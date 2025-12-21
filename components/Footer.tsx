@@ -9,7 +9,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   return (
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
       <div className="container mx-auto px-4 lg:px-8">
-        
+
         {/* Footer CTA */}
         <div className="flex flex-col md:flex-row justify-between items-center bg-[#1F4E6F]/20 p-6 rounded-2xl border border-[#1F4E6F]/30 mb-12 gap-6">
           <div>
@@ -17,17 +17,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <p className="text-slate-400 text-sm mt-1">Your contribution changes lives immediately.</p>
           </div>
           <div className="flex gap-4">
-             <button 
-               onClick={() => onNavigate('donate')}
-               className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-6 rounded-full text-sm flex items-center gap-2 transition-colors"
-             >
+            <button
+              onClick={() => onNavigate('donate')}
+              className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-6 rounded-full text-sm flex items-center gap-2 transition-colors"
+            >
               <Heart className="w-4 h-4 fill-current" />
               Donate
             </button>
-             <button 
-               onClick={() => onNavigate('volunteer')}
-               className="bg-white/10 hover:bg-white/20 text-white font-bold py-2 px-6 rounded-full text-sm flex items-center gap-2 transition-colors border border-white/10"
-             >
+            <button
+              onClick={() => onNavigate('volunteer')}
+              className="bg-white/10 hover:bg-white/20 text-white font-bold py-2 px-6 rounded-full text-sm flex items-center gap-2 transition-colors border border-white/10"
+            >
               <Users className="w-4 h-4" />
               Volunteer
             </button>
@@ -35,22 +35,23 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          
+
           {/* Column 1: Brand */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <img 
-                src="/logo.png" 
-                alt="The International Coalition for Human Rights (ICHR)" 
-                className="h-10 w-auto object-contain bg-white rounded p-1"
-              />
+              <div className="w-10 h-10 bg-[#1F4E6F] rounded-lg flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                </svg>
+              </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold text-white leading-none">ICHR</span>
                 <span className="text-xs font-semibold text-slate-400 tracking-widest uppercase">Intl. Coalition for Human Rights</span>
               </div>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed">
-              The International Coalition for Human Rights (ICHR) is a non-profit organisation committed to protecting human dignity, 
+              The International Coalition for Human Rights (ICHR) is a non-profit organisation committed to protecting human dignity,
               providing humanitarian aid, and ensuring justice for vulnerable communities worldwide.
             </p>
           </div>
@@ -116,13 +117,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('about'); }} className="hover:text-rose-400 transition-colors">Governance & Transparency</a></li>
               <li><a href="#" className="hover:text-rose-400 transition-colors">Privacy Policy</a></li>
               <li><a href="#" className="hover:text-rose-400 transition-colors">Terms & Conditions</a></li>
-              
+
               <li>
                 <button onClick={(e) => { e.preventDefault(); onNavigate('admin'); }} className="hover:text-rose-400 transition-colors flex items-center gap-2 mt-4 pt-4 border-t border-slate-800 w-full">
                   <Lock className="w-3 h-3" /> Staff Login
                 </button>
               </li>
-              
+
             </ul>
           </div>
         </div>
