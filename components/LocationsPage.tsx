@@ -9,9 +9,13 @@ import { MapPin, Mail, Phone } from 'lucide-react';
  * Head offices prominent, map as support element
  */
 export const LocationsPage: React.FC = () => {
-  // Separate head offices from field missions
-  const headOffices = locations.filter(loc => loc.category === 'Head Office');
-  const fieldOffices = locations.filter(loc => loc.category !== 'Head Office');
+  // Separate head offices from field missions (match actual category names)
+  const headOffices = locations.filter(loc =>
+    loc.category.includes('Headquarters')
+  );
+  const fieldOffices = locations.filter(loc =>
+    !loc.category.includes('Headquarters')
+  );
 
   return (
     <div className="animate-fade-in">
