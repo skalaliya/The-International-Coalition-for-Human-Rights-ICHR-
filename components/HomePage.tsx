@@ -15,7 +15,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   // Get the latest 3 items for the main grid
   const mainNews = newsItems.slice(0, 3);
-  
+
   // Get items for the sidebar list (skipping the first 3 if enough exist)
   const sidebarNews = newsItems.length > 3 ? newsItems.slice(3, 7) : newsItems.slice(0, 4);
 
@@ -31,18 +31,18 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </h2>
         <div className="space-y-6 text-lg leading-relaxed text-slate-600 mb-8">
           <p>
-            The International Coalition for Human Rights (ICHR) is dedicated to protecting human dignity and ensuring justice for all. 
-            Founded on the principles of universal human rights, we work tirelessly across borders to support 
+            The International Coalition for Human Rights (ICHR) is dedicated to protecting human dignity and ensuring justice for all.
+            Founded on the principles of universal human rights, we work tirelessly across borders to support
             vulnerable communities and uphold international law.
           </p>
           <p>
-            We believe that every individual deserves safety, freedom, and the opportunity to thrive. Through 
-            direct humanitarian action, legal advocacy, and grassroots empowerment, we bridge the gap between 
+            We believe that every individual deserves safety, freedom, and the opportunity to thrive. Through
+            direct humanitarian action, legal advocacy, and grassroots empowerment, we bridge the gap between
             policy and people, ensuring that no voice goes unheard in the fight for equality.
           </p>
         </div>
-        <button 
-          onClick={() => onNavigate('about')} 
+        <button
+          onClick={() => onNavigate('about')}
           className="inline-flex items-center text-rose-500 font-bold hover:text-rose-600 transition-colors group"
         >
           Read More About ICHR <ArrowRight className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" />
@@ -55,8 +55,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-[#1F4E6F] mb-6">Our Mission</h2>
             <p className="text-xl text-slate-700 leading-relaxed font-light">
-              To coordinate civil society efforts, document violations, and provide immediate humanitarian response. 
-              We strive to embed universal human values into the fabric of global governance, ensuring accountability 
+              To coordinate civil society efforts, document violations, and provide immediate humanitarian response.
+              We strive to embed universal human values into the fabric of global governance, ensuring accountability
               and protection for the marginalized through rigorous monitoring and steadfast advocacy.
             </p>
           </div>
@@ -101,7 +101,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold text-[#1F4E6F] mb-4">Our Global Reach</h2>
           <p className="text-slate-500 max-w-2xl mx-auto">
-            We operate in over 40 countries, providing critical aid and advocacy where it is needed most. 
+            We operate in over 40 countries, providing critical aid and advocacy where it is needed most.
             Explore our operational locations on the map below.
           </p>
         </div>
@@ -115,7 +115,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             <h2 className="text-3xl font-bold text-[#1F4E6F] mb-2">Latest Field Reports</h2>
             <p className="text-slate-500">Stay updated with our latest impact stories from around the globe</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {mainNews.map(item => (
               <NewsCard key={item.id} item={item} />
@@ -133,15 +133,15 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       {/* Newsletter & Latest News Split */}
       <Section>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
-          
+
           {/* Left: Newsletter */}
           <div>
             <h3 className="text-2xl font-bold text-[#1F4E6F] mb-4">Stay informed about new and upcoming causes</h3>
             <p className="text-slate-600 mb-8">
-              Join our community of over 50,000 advocates. Receive weekly updates on our missions, 
+              Join our community of over 50,000 advocates. Receive weekly updates on our missions,
               urgent alerts, and ways you can make a difference directly from your inbox.
             </p>
-            
+
             <form className="space-y-4 bg-slate-50 p-8 rounded-2xl border border-slate-100 shadow-sm">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">Full Name</label>
@@ -166,14 +166,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               <h3 className="text-2xl font-bold text-[#1F4E6F]">Latest News</h3>
               <a href="#" className="text-sm font-semibold text-rose-500 hover:underline">View Archive</a>
             </div>
-            
+
             <div className="space-y-6">
               {sidebarNews.map((news) => (
                 <div key={news.id} className="flex gap-4 group cursor-pointer">
                   <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-slate-200">
-                    <img 
-                      src={news.imageUrl} 
-                      alt="Thumbnail" 
+                    <img
+                      src={news.imageUrl}
+                      alt="Thumbnail"
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   </div>
@@ -197,9 +197,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       {/* CTA Banner */}
       <section className="relative py-24 px-4 overflow-hidden">
         <div className="absolute inset-0">
-            <img 
-            src="https://picsum.photos/id/1025/1920/600" 
-            alt="Join Us" 
+          <img
+            src="/images/cta-global-cooperation.jpg"
+            alt="Global cooperation meeting for humanitarian causes"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-[#1F4E6F]/80"></div>
@@ -210,14 +210,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             Your support can provide life-saving aid to families in crisis. Join our global movement today.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <button 
+            <button
               onClick={() => onNavigate('donate')}
               className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 px-12 rounded-full text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
             >
               <Heart className="w-5 h-5 fill-current" />
               Donate Now
             </button>
-            <button 
+            <button
               onClick={() => onNavigate('volunteer')}
               className="bg-transparent border-2 border-white hover:bg-white hover:text-[#1F4E6F] text-white font-bold py-4 px-12 rounded-full text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
             >

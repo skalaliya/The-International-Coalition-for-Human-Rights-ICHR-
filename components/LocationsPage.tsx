@@ -8,9 +8,9 @@ export const LocationsPage: React.FC = () => {
     <div className="animate-fade-in">
       {/* Page Hero */}
       <section className="relative h-[400px] bg-slate-900 overflow-hidden">
-        <img 
-          src="https://picsum.photos/id/1050/1920/600" 
-          alt="World Map Locations" 
+        <img
+          src="/images/locations-world-map.jpg"
+          alt="Global network visualization showing international presence"
           className="w-full h-full object-cover opacity-40"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1F4E6F]/90 to-transparent"></div>
@@ -37,7 +37,7 @@ export const LocationsPage: React.FC = () => {
       <div className="bg-slate-50 border-t border-slate-100">
         <Section>
           <h2 className="text-3xl font-bold text-[#1F4E6F] mb-12 text-center">Regional Offices & Missions</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {locations.map((loc) => (
               <div key={loc.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md border border-slate-100 transition-all group">
@@ -59,7 +59,7 @@ export const LocationsPage: React.FC = () => {
                   <p className="text-slate-600 text-sm mb-6 min-h-[40px]">
                     {loc.description}
                   </p>
-                  
+
                   <div className="space-y-4 mb-6">
                     {loc.address && (
                       <div className="flex items-start text-sm text-slate-500">
@@ -81,8 +81,8 @@ export const LocationsPage: React.FC = () => {
                     )}
                   </div>
 
-                  <a 
-                    href={loc.link} 
+                  <a
+                    href={loc.link}
                     className="flex items-center justify-center w-full py-2.5 border border-slate-200 rounded-lg text-sm font-semibold text-slate-600 hover:text-white hover:bg-[#1F4E6F] hover:border-[#1F4E6F] transition-all group-hover:shadow-md"
                   >
                     View Office Details <ExternalLink className="w-4 h-4 ml-2" />
@@ -93,7 +93,7 @@ export const LocationsPage: React.FC = () => {
           </div>
         </Section>
       </div>
-      
+
       {/* Local Partner CTA */}
       <Section className="!py-20">
         <div className="bg-[#1F4E6F] rounded-2xl p-8 md:p-12 text-center text-white relative overflow-hidden">

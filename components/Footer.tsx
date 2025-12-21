@@ -90,11 +90,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div>
             <h4 className="text-white font-bold text-lg mb-6 border-b border-slate-700 pb-2 inline-block">Our Causes</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Social Support Systems</a></li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Education for All</a></li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Emergency Response</a></li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Human Rights Advocacy</a></li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Migrant Integration</a></li>
+              <li><span className="text-slate-300">Social Support Systems</span></li>
+              <li><span className="text-slate-300">Education for All</span></li>
+              <li><span className="text-slate-300">Emergency Response</span></li>
+              <li><span className="text-slate-300">Human Rights Advocacy</span></li>
+              <li><span className="text-slate-300">Migrant Integration</span></li>
             </ul>
           </div>
 
@@ -112,10 +112,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   Contact Us
                 </a>
               </li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Careers</a></li>
+              <li><span className="text-slate-400">Careers</span></li>
               <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('about'); }} className="hover:text-rose-400 transition-colors">Governance & Transparency</a></li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-rose-400 transition-colors">Terms & Conditions</a></li>
+              <li><span className="text-slate-400">Privacy Policy</span></li>
+              <li><span className="text-slate-400">Terms & Conditions</span></li>
 
               <li>
                 <button onClick={(e) => { e.preventDefault(); onNavigate('admin'); }} className="hover:text-rose-400 transition-colors flex items-center gap-2 mt-4 pt-4 border-t border-slate-800 w-full">
@@ -133,18 +133,18 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             © {new Date().getFullYear()} The International Coalition for Human Rights (ICHR). All Rights Reserved.
           </p>
           <div className="flex space-x-4">
-            <a href="#" className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#1F4E6F] transition-colors text-white" aria-label="Facebook">
+            <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 cursor-default" aria-label="Facebook">
               <Facebook className="w-4 h-4" />
-            </a>
-            <a href="#" className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-pink-600 transition-colors text-white" aria-label="Instagram">
+            </span>
+            <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 cursor-default" aria-label="Instagram">
               <Instagram className="w-4 h-4" />
-            </a>
-            <a href="#" className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-sky-500 transition-colors text-white" aria-label="Twitter">
+            </span>
+            <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 cursor-default" aria-label="Twitter">
               <Twitter className="w-4 h-4" />
-            </a>
-            <a href="#" className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#1F4E6F] transition-colors text-white" aria-label="LinkedIn">
+            </span>
+            <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 cursor-default" aria-label="LinkedIn">
               <Linkedin className="w-4 h-4" />
-            </a>
+            </span>
           </div>
         </div>
       </div>

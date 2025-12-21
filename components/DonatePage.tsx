@@ -22,13 +22,13 @@ export const DonatePage: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
               <div className="p-8 border-b border-slate-100 bg-slate-50">
                 <div className="flex justify-center gap-4 mb-8">
-                  <button 
+                  <button
                     onClick={() => setFrequency('once')}
                     className={`px-6 py-2 rounded-full font-bold transition-all ${frequency === 'once' ? 'bg-[#1F4E6F] text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'}`}
                   >
                     Give Once
                   </button>
-                  <button 
+                  <button
                     onClick={() => setFrequency('monthly')}
                     className={`px-6 py-2 rounded-full font-bold transition-all ${frequency === 'monthly' ? 'bg-rose-500 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'}`}
                   >
@@ -48,9 +48,9 @@ export const DonatePage: React.FC = () => {
                   ))}
                   <div className="col-span-2 sm:col-span-2 relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 font-bold">$</span>
-                    <input 
-                      type="number" 
-                      value={amount} 
+                    <input
+                      type="number"
+                      value={amount}
                       onChange={(e) => setAmount(parseInt(e.target.value) || 0)}
                       className="w-full h-full pl-8 pr-4 rounded-lg border-2 border-slate-200 focus:border-rose-500 focus:outline-none font-bold text-slate-700"
                     />
@@ -62,7 +62,7 @@ export const DonatePage: React.FC = () => {
                 <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                   <Lock className="w-5 h-5 text-green-600" /> Secure Payment Details
                 </h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">First Name</label>
@@ -75,11 +75,11 @@ export const DonatePage: React.FC = () => {
                 </div>
 
                 <div>
-                   <label className="block text-sm font-semibold text-slate-700 mb-2">Card Number</label>
-                   <div className="relative">
-                     <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                     <input type="text" placeholder="0000 0000 0000 0000" className="w-full pl-12 pr-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1F4E6F] outline-none" />
-                   </div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Card Number</label>
+                  <div className="relative">
+                    <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <input type="text" placeholder="0000 0000 0000 0000" className="w-full pl-12 pr-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-[#1F4E6F] outline-none" />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
@@ -97,7 +97,7 @@ export const DonatePage: React.FC = () => {
                   <Heart className="w-5 h-5 fill-current" />
                   Donate ${amount} {frequency === 'monthly' ? '/ month' : ''}
                 </button>
-                
+
                 <p className="text-center text-xs text-slate-400 flex items-center justify-center gap-1">
                   <Shield className="w-3 h-3" /> 256-bit SSL Encrypted Donation
                 </p>
@@ -123,9 +123,9 @@ export const DonatePage: React.FC = () => {
                 ))}
               </ul>
             </div>
-            
+
             <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-              <img src="https://picsum.photos/id/1025/400/300" alt="Impact" className="w-full h-48 object-cover rounded-lg mb-4" />
+              <img src="/images/impact-field-mission.jpg" alt="Humanitarian aid workers providing assistance to communities" className="w-full h-48 object-cover rounded-lg mb-4" />
               <p className="text-sm italic text-slate-600">
                 "Your donation last month helped us provide clean water to 5,000 residents in Yemen."
               </p>

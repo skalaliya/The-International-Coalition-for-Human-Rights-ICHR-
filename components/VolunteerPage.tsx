@@ -6,9 +6,9 @@ export const VolunteerPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <div className="relative bg-slate-900 h-[300px] overflow-hidden">
-        <img 
-          src="https://picsum.photos/id/1015/1920/600" 
-          alt="Volunteers" 
+        <img
+          src="/images/volunteer-teamwork.jpg"
+          alt="Diverse volunteers working together in community service"
           className="w-full h-full object-cover opacity-50"
         />
         <div className="absolute inset-0 bg-[#1F4E6F]/80 flex flex-col justify-center items-center text-center px-4">
