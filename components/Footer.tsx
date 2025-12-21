@@ -39,12 +39,11 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Column 1: Brand */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#1F4E6F] rounded-lg flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                </svg>
-              </div>
+              <img
+                src="/logo.png"
+                alt="The International Coalition for Human Rights (ICHR)"
+                className="h-10 w-auto object-contain"
+              />
               <div className="flex flex-col">
                 <span className="text-lg font-bold text-white leading-none">ICHR</span>
                 <span className="text-xs font-semibold text-slate-400 tracking-widest uppercase">Intl. Coalition for Human Rights</span>

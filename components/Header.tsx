@@ -123,12 +123,11 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onNavigate }) => {
             className="flex items-center gap-3 cursor-pointer"
             onClick={() => onNavigate('home')}
           >
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-[#1F4E6F] rounded-lg flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 md:w-7 md:h-7">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-              </svg>
-            </div>
+            <img
+              src="/logo.png"
+              alt="The International Coalition for Human Rights (ICHR)"
+              className="h-10 md:h-12 w-auto object-contain"
+            />
             <div className="flex flex-col">
               <span className="text-xl font-bold text-[#1F4E6F] leading-none tracking-tight">ICHR</span>
               <span className="text-xs font-semibold text-slate-500 tracking-widest uppercase">Intl. Coalition for Human Rights</span>
@@ -161,8 +160,8 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onNavigate }) => {
       {/* Mobile Menu Overlay with Smooth Transition */}
       <div
         className={`lg:hidden absolute top-full left-0 w-full bg-white shadow-2xl border-t border-slate-100 overflow-hidden transition-all duration-300 ease-in-out origin-top ${mobileMenuOpen
-            ? 'opacity-100 max-h-[calc(100vh-80px)] visible'
-            : 'opacity-0 max-h-0 invisible'
+          ? 'opacity-100 max-h-[calc(100vh-80px)] visible'
+          : 'opacity-0 max-h-0 invisible'
           }`}
       >
         <div className="flex flex-col p-4 pb-20 overflow-y-auto max-h-[calc(100vh-80px)]">
@@ -190,8 +189,8 @@ export const Header: React.FC<HeaderProps> = ({ activePage, onNavigate }) => {
               {/* Mobile Submenu with transition */}
               <div
                 className={`overflow-hidden transition-all duration-300 ease-in-out ${item.hasDropdown && expandedMobileItems.includes(item.id)
-                    ? 'max-h-96 opacity-100 mb-2'
-                    : 'max-h-0 opacity-0'
+                  ? 'max-h-96 opacity-100 mb-2'
+                  : 'max-h-0 opacity-0'
                   }`}
               >
                 <div className="bg-slate-50 rounded-lg py-2 mx-2">
