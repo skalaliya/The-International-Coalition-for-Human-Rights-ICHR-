@@ -1,150 +1,124 @@
 import React from 'react';
-import { Facebook, Twitter, Linkedin, Instagram, MapPin, Phone, Mail, Heart, Users, Lock } from 'lucide-react';
+import { MapPin, Mail, Phone } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
 }
 
+/**
+ * Institutional Footer Component
+ * Three-column layout, formal legal structure
+ * Single logo instance, muted tones
+ */
 export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
-      <div className="container mx-auto px-4 lg:px-8">
+    <footer className="bg-slate-900 text-slate-300">
+      {/* Main Footer Content */}
+      <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
 
-        {/* Footer CTA */}
-        <div className="flex flex-col md:flex-row justify-between items-center bg-[#1F4E6F]/20 p-6 rounded-2xl border border-[#1F4E6F]/30 mb-12 gap-6">
+          {/* Column 1: Organisation */}
           <div>
-            <h3 className="text-white text-xl font-bold">Support our mission today</h3>
-            <p className="text-slate-400 text-sm mt-1">Your contribution changes lives immediately.</p>
-          </div>
-          <div className="flex gap-4">
-            <button
-              onClick={() => onNavigate('donate')}
-              className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-6 rounded-full text-sm flex items-center gap-2 transition-colors"
-            >
-              <Heart className="w-4 h-4 fill-current" />
-              Donate
-            </button>
-            <button
-              onClick={() => onNavigate('volunteer')}
-              className="bg-white/10 hover:bg-white/20 text-white font-bold py-2 px-6 rounded-full text-sm flex items-center gap-2 transition-colors border border-white/10"
-            >
-              <Users className="w-4 h-4" />
-              Volunteer
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-
-          {/* Column 1: Brand */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-6">
               <img
                 src="/logo.png"
-                alt="The International Coalition for Human Rights (ICHR)"
-                className="h-10 w-auto object-contain"
+                alt="ICHR"
+                className="h-10 w-auto brightness-0 invert opacity-90"
               />
-              <div className="flex flex-col">
-                <span className="text-lg font-bold text-white leading-none">ICHR</span>
-                <span className="text-xs font-semibold text-slate-400 tracking-widest uppercase">Intl. Coalition for Human Rights</span>
-              </div>
+              <span className="text-lg font-semibold text-white">ICHR</span>
             </div>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              The International Coalition for Human Rights (ICHR) is a non-profit organisation committed to protecting human dignity,
-              providing humanitarian aid, and ensuring justice for vulnerable communities worldwide.
+            <p className="text-sm leading-relaxed text-slate-400 mb-6">
+              The International Coalition for Human Rights (ICHR) is a global
+              non-governmental organisation dedicated to the protection of human
+              dignity and the advancement of justice worldwide.
             </p>
           </div>
 
-          {/* Column 2: Contact */}
+          {/* Column 2: Head Offices */}
           <div>
-            <h4 className="text-white font-bold text-lg mb-6 border-b border-slate-700 pb-2 inline-block">Head Offices</h4>
-            <ul className="space-y-6 text-sm">
-              <li className="flex items-start">
-                <MapPin className="w-5 h-5 text-rose-500 mr-3 mt-0.5 flex-shrink-0" />
-                <span className="text-slate-300">
-                  <strong className="text-white block mb-1">Geneva (International HQ)</strong>
-                  123 Humanitarian Avenue,<br />
-                  Geneva, Switzerland 1202
-                </span>
-              </li>
-              <li className="flex items-start">
-                <MapPin className="w-5 h-5 text-rose-500 mr-3 mt-0.5 flex-shrink-0" />
-                <span className="text-slate-300">
-                  <strong className="text-white block mb-1">Paris (Administrative HQ)</strong>
-                  25 Rue de la Paix,<br />
-                  75002 Paris, France
-                </span>
-              </li>
-              <li className="flex items-center border-t border-slate-800 pt-4">
-                <Phone className="w-5 h-5 text-rose-500 mr-3 flex-shrink-0" />
-                <span className="text-white font-medium">+33 7 68 85 10 66</span>
-              </li>
-              <li className="flex items-center">
-                <Mail className="w-5 h-5 text-rose-500 mr-3 flex-shrink-0" />
-                <span className="text-white font-medium">ichr.geneva@gmail.com</span>
-              </li>
-            </ul>
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-6">
+              Head Offices
+            </h4>
+            <div className="space-y-5 text-sm">
+              <div className="flex gap-3">
+                <MapPin className="w-4 h-4 text-slate-500 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-white font-medium mb-1">Geneva, Switzerland</div>
+                  <div className="text-slate-400">International Headquarters</div>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <MapPin className="w-4 h-4 text-slate-500 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-white font-medium mb-1">Paris, France</div>
+                  <div className="text-slate-400">Administrative Office</div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Column 3: Causes */}
+          {/* Column 3: Contact */}
           <div>
-            <h4 className="text-white font-bold text-lg mb-6 border-b border-slate-700 pb-2 inline-block">Our Causes</h4>
-            <ul className="space-y-3 text-sm">
-              <li><span className="text-slate-300">Social Support Systems</span></li>
-              <li><span className="text-slate-300">Education for All</span></li>
-              <li><span className="text-slate-300">Emergency Response</span></li>
-              <li><span className="text-slate-300">Human Rights Advocacy</span></li>
-              <li><span className="text-slate-300">Migrant Integration</span></li>
-            </ul>
-          </div>
+            <h4 className="text-sm font-semibold text-white uppercase tracking-wider mb-6">
+              Contact
+            </h4>
+            <div className="space-y-4 text-sm">
+              <a
+                href="mailto:ichr.geneva@gmail.com"
+                className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors"
+              >
+                <Mail className="w-4 h-4 text-slate-500" />
+                ichr.geneva@gmail.com
+              </a>
+              <a
+                href="tel:+33768851066"
+                className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors"
+              >
+                <Phone className="w-4 h-4 text-slate-500" />
+                +33 7 68 85 10 66
+              </a>
+            </div>
 
-          {/* Column 4: Links */}
-          <div>
-            <h4 className="text-white font-bold text-lg mb-6 border-b border-slate-700 pb-2 inline-block">Other Pages</h4>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('about'); }} className="hover:text-rose-400 transition-colors">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" onClick={(e) => { e.preventDefault(); onNavigate('contact'); }} className="hover:text-rose-400 transition-colors">
-                  Contact Us
-                </a>
-              </li>
-              <li><span className="text-slate-400">Careers</span></li>
-              <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('about'); }} className="hover:text-rose-400 transition-colors">Governance & Transparency</a></li>
-              <li><span className="text-slate-400">Privacy Policy</span></li>
-              <li><span className="text-slate-400">Terms & Conditions</span></li>
-
-              <li>
-                <button onClick={(e) => { e.preventDefault(); onNavigate('admin'); }} className="hover:text-rose-400 transition-colors flex items-center gap-2 mt-4 pt-4 border-t border-slate-800 w-full">
-                  <Lock className="w-3 h-3" /> Staff Login
+            {/* Quick Links */}
+            <div className="mt-8 pt-6 border-t border-slate-800">
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                <button
+                  onClick={() => onNavigate('about')}
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  About
                 </button>
-              </li>
-
-            </ul>
+                <button
+                  onClick={() => onNavigate('locations')}
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Locations
+                </button>
+                <button
+                  onClick={() => onNavigate('contact')}
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Contact
+                </button>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-slate-500 text-center md:text-left">
-            © {new Date().getFullYear()} The International Coalition for Human Rights (ICHR). All Rights Reserved.
-          </p>
-          <div className="flex space-x-4">
-            <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 cursor-default" aria-label="Facebook">
-              <Facebook className="w-4 h-4" />
-            </span>
-            <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 cursor-default" aria-label="Instagram">
-              <Instagram className="w-4 h-4" />
-            </span>
-            <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 cursor-default" aria-label="Twitter">
-              <Twitter className="w-4 h-4" />
-            </span>
-            <span className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 cursor-default" aria-label="LinkedIn">
-              <Linkedin className="w-4 h-4" />
-            </span>
+      {/* Legal Footer */}
+      <div className="border-t border-slate-800">
+        <div className="max-w-6xl mx-auto px-6 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+            <p>
+              © {currentYear} The International Coalition for Human Rights (ICHR). All rights reserved.
+            </p>
+            <div className="flex items-center gap-6">
+              <span className="text-slate-600">Privacy Policy</span>
+              <span className="text-slate-600">Terms of Use</span>
+            </div>
           </div>
         </div>
       </div>
