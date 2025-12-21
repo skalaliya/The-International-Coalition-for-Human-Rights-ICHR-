@@ -25,7 +25,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <img
                 src="/logo.png"
                 alt="ICHR"
-                className="h-10 w-auto brightness-0 invert opacity-90"
+                className="h-10 w-auto bg-white rounded p-1"
               />
               <span className="text-lg font-semibold text-white">ICHR</span>
             </div>
