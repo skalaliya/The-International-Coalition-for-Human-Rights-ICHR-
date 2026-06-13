@@ -1,0 +1,116 @@
+---
+const path = Astro.url.pathname;
+const nav = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
+  { label: 'Locations', href: '/locations' },
+  { label: 'News', href: '/news' },
+  { label: 'Contact', href: '/contact' },
+];
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header id="site-header" class="w-full z-50 transition-all duration-300 relative bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex items-center justify-between h-16 md:h-20">
+      <a href="/" class="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] rounded">
+        <img src="/logo.png" alt="ICHR" class="h-8 md:h-10 w-auto" />
+        <span class="hidden sm:block text-lg font-semibold text-[#1a4a68] leading-none">ICHR</span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-8">
+        {nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+            class:list={[
+              'text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2 rounded',
+              isActive(item.href) ? 'text-[#1a4a68]' : 'text-slate-600 hover:text-[#1a4a68]',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))}
+        <a
+          href="/donate"
+          class="text-sm font-medium text-white bg-[#1a4a68] hover:bg-[#133549] px-5 py-2 rounded transition-colors"
+        >
+          Support Us
+        </a>
+      </nav>
+
+      <button
+        id="menu-toggle"
+        class="lg:hidden p-2 text-slate-700"
+        aria-label="Toggle menu"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg id="icon-menu" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="18" x2="20" y2="18" /></svg>
+        <svg id="icon-close" class="w-6 h-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="mobile-menu"
+    class="lg:hidden fixed inset-x-0 top-16 bg-white border-t border-slate-100 shadow-lg transition-all duration-300 opacity-0 invisible pointer-events-none"
+  >
+    <nav class="max-w-6xl mx-auto px-6 py-6">
+      <div class="flex flex-col gap-1">
+        {nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+            class:list={[
+              'text-left py-3 px-4 rounded-lg text-base font-medium transition-colors',
+              isActive(item.href) ? 'text-[#1a4a68] bg-slate-50' : 'text-slate-700 hover:bg-slate-50',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))}
+        <div class="pt-4 mt-4 border-t border-slate-100">
+          <a
+            href="/donate"
+            class="block w-full text-center font-medium text-white bg-[#1a4a68] hover:bg-[#133549] py-3 rounded-lg transition-colors"
+          >
+            Support Us
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-menu');
+    const iconMenu = document.getElementById('icon-menu');
+    const iconClose = document.getElementById('icon-close');
+    const header = document.getElementById('site-header');
+    if (!btn || !menu || !header) return;
+    let open = false;
+    function set(state) {
+      open = state;
+      menu.classList.toggle('opacity-100', state);
+      menu.classList.toggle('visible', state);
+      menu.classList.toggle('opacity-0', !state);
+      menu.classList.toggle('invisible', !state);
+      menu.classList.toggle('pointer-events-none', !state);
+      iconMenu.classList.toggle('hidden', state);
+      iconClose.classList.toggle('hidden', !state);
+      btn.setAttribute('aria-expanded', String(state));
+    }
+    btn.addEventListener('click', function () { set(!open); });
+    window.addEventListener('resize', function () { if (window.innerWidth >= 1024 && open) set(false); });
+    window.addEventListener('scroll', function () {
+      const s = window.scrollY > 20;
+      header.classList.toggle('fixed', s);
+      header.classList.toggle('top-0', s);
+      header.classList.toggle('shadow-sm', s);
+      header.classList.toggle('relative', !s);
+    });
+  })();
+</script>

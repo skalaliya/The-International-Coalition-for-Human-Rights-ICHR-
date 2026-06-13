@@ -1,0 +1,16 @@
+---
+import { dateline } from '@/lib/dateline';
+
+interface Props {
+  date: string;
+  location?: string;
+  class?: string;
+}
+const { date, location, class: className = '' } = Astro.props;
+---
+
+<p
+  class={`inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-gold)] ${className}`}
+>
+  {dateline(location, date)}
+</p>
