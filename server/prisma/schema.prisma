@@ -1,0 +1,69 @@
+// ICHR Newsroom — Prisma schema (SQLite)
+// SQLite has no enums and no scalar lists, so `category`/`status` are validated
+// in the app (zod) and `hashtags` is stored as a JSON-encoded string.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  category      String // "Press Release" | "Statement" | "Field Update" | "News" (validated in app)
+  status        String   @default("draft") // "draft" | "published" (validated in app)
+  date          DateTime // publication date
+  location      String?
+  excerpt       String?
+  coverImageUrl String?
+  body          String // Markdown
+  // SQLite has no scalar lists and `Json @default` emits invalid DDL (prisma#26571),
+  // so hashtags is a JSON-encoded string[] handled by the app layer.
+  hashtags      String   @default("[]")
+  authorName    String?
+
+  gallery   GalleryImage[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([status, date])
+  @@index([category])
+}
+
+model GalleryImage {
+  id      String  @id @default(cuid())
+  url     String
+  caption String?
+  order   Int     @default(0)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
+// Kept so the legacy /videos routes do not crash. Not part of the Newsroom feature.
+model VideoItem {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  videoUrl     String
+  thumbnailUrl String?
+  duration     String?
+  date         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

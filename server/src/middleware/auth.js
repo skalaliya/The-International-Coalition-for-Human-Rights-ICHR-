@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = "ichr_super_secret_key_change_in_production";
+// Secret comes from the environment. Fail loud at boot rather than silently
+// signing/verifying with `undefined` (which would 403 every request).
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) {
+    throw new Error('JWT_SECRET is required (set it in server/.env)');
+}
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];

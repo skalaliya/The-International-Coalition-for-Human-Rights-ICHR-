@@ -1,0 +1,10 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { AdminDashboard } from '@/components/react/AdminDashboard';
+
+export const prerender = true; // empty shell prerenders; React fills it client-side
+---
+
+<BaseLayout title="ICHR Newsroom CMS" noindex={true} hideChrome={true}>
+  <AdminDashboard client:only="react" />
+</BaseLayout>

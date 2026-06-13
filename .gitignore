@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# Env & Astro build artifacts
+.env
+.astro
+
+# Backend (also has its own .gitignore)
+server/.env
+server/prisma/dev.db
+server/prisma/dev.db-journal
+server/uploads/*
+!server/uploads/.gitkeep
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

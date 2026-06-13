@@ -1,0 +1,154 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Section from '@/components/Section.astro';
+
+export const prerender = true;
+
+const amounts = [25, 50, 100, 250, 500, 1000];
+const impact = [
+  '92% of funds go directly to field operations',
+  'Tax-deductible contributions',
+  'Quarterly impact reports',
+  'Immediate deployment capability',
+];
+const input = 'w-full px-3 py-2.5 rounded border border-slate-200 focus:border-[#1a4a68] focus:outline-none text-sm';
+---
+
+<BaseLayout
+  title="Support Our Work — Donate to ICHR"
+  description="Your contribution enables us to continue protecting human rights and providing humanitarian assistance."
+>
+  <PageHeader
+    title="Support Our Work"
+    subtitle="Your contribution enables us to continue protecting human rights and providing humanitarian assistance."
+  />
+
+  <Section width="wide" spacing="lg">
+    <div class="flex flex-col lg:flex-row gap-12 max-w-5xl mx-auto">
+      <div class="flex-1">
+        <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
+          <div class="p-6 bg-slate-50 border-b border-slate-200">
+            <div class="flex gap-3 justify-center">
+              <button type="button" data-freq="once" class="freq-btn px-5 py-2 rounded font-medium text-sm transition-colors bg-[#1a4a68] text-white">One-time</button>
+              <button type="button" data-freq="monthly" class="freq-btn px-5 py-2 rounded font-medium text-sm transition-colors bg-white text-slate-600 border border-slate-200">Monthly</button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 mt-6">
+              {amounts.map((val) => (
+                <button
+                  type="button"
+                  data-amount={val}
+                  class="amount-btn py-2.5 rounded font-medium text-sm border transition-colors border-slate-200 text-slate-600 hover:border-slate-300"
+                >
+                  ${val}
+                </button>
+              ))}
+            </div>
+
+            <div class="mt-4">
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium">$</span>
+                <input id="custom-amount" type="number" value="50" class="w-full pl-8 pr-4 py-2.5 rounded border border-slate-200 focus:border-[#1a4a68] focus:outline-none text-sm" placeholder="Other amount" />
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5" for="d-first">First Name</label>
+                <input id="d-first" type="text" class={input} />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5" for="d-last">Last Name</label>
+                <input id="d-last" type="text" class={input} />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1.5" for="d-email">Email</label>
+              <input id="d-email" type="email" class={input} />
+            </div>
+            <button id="donate-btn" type="button" class="w-full bg-[#1a4a68] hover:bg-[#133549] text-white font-medium py-3 rounded transition-colors text-sm">
+              Donate $50
+            </button>
+            <p class="text-xs text-slate-500 text-center flex items-center justify-center gap-1.5">
+              <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+              Secure, encrypted donation
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:w-80 space-y-6">
+        <div class="bg-slate-50 p-6 rounded-lg border border-slate-200">
+          <h3 class="font-semibold text-slate-800 mb-4">Your Impact</h3>
+          <ul class="space-y-3">
+            {impact.map((item) => (
+              <li class="flex items-start gap-2.5 text-sm text-slate-600">
+                <svg class="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><path d="m9 11 3 3L22 4" /></svg>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="bg-white p-6 rounded-lg border border-slate-200">
+          <p class="text-sm text-slate-600 italic leading-relaxed">
+            "Contributions from supporters like you enable our teams to respond rapidly
+            to humanitarian crises and advocate for those who cannot speak for themselves."
+          </p>
+          <p class="text-xs text-slate-500 mt-3">— ICHR Field Operations</p>
+        </div>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    let amount = 50;
+    let frequency = 'once';
+    const amountBtns = Array.from(document.querySelectorAll('.amount-btn'));
+    const freqBtns = Array.from(document.querySelectorAll('.freq-btn'));
+    const custom = document.getElementById('custom-amount');
+    const donateBtn = document.getElementById('donate-btn');
+    const ACTIVE_AMT = ['border-[#1a4a68]', 'bg-[#1a4a68]/5', 'text-[#1a4a68]'];
+    const IDLE_AMT = ['border-slate-200', 'text-slate-600', 'hover:border-slate-300'];
+
+    function renderAmounts() {
+      amountBtns.forEach((b) => {
+        const isActive = Number(b.getAttribute('data-amount')) === amount;
+        ACTIVE_AMT.forEach((c) => b.classList.toggle(c, isActive));
+        IDLE_AMT.forEach((c) => b.classList.toggle(c, !isActive));
+      });
+    }
+    function renderFreq() {
+      freqBtns.forEach((b) => {
+        const isActive = b.getAttribute('data-freq') === frequency;
+        b.classList.toggle('bg-[#1a4a68]', isActive);
+        b.classList.toggle('text-white', isActive);
+        b.classList.toggle('bg-white', !isActive);
+        b.classList.toggle('text-slate-600', !isActive);
+        b.classList.toggle('border', !isActive);
+        b.classList.toggle('border-slate-200', !isActive);
+      });
+    }
+    function renderBtn() {
+      donateBtn.textContent = `Donate $${amount || 0}${frequency === 'monthly' ? '/month' : ''}`;
+    }
+    amountBtns.forEach((b) => b.addEventListener('click', () => {
+      amount = Number(b.getAttribute('data-amount'));
+      custom.value = String(amount);
+      renderAmounts(); renderBtn();
+    }));
+    freqBtns.forEach((b) => b.addEventListener('click', () => {
+      frequency = b.getAttribute('data-freq');
+      renderFreq(); renderBtn();
+    }));
+    custom.addEventListener('input', () => {
+      amount = parseInt(custom.value, 10) || 0;
+      renderAmounts(); renderBtn();
+    });
+    renderAmounts(); renderFreq(); renderBtn();
+  })();
+</script>
