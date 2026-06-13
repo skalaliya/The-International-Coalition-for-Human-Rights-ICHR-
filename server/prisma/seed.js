@@ -19,25 +19,26 @@ Regarding monitoring and accountability mechanisms, the Coalition stressed the i
 At the conclusion of the meeting, the EU Delegation to the UN in Geneva commended the pivotal role played by the United Kingdom in advancing peace efforts in Sudan. She reaffirmed the European Union's firm position calling for an immediate end to the war and announced that, on 15 June, the European Union will present a comprehensive report on the human-rights situation in Sudan before the United Nations.`;
 
 const EXCERPT =
-    'Representatives of the International Coalition for Human Rights held an extensive meeting with Mrs. Katarina Tapio of the EU Delegation to the UN in Geneva to discuss the rapidly deteriorating humanitarian and human-rights situation in Sudan.';
+    'Representatives of the International Coalition for Human Rights held an important and extensive meeting with Mrs. Katarina Tapio of the EU Delegation to the UN in Geneva to discuss the rapidly deteriorating humanitarian and human rights situation in Sudan as a result of the ongoing conflict.';
 
+// Captions are ordered to match the three press cards as supplied (E1, E2, E3).
 const GALLERY = [
     {
         url: `/blog/${SLUG}/E1.jpg`,
         caption:
-            "The EU Mission in Geneva commends the United Kingdom's efforts to restore peace in Sudan and reaffirms continued support for education through UNICEF.",
+            "The European Union Mission in Geneva commends the United Kingdom's efforts to restore peace in Sudan and reaffirms to the International Coalition its continued support for education through UNICEF.",
         order: 0,
     },
     {
         url: `/blog/${SLUG}/E2.jpg`,
         caption:
-            'The Coalition briefs the EU Representative to the Human Rights Council at the UN on the exploitation of medical professionals by the Sudanese Army, condemns the use of chemical weapons, and calls for a field visit by the UN Fact-Finding Mission.',
+            'Geneva talks between the International Coalition and the European Union consider addressing violations in Sudan; designating the Islamic Movement as a terrorist organization is a key effort to restore peace.',
         order: 1,
     },
     {
         url: `/blog/${SLUG}/E3.jpg`,
         caption:
-            'Geneva talks between the International Coalition and the European Union consider addressing violations in Sudan and designating the Islamic Movement as a terrorist organization as a key effort to restore peace.',
+            'The International Coalition for Human Rights briefs the European Union Representative to the Human Rights Council at the United Nations on the exploitation of medical professionals by the Sudanese Army, condemns the use of chemical weapons, and calls for a field visit by the UN Fact-Finding Mission.',
         order: 2,
     },
 ];
