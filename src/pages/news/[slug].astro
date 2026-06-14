@@ -65,7 +65,9 @@ const jsonLd = {
 
     {post.coverImageUrl && (
       <Section width="content" spacing="sm">
-        <img src={resolveAssetUrl(post.coverImageUrl)} alt={post.title} class="w-full rounded-xl object-cover max-h-[480px] border border-slate-200" />
+        <div class="rounded-xl overflow-hidden border border-slate-200 bg-[#1a4a68] flex justify-center">
+          <img src={resolveAssetUrl(post.coverImageUrl)} alt={post.title} class="max-h-[640px] w-auto object-contain" />
+        </div>
       </Section>
     )}
 
@@ -82,7 +84,9 @@ const jsonLd = {
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {post.gallery.map((g, i) => (
             <figure class="bg-white rounded-lg overflow-hidden border border-slate-100 shadow-sm">
-              <img src={resolveAssetUrl(g.url)} alt={g.caption ?? `${post.title} — image ${i + 1}`} loading="lazy" class="w-full h-48 object-cover" />
+              <div class="bg-[#1a4a68]">
+                <img src={resolveAssetUrl(g.url)} alt={g.caption ?? `${post.title} — image ${i + 1}`} loading="lazy" class="w-full aspect-[4/5] object-contain" />
+              </div>
               {g.caption && <figcaption class="px-4 py-3 text-sm text-slate-500 leading-snug">{g.caption}</figcaption>}
             </figure>
           ))}

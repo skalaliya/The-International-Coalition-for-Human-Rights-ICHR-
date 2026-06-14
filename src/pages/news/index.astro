@@ -87,12 +87,12 @@ const pageHref = (p: number) => {
             href={`/news/${featured.slug}`}
             class="group grid md:grid-cols-2 gap-8 items-center bg-white rounded-xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 mb-12 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2"
           >
-            <div class="relative h-64 md:h-full overflow-hidden">
+            <div class="relative h-72 md:h-full md:min-h-[24rem] overflow-hidden bg-[#1a4a68]">
               <img
                 src={resolveAssetUrl(featured.coverImageUrl)}
                 alt={featured.title}
                 loading="lazy"
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
+                class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
               />
             </div>
             <div class="p-8">
