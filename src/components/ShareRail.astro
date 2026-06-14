@@ -1,0 +1,37 @@
+---
+// Floating vertical share rail, desktop only (xl+). The copy-link button reuses
+// the global delegated handler from ShareButtons (present on the article page).
+import { shareLinks } from '@/lib/share';
+
+interface Props {
+  url: string;
+  title: string;
+}
+const { url, title } = Astro.props;
+const links = shareLinks(url, title);
+
+const cls =
+  'w-10 h-10 rounded-full flex items-center justify-center bg-white border border-slate-200 text-slate-600 shadow-sm hover:bg-[#1a4a68] hover:text-white hover:border-[#1a4a68] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2';
+---
+
+<aside
+  class="hidden xl:flex fixed left-6 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-2"
+  aria-label="Share this article"
+>
+  <span class="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 mb-1 [writing-mode:vertical-rl] rotate-180">
+    Share
+  </span>
+  {links.map((l) => (
+    <a href={l.href} target="_blank" rel="noopener noreferrer" aria-label={`Share on ${l.name}`} class={cls}>
+      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d={l.path} />
+      </svg>
+    </a>
+  ))}
+  <button type="button" class={`share-copy ${cls}`} data-url={url} aria-label="Copy link" title="Copy link">
+    <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  </button>
+</aside>

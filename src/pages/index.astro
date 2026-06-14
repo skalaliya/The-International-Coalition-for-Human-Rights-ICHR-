@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Hero from '@/components/Hero.astro';
 import Section from '@/components/Section.astro';
 import { WorldMap } from '@/components/react/WorldMap';
+import { organizationJsonLd } from '@/lib/site';
 
 export const prerender = true;
 
@@ -25,7 +26,7 @@ const pillars = [
 ];
 ---
 
-<BaseLayout title="The International Coalition for Human Rights (ICHR)" canonical={new URL('/', Astro.site).href}>
+<BaseLayout title="The International Coalition for Human Rights (ICHR)" canonical={new URL('/', Astro.site).href} jsonLd={organizationJsonLd()}>
   <Hero />
 
   <Section width="prose" spacing="lg">
