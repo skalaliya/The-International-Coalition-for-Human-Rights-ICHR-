@@ -6,6 +6,7 @@ import CategoryPill from '@/components/CategoryPill.astro';
 import { getPostBySlug } from '@/lib/api';
 import { renderMarkdown } from '@/lib/markdown';
 import { resolveAssetUrl, absoluteUrl } from '@/lib/assets';
+import ShareButtons from '@/components/ShareButtons.astro';
 
 const { slug } = Astro.params;
 const post = slug ? await getPostBySlug(slug) : null;
@@ -61,6 +62,12 @@ const jsonLd = {
       <div class="mb-4"><CategoryPill category={post.category} /></div>
       <h1 class="text-3xl md:text-[2.5rem] font-bold text-slate-900 leading-tight mb-6">{post.title}</h1>
       <p class="text-lg md:text-xl text-slate-600 leading-relaxed">{post.excerpt}</p>
+      <div class="mt-6 pt-6 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center gap-4">
+        {post.authorName && (
+          <p class="text-sm text-slate-500">By <span class="font-medium text-slate-700">{post.authorName}</span></p>
+        )}
+        <ShareButtons url={canonical} title={post.title} label="Share" class="sm:ml-auto" />
+      </div>
     </Section>
 
     {post.coverImageUrl && (
@@ -79,7 +86,7 @@ const jsonLd = {
       <Section width="content" spacing="default" bg="subtle">
         <div class="flex items-center gap-3 mb-8">
           <span class="h-px w-10 bg-[color:var(--color-gold)]" aria-hidden="true"></span>
-          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-700">From the meeting</h2>
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-700">Gallery</h2>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {post.gallery.map((g, i) => (
@@ -105,6 +112,16 @@ const jsonLd = {
         </ul>
       </Section>
     )}
+
+    <Section width="prose" spacing="sm">
+      <div class="rounded-xl bg-slate-50 border border-slate-100 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+        <div>
+          <p class="text-base font-semibold text-slate-800">Share this story</p>
+          <p class="text-sm text-slate-500">Help raise awareness — share it with your network.</p>
+        </div>
+        <ShareButtons url={canonical} title={post.title} label="" />
+      </div>
+    </Section>
   </article>
 
   <Section bg="primary" spacing="lg">
