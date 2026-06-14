@@ -12,7 +12,7 @@ const { url, title, label = 'Share', class: className = '' } = Astro.props;
 const shares = shareLinks(url, title);
 
 const cls =
-  'w-9 h-9 rounded-full flex items-center justify-center bg-slate-100 text-slate-600 hover:bg-[#1a4a68] hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2';
+  'w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-600 hover:bg-[#1a4a68] hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2';
 ---
 
 <div class={`flex items-center gap-3 flex-wrap ${className}`}>

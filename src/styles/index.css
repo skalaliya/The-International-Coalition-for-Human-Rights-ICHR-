@@ -101,6 +101,12 @@
    BASE STYLES
    ============================================ */
 
+html {
+  /* Prevent iOS Safari from auto-enlarging text (e.g. in landscape) */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: var(--text-body);
@@ -108,6 +114,8 @@ body {
   color: var(--color-text-muted);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Remove the grey tap-flash on touch; we provide our own focus/active states */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ============================================

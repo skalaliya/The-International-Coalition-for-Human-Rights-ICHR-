@@ -33,7 +33,7 @@ const {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
@@ -65,7 +65,7 @@ const {
 
     {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
-  <body class="bg-white text-slate-800 antialiased font-sans min-h-screen flex flex-col">
+  <body class="bg-white text-slate-800 antialiased font-sans min-h-dvh flex flex-col">
     {!hideChrome && <Header />}
     <main class="flex-1">
       <slot />
