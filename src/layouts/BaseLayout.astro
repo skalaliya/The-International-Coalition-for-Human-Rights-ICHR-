@@ -25,6 +25,8 @@ interface Props {
   lang?: Locale;
   /** hreflang alternates. Defaults to all locales; article pages pass existing-only. */
   alternates?: Alternate[];
+  /** Article pages pass existing-translation hrefs so the header switcher never 404s. */
+  localeSwitch?: { hrefs?: Partial<Record<Locale, string>>; available?: readonly Locale[] };
 }
 
 const DEFAULT_DESC =
@@ -41,6 +43,7 @@ const {
   hideChrome = false,
   lang = getLang(Astro.currentLocale),
   alternates = localeAlternates(Astro.url.pathname, Astro.site ?? Astro.url),
+  localeSwitch,
 } = Astro.props;
 
 const htmlDir = dir(lang);
@@ -97,7 +100,7 @@ const ogAlternates = LOCALES.filter((l) => l !== lang).map(ogLocale);
     {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body class="bg-white text-slate-800 antialiased font-sans min-h-dvh flex flex-col">
-    {!hideChrome && <Header lang={lang} />}
+    {!hideChrome && <Header lang={lang} localeSwitch={localeSwitch} />}
     <main class="flex-1">
       <slot />
     </main>

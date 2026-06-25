@@ -4,8 +4,10 @@ import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 
 interface Props {
   lang: Locale;
+  /** Article pages pass existing-translation hrefs/locales so the switcher never 404s. */
+  localeSwitch?: { hrefs?: Partial<Record<Locale, string>>; available?: readonly Locale[] };
 }
-const { lang } = Astro.props;
+const { lang, localeSwitch } = Astro.props;
 const t = useTranslations(lang);
 
 const path = stripLocale(Astro.url.pathname);
@@ -47,7 +49,7 @@ const L = (href: string) => localizeHref(href, lang);
         >
           {t.nav.support}
         </a>
-        <LanguageSwitcher lang={lang} class="ms-1" />
+        <LanguageSwitcher lang={lang} hrefs={localeSwitch?.hrefs} available={localeSwitch?.available} class="ms-1" />
       </nav>
 
       <button
@@ -88,7 +90,7 @@ const L = (href: string) => localizeHref(href, lang);
           >
             {t.nav.support}
           </a>
-          <LanguageSwitcher lang={lang} class="justify-center" />
+          <LanguageSwitcher lang={lang} hrefs={localeSwitch?.hrefs} available={localeSwitch?.available} class="justify-center" />
         </div>
       </div>
     </nav>
