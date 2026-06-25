@@ -108,7 +108,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', 'Noto Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: var(--text-body);
   line-height: var(--leading-normal);
   color: var(--color-text-muted);
@@ -244,7 +244,16 @@ body {
 
 .leaflet-container {
   z-index: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', 'Noto Sans Arabic', sans-serif;
+}
+
+/* ============================================
+   RTL SUPPORT (Arabic)
+   Per-glyph font fallback handles Arabic via Noto Sans Arabic (loaded only on
+   ar pages). Inline directional arrows opt into mirroring with `.rtl-flip`.
+   ============================================ */
+[dir='rtl'] .rtl-flip {
+  transform: scaleX(-1);
 }
 
 /* Keep one-finger page scroll working from the very first gesture over the map.
@@ -436,12 +445,12 @@ body {
 
 .prose-article ul {
   list-style: disc;
-  padding-left: var(--space-6);
+  padding-inline-start: var(--space-6);
 }
 
 .prose-article ol {
   list-style: decimal;
-  padding-left: var(--space-6);
+  padding-inline-start: var(--space-6);
 }
 
 .prose-article li {
@@ -449,8 +458,8 @@ body {
 }
 
 .prose-article blockquote {
-  border-left: 3px solid var(--color-gold);
-  padding-left: var(--space-4);
+  border-inline-start: 3px solid var(--color-gold);
+  padding-inline-start: var(--space-4);
   color: var(--color-text-muted);
   font-style: italic;
 }
@@ -492,7 +501,7 @@ body {
 .prose-article td {
   border: 1px solid var(--color-border);
   padding: var(--space-2) var(--space-3);
-  text-align: left;
+  text-align: start;
 }
 
 /* ============================================

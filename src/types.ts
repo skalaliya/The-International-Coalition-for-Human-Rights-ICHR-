@@ -9,6 +9,8 @@ export interface GalleryImage {
 export interface Post {
   id: string;
   slug: string;
+  locale: string; // 'en' | 'ar' | 'fr'
+  translationKey?: string; // links the same story across locales
   title: string;
   category: PostCategory;
   status: PostStatus;

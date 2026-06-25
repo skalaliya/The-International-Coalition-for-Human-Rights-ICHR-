@@ -1,5 +1,6 @@
 // Server-only post logic: validation, slug generation, serialization, and all
 // DB queries/mutations. Reused by SSR pages (src/lib/api.ts) and API endpoints.
+import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
 import { prisma } from './db';
@@ -7,6 +8,8 @@ import type { Post, PostCategory } from '@/types';
 
 export const CATEGORIES = ['Press Release', 'Statement', 'Field Update', 'News'] as const;
 export const STATUSES = ['draft', 'published'] as const;
+export const LOCALES = ['en', 'ar', 'fr'] as const;
+export const DEFAULT_LOCALE = 'en';
 
 // ---- validation ----
 const gallerySchema = z.object({
@@ -17,6 +20,8 @@ const gallerySchema = z.object({
 
 export const createPostSchema = z.object({
   slug: z.string().trim().max(120).optional(),
+  locale: z.enum(LOCALES).default('en'),
+  translationKey: z.string().trim().max(64).optional(),
   title: z.string().trim().min(1, 'title is required').max(300),
   category: z.enum(CATEGORIES),
   status: z.enum(STATUSES).default('draft'),
@@ -32,6 +37,8 @@ export const createPostSchema = z.object({
 
 export const updatePostSchema = z.object({
   slug: z.string().trim().max(120).optional(),
+  locale: z.enum(LOCALES).optional(),
+  translationKey: z.string().trim().max(64).optional(),
   title: z.string().trim().min(1).max(300).optional(),
   category: z.enum(CATEGORIES).optional(),
   status: z.enum(STATUSES).optional(),
@@ -62,12 +69,13 @@ export function slugify(input: string): string {
   );
 }
 
-async function uniqueSlug(base: string, excludeId: string | null = null): Promise<string> {
+// Slugs are unique per locale, so the same story can share a slug across languages.
+async function uniqueSlug(base: string, locale: string, excludeId: string | null = null): Promise<string> {
   const root = slugify(base);
   let candidate = root;
   let n = 1;
   for (;;) {
-    const existing = await prisma.post.findUnique({ where: { slug: candidate } });
+    const existing = await prisma.post.findFirst({ where: { slug: candidate, locale } });
     if (!existing || existing.id === excludeId) return candidate;
     n += 1;
     candidate = `${root}-${n}`;
@@ -87,6 +95,8 @@ export function serializePost(p: DbPost): Post {
   return {
     id: p.id,
     slug: p.slug,
+    locale: p.locale ?? 'en',
+    translationKey: p.translationKey ?? undefined,
     title: p.title,
     category: p.category as PostCategory,
     status: p.status as Post['status'],
@@ -125,10 +135,11 @@ export async function listPublished(opts: {
   page?: number;
   pageSize?: number;
   category?: string;
+  locale?: string;
 }): Promise<Paged> {
   const page = Math.max(1, opts.page ?? 1);
   const pageSize = Math.min(50, Math.max(1, opts.pageSize ?? 9));
-  const where: Prisma.PostWhereInput = { status: 'published' };
+  const where: Prisma.PostWhereInput = { status: 'published', locale: opts.locale ?? DEFAULT_LOCALE };
   if (opts.category && CATEGORIES.includes(opts.category as PostCategory)) {
     where.category = opts.category;
   }
@@ -153,15 +164,32 @@ export async function listPublished(opts: {
 
 export async function listPublishedFromQuery(q: URLSearchParams): Promise<Paged> {
   const { page, pageSize } = clampPage(q);
-  return listPublished({ page, pageSize, category: q.get('category') || undefined });
+  return listPublished({
+    page,
+    pageSize,
+    category: q.get('category') || undefined,
+    locale: q.get('locale') || undefined,
+  });
 }
 
-export async function getPublishedBySlug(slug: string): Promise<Post | null> {
+export async function getPublishedBySlug(slug: string, locale: string = DEFAULT_LOCALE): Promise<Post | null> {
   const post = await prisma.post.findFirst({
-    where: { slug, status: 'published' },
+    where: { slug, locale, status: 'published' },
     include: { gallery: true },
   });
   return post ? serializePost(post) : null;
+}
+
+/** Published translations of a story (for the article language toggle). */
+export async function getTranslations(
+  translationKey: string | null | undefined,
+): Promise<{ locale: string; slug: string; title: string }[]> {
+  if (!translationKey) return [];
+  const rows = await prisma.post.findMany({
+    where: { translationKey, status: 'published' },
+    select: { locale: true, slug: true, title: true },
+  });
+  return rows;
 }
 
 export async function listAll(q: URLSearchParams): Promise<Paged> {
@@ -169,8 +197,10 @@ export async function listAll(q: URLSearchParams): Promise<Paged> {
   const where: Prisma.PostWhereInput = {};
   const status = q.get('status');
   const category = q.get('category');
+  const locale = q.get('locale');
   if (status) where.status = status;
   if (category && CATEGORIES.includes(category as PostCategory)) where.category = category;
+  if (locale && (LOCALES as readonly string[]).includes(locale)) where.locale = locale;
   const [items, total] = await Promise.all([
     prisma.post.findMany({ where, orderBy: [{ updatedAt: 'desc' }], skip, take, include: { gallery: true } }),
     prisma.post.count({ where }),
@@ -191,10 +221,15 @@ export async function getById(id: string): Promise<Post | null> {
 
 // ---- mutations ----
 export async function createPost(d: CreateInput): Promise<Post> {
-  const slug = await uniqueSlug(d.slug && d.slug.trim() ? d.slug : d.title);
+  const locale = d.locale ?? DEFAULT_LOCALE;
+  const slug = await uniqueSlug(d.slug && d.slug.trim() ? d.slug : d.title, locale);
+  // New stories get a fresh translation key; translations of an existing story pass theirs.
+  const translationKey = d.translationKey && d.translationKey.trim() ? d.translationKey.trim() : randomUUID();
   const post = await prisma.post.create({
     data: {
       slug,
+      locale,
+      translationKey,
       title: d.title,
       category: d.category,
       status: d.status,
@@ -222,13 +257,15 @@ export async function updatePost(id: string, d: UpdateInput): Promise<Post | nul
   const existing = await prisma.post.findUnique({ where: { id } });
   if (!existing) return null;
 
+  const locale = d.locale ?? existing.locale ?? DEFAULT_LOCALE;
   let slug = existing.slug;
-  if (d.slug !== undefined || d.title !== undefined) {
+  if (d.slug !== undefined || d.title !== undefined || d.locale !== undefined) {
     const base = d.slug && d.slug.trim() ? d.slug : d.title ?? existing.title;
-    slug = await uniqueSlug(base, existing.id);
+    slug = await uniqueSlug(base, locale, existing.id);
   }
 
-  const scalar: Prisma.PostUpdateInput = { slug };
+  const scalar: Prisma.PostUpdateInput = { slug, locale };
+  if (d.translationKey !== undefined) scalar.translationKey = d.translationKey;
   if (d.title !== undefined) scalar.title = d.title;
   if (d.category !== undefined) scalar.category = d.category;
   if (d.status !== undefined) scalar.status = d.status;

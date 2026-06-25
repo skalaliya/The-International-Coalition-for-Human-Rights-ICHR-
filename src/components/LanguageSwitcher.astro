@@ -1,0 +1,44 @@
+---
+import { LOCALES, LANG_NAMES, localizedPath, type Locale } from '@/i18n';
+
+interface Props {
+  lang: Locale;
+  /** Explicit per-locale hrefs (article pages pass existing-translations-only). */
+  hrefs?: Partial<Record<Locale, string>>;
+  /** Which locales to offer (default: all). Article pages restrict to existing. */
+  available?: readonly Locale[];
+  class?: string;
+}
+
+const { lang, hrefs, available = LOCALES, class: className = '' } = Astro.props;
+const path = Astro.url.pathname;
+const search = Astro.url.search;
+
+function hrefFor(l: Locale): string {
+  if (hrefs && hrefs[l]) return hrefs[l]!;
+  return localizedPath(path, l) + search;
+}
+---
+
+<div class={`flex items-center gap-1.5 ${className}`} role="group" aria-label="Change language">
+  {
+    available.map((l, i) => (
+      <>
+        {i > 0 && <span class="text-slate-300 select-none" aria-hidden="true">·</span>}
+        <a
+          href={hrefFor(l)}
+          hreflang={l}
+          lang={l}
+          aria-current={l === lang ? 'true' : undefined}
+          title={LANG_NAMES[l]}
+          class:list={[
+            'px-1 py-1 text-sm font-medium rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68]',
+            l === lang ? 'text-[#1a4a68] font-semibold' : 'text-slate-500 hover:text-[#1a4a68]',
+          ]}
+        >
+          {LANG_NAMES[l]}
+        </a>
+      </>
+    ))
+  }
+</div>

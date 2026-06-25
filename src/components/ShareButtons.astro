@@ -1,14 +1,18 @@
 ---
 // Inline share row so readers can post the article to social platforms.
 import { shareLinks } from '@/lib/share';
+import { useTranslations, type Locale } from '@/i18n';
 
 interface Props {
   url: string; // absolute canonical URL of the article
   title: string;
   label?: string;
+  lang?: Locale;
   class?: string;
 }
-const { url, title, label = 'Share', class: className = '' } = Astro.props;
+const { url, title, label, lang = 'en', class: className = '' } = Astro.props;
+const t = useTranslations(lang);
+const shareLabel = label === undefined ? t.common.share : label;
 const shares = shareLinks(url, title);
 
 const cls =
@@ -16,18 +20,18 @@ const cls =
 ---
 
 <div class={`flex items-center gap-3 flex-wrap ${className}`}>
-  {label && (
-    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</span>
+  {shareLabel && (
+    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">{shareLabel}</span>
   )}
   <div class="flex items-center gap-2">
     {shares.map((s) => (
-      <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`Share on ${s.name}`} class={cls}>
+      <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`${t.common.share}: ${s.name}`} class={cls}>
         <svg class="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d={s.path} />
         </svg>
       </a>
     ))}
-    <button type="button" class={`share-copy ${cls}`} data-url={url} aria-label="Copy link" title="Copy link">
+    <button type="button" class={`share-copy ${cls}`} data-url={url} aria-label={t.common.copyLink} title={t.common.copyLink}>
       <svg class="w-[17px] h-[17px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />

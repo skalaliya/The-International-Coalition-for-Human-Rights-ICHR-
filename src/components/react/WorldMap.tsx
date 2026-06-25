@@ -11,6 +11,9 @@ import { locations, REGION_ORDER, type Location, type LocationKind } from '@/lib
      navy ring) built as inline-SVG divIcons with ≥44px transparent hit areas.
    - One `selectedId` (the stable, non-sequential loc.id) syncs the index/rail,
      the markers, and the detail surface (desktop Leaflet popup / mobile sheet).
+   - i18n: all display text comes from the optional `labels` prop (English
+     defaults derived from the data), so titles/descriptions/categories/UI
+     strings render in the active locale. Geometry/data keys stay language-free.
    ──────────────────────────────────────────────────────────────────────── */
 
 const NAVY = '#1a4a68';
@@ -20,6 +23,43 @@ const GOLD = '#C9A227';
 const esc = (s: string) =>
   s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] as string));
 const telHref = (p: string) => p.replace(/[^+\d]/g, '');
+const fill = (tpl: string, vars: Record<string, string>) =>
+  tpl.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? `{${k}}`);
+
+/* ---- localized labels (display only; data keys stay English/numeric) ---- */
+export interface WorldMapLabels {
+  kind: Record<LocationKind, string>;
+  category: Record<string, string>; // English category → localized
+  region: Record<string, string>; // region key → localized
+  title: Record<string, string>; // String(id) → localized title
+  description: Record<string, string>; // String(id) → localized description
+  ui: {
+    index: string;
+    viewOnMap: string; // "{title}" placeholder
+    showing: string; // "{title}", "{category}" placeholders
+    legendAria: string;
+    railAria: string;
+    twoFingers: string;
+    close: string;
+  };
+}
+
+const DEFAULT_LABELS: WorldMapLabels = {
+  kind: { hq: 'Headquarters', regional: 'Regional Office', field: 'Field Mission' },
+  category: Object.fromEntries(locations.map((l) => [l.category, l.category])),
+  region: Object.fromEntries(REGION_ORDER.map((r) => [r, r])),
+  title: Object.fromEntries(locations.map((l) => [String(l.id), l.title])),
+  description: Object.fromEntries(locations.map((l) => [String(l.id), l.description])),
+  ui: {
+    index: 'Office and mission index',
+    viewOnMap: 'View {title} on map',
+    showing: 'Showing {title}, {category}',
+    legendAria: 'Map legend: gold pin Headquarters, navy pin Regional Office, navy ring Field Mission',
+    railAria: 'Tap a location to view it on the map',
+    twoFingers: 'Use two fingers to move the map',
+    close: 'Close details',
+  },
+};
 
 /* ---- pin geometry per tier (size encodes seniority: 45 → 35 → 22) ---- */
 const PIN: Record<LocationKind, { w: number; h: number; tail: boolean }> = {
@@ -38,11 +78,11 @@ function glyphSvg(kind: LocationKind, cls = 'ichr-pin-svg'): string {
       <circle cx="12" cy="12" r="2.4" fill="${NAVY}" />
     </svg>`;
   }
-  const fill = kind === 'hq' ? GOLD : NAVY;
+  const fillColor = kind === 'hq' ? GOLD : NAVY;
   const stroke = kind === 'hq' ? NAVY : NAVY_DARK;
   const dot = kind === 'hq' ? '#ffffff' : GOLD;
   return `<svg class="${cls}" width="${p.w}" height="${p.h}" viewBox="0 0 24 32" aria-hidden="true">
-    <path d="${TEARDROP}" fill="${fill}" stroke="${stroke}" stroke-width="1.5" />
+    <path d="${TEARDROP}" fill="${fillColor}" stroke="${stroke}" stroke-width="1.5" />
     <circle cx="12" cy="10" r="4.2" fill="${dot}" />
   </svg>`;
 }
@@ -68,12 +108,15 @@ const MAIL_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" st
 const PHONE_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-slate-400"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92Z"/></svg>`;
 const PIN_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-slate-400 mt-0.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>`;
 
-function detailHtml(loc: Location, variant: 'popup' | 'sheet'): string {
+function detailHtml(loc: Location, variant: 'popup' | 'sheet', labels: WorldMapLabels): string {
   const isHq = loc.kind === 'hq';
   const rule = isHq ? 'bg-[#C9A227]' : 'bg-[#1a4a68]';
   const pill = isHq
     ? 'bg-[#C9A227]/15 text-[#7a5f10] border-[#C9A227]/40'
     : 'bg-[#1a4a68]/10 text-[#1a4a68] border-[#1a4a68]/20';
+  const title = labels.title[String(loc.id)] ?? loc.title;
+  const category = labels.category[loc.category] ?? loc.category;
+  const description = labels.description[String(loc.id)] ?? loc.description;
   const rows: string[] = [];
   if (loc.address)
     rows.push(
@@ -94,9 +137,9 @@ function detailHtml(loc: Location, variant: 'popup' | 'sheet'): string {
   return `<div class="ichr-detail ${width} max-w-full overflow-hidden">
     <div class="h-1 w-full ${rule}" aria-hidden="true"></div>
     <div class="p-4">
-      <span class="inline-flex mb-2.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border ${pill}">${esc(loc.category)}</span>
-      <h3 class="font-bold text-[#1a4a68] text-base leading-snug mb-1.5">${esc(loc.title)}</h3>
-      <p class="text-slate-600 text-sm leading-relaxed">${esc(loc.description)}</p>
+      <span class="inline-flex mb-2.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border ${pill}">${esc(category)}</span>
+      <h3 class="font-bold text-[#1a4a68] text-base leading-snug mb-1.5">${esc(title)}</h3>
+      <p class="text-slate-600 text-sm leading-relaxed">${esc(description)}</p>
       ${contact}
     </div>
   </div>`;
@@ -112,18 +155,18 @@ const Swatch: React.FC<{ kind: LocationKind; size?: number }> = ({ kind, size })
   />
 );
 
-const KIND_LABEL: Record<LocationKind, string> = {
-  hq: 'Headquarters',
-  regional: 'Regional Office',
-  field: 'Field Mission',
-};
-
-export const WorldMap: React.FC = () => {
+export const WorldMap: React.FC<{ labels?: WorldMapLabels }> = ({ labels = DEFAULT_LABELS }) => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [reduce, setReduce] = useState(false);
   const [hint, setHint] = useState(false);
   const [announce, setAnnounce] = useState(''); // sr-only live-region text
+
+  const labelsRef = useRef(labels);
+  labelsRef.current = labels;
+  const catLabel = (c: string) => labels.category[c] ?? c;
+  const titleLabel = (id: number) => labels.title[String(id)] ?? '';
+  const regionLabel = (r: string) => labels.region[r] ?? r;
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -220,7 +263,7 @@ export const WorldMap: React.FC = () => {
 
     locations.forEach((loc, index) => {
       const marker = L.marker(loc.coords, { icon: buildIcon(loc.kind, index) }).addTo(map);
-      marker.bindPopup(detailHtml(loc, 'popup'), {
+      marker.bindPopup(detailHtml(loc, 'popup', labelsRef.current), {
         className: 'ichr-popup',
         maxWidth: 300,
         minWidth: 240,
@@ -234,7 +277,8 @@ export const WorldMap: React.FC = () => {
         if (!m) return;
         m.setAttribute('tabindex', '0');
         m.setAttribute('role', 'button');
-        m.setAttribute('aria-label', `${loc.title}, ${loc.category}`);
+        const lab = labelsRef.current;
+        m.setAttribute('aria-label', `${lab.title[String(loc.id)] ?? loc.title}, ${lab.category[loc.category] ?? loc.category}`);
         m.addEventListener('keydown', (e: KeyboardEvent) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -335,7 +379,13 @@ export const WorldMap: React.FC = () => {
     const marker = markersRef.current.get(selectedId);
     if (!loc || !marker) return;
 
-    setAnnounce(`Showing ${loc.title}, ${loc.category}`);
+    const lab = labelsRef.current;
+    setAnnounce(
+      fill(lab.ui.showing, {
+        title: lab.title[String(loc.id)] ?? loc.title,
+        category: lab.category[loc.category] ?? loc.category,
+      })
+    );
     const z = loc.kind === 'hq' ? 4 : 5;
     const animate = !reduce;
 
@@ -436,8 +486,8 @@ export const WorldMap: React.FC = () => {
     const active = selectedId === loc.id;
     const base =
       ctx === 'list'
-        ? 'w-full flex items-center gap-3 text-left px-3 py-2.5 rounded-lg border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-1'
-        : 'snap-center shrink-0 w-[78%] flex items-center gap-3 text-left px-3.5 py-3 rounded-xl border bg-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68]';
+        ? 'w-full flex items-center gap-3 text-start px-3 py-2.5 rounded-lg border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-1'
+        : 'snap-center shrink-0 w-[78%] flex items-center gap-3 text-start px-3.5 py-3 rounded-xl border bg-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68]';
     const state = active
       ? 'border-[#C9A227] bg-[#C9A227]/10'
       : 'border-slate-200 bg-white hover:border-[#1a4a68]/40 hover:bg-slate-50';
@@ -447,7 +497,7 @@ export const WorldMap: React.FC = () => {
         type="button"
         data-loc={loc.id}
         aria-current={active ? 'true' : undefined}
-        aria-label={`View ${loc.title} on map`}
+        aria-label={fill(labels.ui.viewOnMap, { title: titleLabel(loc.id) || loc.title })}
         className={`${base} ${state}`}
         onClick={(e) => select(loc.id, e.currentTarget)}
         onMouseEnter={ctx === 'list' ? () => setHover(loc.id) : undefined}
@@ -455,8 +505,8 @@ export const WorldMap: React.FC = () => {
       >
         <Swatch kind={loc.kind} />
         <span className="min-w-0">
-          <span className="block text-sm font-semibold text-slate-800 truncate">{loc.title}</span>
-          <span className="block text-xs text-slate-500 truncate">{loc.category}</span>
+          <span className="block text-sm font-semibold text-slate-800 truncate">{titleLabel(loc.id) || loc.title}</span>
+          <span className="block text-xs text-slate-500 truncate">{catLabel(loc.category)}</span>
         </span>
       </button>
     );
@@ -469,13 +519,13 @@ export const WorldMap: React.FC = () => {
       {/* ── DESKTOP INDEX ── */}
       <div
         ref={listRef}
-        className="hidden lg:flex lg:flex-col lg:max-h-[600px] lg:overflow-y-auto pr-1 -mr-1"
-        aria-label="Office and mission index"
+        className="hidden lg:flex lg:flex-col lg:max-h-[600px] lg:overflow-y-auto pe-1 -me-1"
+        aria-label={labels.ui.index}
       >
         {groups.map((g) => (
           <div key={g.region} className="mb-4 last:mb-0">
             <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-1 mb-2">
-              {g.region}
+              {regionLabel(g.region)}
             </h3>
             <div className="flex flex-col gap-1.5">{g.items.map((loc) => rowBtn(loc, 'list'))}</div>
           </div>
@@ -489,7 +539,7 @@ export const WorldMap: React.FC = () => {
           {(['hq', 'regional', 'field'] as LocationKind[]).map((k) => (
             <span key={k} className="inline-flex items-center gap-1.5 text-xs text-slate-600">
               <Swatch kind={k} size={18} />
-              {KIND_LABEL[k]}
+              {labels.kind[k]}
             </span>
           ))}
         </div>
@@ -502,15 +552,15 @@ export const WorldMap: React.FC = () => {
 
           {/* desktop legend (floating, clear of the bottom-right zoom control) */}
           <div
-            className="hidden lg:block absolute bottom-4 left-4 z-[450] bg-white/95 backdrop-blur rounded-lg border border-slate-200 shadow-sm px-3 py-2.5"
+            className="hidden lg:block absolute bottom-4 start-4 z-[450] bg-white/95 backdrop-blur rounded-lg border border-slate-200 shadow-sm px-3 py-2.5"
             role="img"
-            aria-label="Map legend: gold pin Headquarters, navy pin Regional Office, navy ring Field Mission"
+            aria-label={labels.ui.legendAria}
           >
             <div className="flex flex-col gap-1.5">
               {(['hq', 'regional', 'field'] as LocationKind[]).map((k) => (
                 <span key={k} className="inline-flex items-center gap-2 text-xs text-slate-600">
                   <Swatch kind={k} size={18} />
-                  {KIND_LABEL[k]}
+                  {labels.kind[k]}
                 </span>
               ))}
             </div>
@@ -524,7 +574,7 @@ export const WorldMap: React.FC = () => {
             aria-hidden="true"
           >
             <span className="bg-slate-900/85 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg">
-              Use two fingers to move the map
+              {labels.ui.twoFingers}
             </span>
           </div>
         </div>
@@ -533,7 +583,7 @@ export const WorldMap: React.FC = () => {
         <div
           ref={railRef}
           className="lg:hidden mt-3 flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 -mx-4 pb-1 [scrollbar-width:none]"
-          aria-label="Tap a location to view it on the map"
+          aria-label={labels.ui.railAria}
         >
           {locations.map((loc) => rowBtn(loc, 'rail'))}
         </div>
@@ -553,7 +603,7 @@ export const WorldMap: React.FC = () => {
               ref={sheetRef}
               role="dialog"
               aria-modal="true"
-              aria-label={selectedLoc.title}
+              aria-label={titleLabel(selectedLoc.id) || selectedLoc.title}
               onKeyDown={onSheetKeyDown}
               className="ichr-sheet absolute inset-x-0 bottom-0 bg-white rounded-t-2xl shadow-2xl max-h-[72svh] overflow-y-auto overscroll-contain pb-[calc(0.5rem+env(safe-area-inset-bottom))]"
             >
@@ -571,12 +621,12 @@ export const WorldMap: React.FC = () => {
                 ref={closeBtnRef}
                 type="button"
                 onClick={() => select(null)}
-                aria-label="Close details"
-                className="absolute top-2 right-2 w-11 h-11 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68]"
+                aria-label={labels.ui.close}
+                className="absolute top-2 end-2 w-11 h-11 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68]"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
-              <div dangerouslySetInnerHTML={{ __html: detailHtml(selectedLoc, 'sheet') }} />
+              <div dangerouslySetInnerHTML={{ __html: detailHtml(selectedLoc, 'sheet', labels) }} />
             </div>
           </div>,
           document.body

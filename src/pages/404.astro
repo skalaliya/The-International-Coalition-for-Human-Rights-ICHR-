@@ -1,27 +1,8 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import Section from '@/components/Section.astro';
+import NotFoundPage from '@/components/pages/NotFoundPage.astro';
 
 // Ensure a real 404 status whether reached directly or via Astro.rewrite('/404').
 Astro.response.status = 404;
 ---
 
-<BaseLayout title="Page not found — ICHR" noindex={true}>
-  <Section width="content" spacing="lg">
-    <div class="text-center py-16">
-      <p class="text-sm font-semibold uppercase tracking-wider text-[color:var(--color-gold)] mb-3">404</p>
-      <h1 class="text-2xl md:text-3xl font-bold text-slate-800 mb-4">Page not found</h1>
-      <p class="text-slate-500 mb-8 max-w-md mx-auto">
-        This page may have been moved, unpublished, or never existed.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-3 justify-center">
-        <a href="/" class="inline-flex items-center justify-center px-6 py-3 bg-[#1a4a68] text-white font-medium rounded hover:bg-[#133549] transition-colors">
-          Go home
-        </a>
-        <a href="/news" class="inline-flex items-center justify-center px-6 py-3 border border-slate-300 text-slate-700 font-medium rounded hover:border-[#1a4a68] transition-colors">
-          Visit the Newsroom
-        </a>
-      </div>
-    </div>
-  </Section>
-</BaseLayout>
+<NotFoundPage lang="en" />

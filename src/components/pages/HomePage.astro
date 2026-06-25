@@ -1,0 +1,85 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import Section from '@/components/Section.astro';
+import { WorldMap } from '@/components/react/WorldMap';
+import { organizationJsonLd } from '@/lib/site';
+import { useTranslations, localizeHref, type Locale } from '@/i18n';
+import { worldMapLabels } from '@/i18n/maplabels';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const L = (href: string) => localizeHref(href, lang);
+const mapLabels = worldMapLabels(lang);
+
+// Presentational pillar icons (text comes from the dictionary).
+const pillarIcons = [
+  '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z" />',
+  '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" />',
+  '<path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16" /><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" /><path d="m2 15 6 6" /><path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.73 2.73 0 0 0 16 4a2.78 2.78 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12Z" />',
+];
+const pillars = t.home.pillars.map((p, i) => ({ ...p, icon: pillarIcons[i] ?? '' }));
+---
+
+<BaseLayout title={t.meta.home.title} description={t.meta.home.desc} jsonLd={organizationJsonLd()} lang={lang}>
+  <Hero lang={lang} />
+
+  <Section width="prose" spacing="lg">
+    <div class="text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#1a4a68] mb-6">{t.home.mandateTitle}</h2>
+      <p class="text-lg text-slate-600 leading-relaxed mb-6">{t.home.mandateBody}</p>
+      <a href={L('/about')} class="inline-flex items-center text-[#1a4a68] font-medium hover:text-[#2a6a96] transition-colors">
+        {t.home.readMore}
+        <svg class="w-4 h-4 ms-2 rtl-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+      </a>
+    </div>
+  </Section>
+
+  <Section bg="subtle" spacing="lg">
+    <div class="text-center mb-12">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#1a4a68] mb-4">{t.home.whatWeDoTitle}</h2>
+      <p class="text-slate-600 max-w-2xl mx-auto">{t.home.whatWeDoIntro}</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      {pillars.map((item) => (
+        <div class="bg-white p-8 rounded-lg border border-slate-200">
+          <div class="w-12 h-12 bg-[#1a4a68]/10 text-[#1a4a68] rounded-lg flex items-center justify-center mb-5">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={item.icon} />
+          </div>
+          <h3 class="text-lg font-semibold text-slate-800 mb-3">{item.title}</h3>
+          <p class="text-slate-600 text-sm leading-relaxed">{item.body}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section spacing="lg">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#1a4a68] mb-4">{t.home.presenceTitle}</h2>
+      <p class="text-slate-600 max-w-2xl mx-auto">{t.home.presenceBody}</p>
+    </div>
+    <div class="max-w-5xl mx-auto">
+      <WorldMap client:only="react" labels={mapLabels} />
+    </div>
+    <div class="text-center mt-8">
+      <a href={L('/locations')} class="inline-flex items-center text-[#1a4a68] font-medium hover:text-[#2a6a96] transition-colors">
+        {t.home.viewAll}
+        <svg class="w-4 h-4 ms-2 rtl-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+      </a>
+    </div>
+  </Section>
+
+  <Section bg="primary" spacing="lg">
+    <div class="text-center max-w-2xl mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">{t.home.supportTitle}</h2>
+      <p class="text-white/80 mb-8 leading-relaxed">{t.home.supportBody}</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href={L('/donate')} class="px-8 py-3 bg-white text-[#1a4a68] font-medium rounded hover:bg-slate-100 transition-colors">{t.home.donate}</a>
+        <a href={L('/volunteer')} class="px-8 py-3 border border-white/40 text-white font-medium rounded hover:bg-white/10 transition-colors">{t.home.volunteer}</a>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>

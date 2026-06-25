@@ -23,8 +23,15 @@ function todayISODate(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+const LOCALE_OPTIONS: { value: string; label: string }[] = [
+  { value: 'en', label: 'English' },
+  { value: 'ar', label: 'العربية' },
+  { value: 'fr', label: 'Français' },
+];
+
 const emptyDraft: PostInput = {
   slug: '',
+  locale: 'en',
   title: '',
   category: 'News',
   status: 'draft',
@@ -222,6 +229,8 @@ export const AdminDashboard: React.FC = () => {
   const openEdit = (p: Post) => {
     setDraft({
       slug: p.slug,
+      locale: p.locale,
+      translationKey: p.translationKey,
       title: p.title,
       category: p.category,
       status: p.status,
@@ -435,6 +444,7 @@ export const AdminDashboard: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <StatusBadge status={p.status} />
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400 border border-slate-200 rounded px-1">{p.locale}</span>
                         <span className="text-xs font-semibold uppercase text-[#1a4a68]">{p.category}</span>
                       </div>
                       <h3 className="font-bold text-slate-800 truncate">{p.title}</h3>
@@ -507,6 +517,25 @@ export const AdminDashboard: React.FC = () => {
                   </Field>
                   <Field label="Date">
                     <input type="date" value={draft.date} onChange={(e) => setDraft((d) => ({ ...d, date: e.target.value }))} className={inputCls} />
+                  </Field>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Field label="Language" hint="locale of this version">
+                    <select
+                      value={draft.locale}
+                      onChange={(e) => setDraft((d) => ({ ...d, locale: e.target.value }))}
+                      className={inputCls}
+                    >
+                      {LOCALE_OPTIONS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
+                    </select>
+                  </Field>
+                  <Field label="Translation key" hint="links a story's languages">
+                    <input
+                      value={draft.translationKey ?? ''}
+                      onChange={(e) => setDraft((d) => ({ ...d, translationKey: e.target.value || undefined }))}
+                      className={inputCls}
+                      placeholder="(auto for new stories)"
+                    />
                   </Field>
                 </div>
                 <div className="grid grid-cols-2 gap-4">

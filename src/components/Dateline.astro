@@ -1,16 +1,18 @@
 ---
 import { dateline } from '@/lib/dateline';
+import type { Locale } from '@/i18n';
 
 interface Props {
   date: string;
   location?: string;
+  lang?: Locale;
   class?: string;
 }
-const { date, location, class: className = '' } = Astro.props;
+const { date, location, lang = 'en', class: className = '' } = Astro.props;
 ---
 
 <p
   class={`inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-gold)] ${className}`}
 >
-  {dateline(location, date)}
+  {dateline(location, date, lang)}
 </p>

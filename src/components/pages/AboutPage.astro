@@ -1,0 +1,88 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/PageHeader.astro';
+import Section from '@/components/Section.astro';
+import { useTranslations, type Locale } from '@/i18n';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const pinIcon =
+  '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" />';
+---
+
+<BaseLayout title={t.meta.about.title} description={t.meta.about.desc} lang={lang}>
+  <PageHeader title={t.about.title} subtitle={t.about.subtitle} />
+
+  <Section width="prose" spacing="lg">
+    <h2 class="text-xl md:text-2xl font-bold text-[#1a4a68] mb-6">{t.about.mandateTitle}</h2>
+    <div class="text-slate-600 leading-relaxed space-y-4">
+      <p>{t.about.mandateP1}</p>
+      <p>{t.about.mandateP2}</p>
+    </div>
+  </Section>
+
+  <Section bg="subtle" spacing="lg">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div class="bg-white p-8 rounded-lg border border-slate-200">
+        <div class="w-12 h-12 bg-[#1a4a68]/10 rounded-lg flex items-center justify-center mb-5">
+          <svg class="w-6 h-6 text-[#1a4a68]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1Z" /></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-[#1a4a68] mb-3">{t.about.missionTitle}</h3>
+        <p class="text-slate-600 text-sm leading-relaxed">{t.about.missionBody}</p>
+      </div>
+      <div class="bg-white p-8 rounded-lg border border-slate-200">
+        <div class="w-12 h-12 bg-[#1a4a68]/10 rounded-lg flex items-center justify-center mb-5">
+          <svg class="w-6 h-6 text-[#1a4a68]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-[#1a4a68] mb-3">{t.about.visionTitle}</h3>
+        <p class="text-slate-600 text-sm leading-relaxed">{t.about.visionBody}</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section width="content" spacing="lg">
+    <h2 class="text-xl md:text-2xl font-bold text-[#1a4a68] mb-8">{t.about.objectivesTitle}</h2>
+    <div class="space-y-4">
+      {t.about.objectives.map((objective, idx) => (
+        <div class="flex items-start gap-4 py-4 border-b border-slate-100 last:border-0">
+          <span class="flex-shrink-0 w-8 h-8 rounded-full bg-[#1a4a68] text-white text-sm font-medium flex items-center justify-center">{idx + 1}</span>
+          <p class="text-slate-700 pt-1">{objective}</p>
+        </div>
+      ))}
+    </div>
+  </Section>
+
+  <Section bg="primary" spacing="lg">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-xl md:text-2xl font-bold text-white mb-8 text-center">{t.about.presenceTitle}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {t.about.offices.map((o) => (
+          <div class="bg-white/10 p-6 rounded-lg border border-white/10">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-[#1a4a68]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={pinIcon} />
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-white mb-1">{o.city}</h3>
+                <p class="text-xs text-white/60 uppercase tracking-wider mb-3">{o.role}</p>
+                <p class="text-sm text-white/80 leading-relaxed">{o.text}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Section>
+
+  <Section width="content" spacing="lg">
+    <h2 class="text-xl md:text-2xl font-bold text-[#1a4a68] mb-8 text-center">{t.about.principlesTitle}</h2>
+    <div class="flex flex-wrap justify-center gap-3 max-w-3xl mx-auto">
+      {t.about.principles.map((p) => (
+        <span class="px-5 py-2.5 bg-slate-100 text-slate-700 text-sm font-medium rounded">{p}</span>
+      ))}
+    </div>
+  </Section>
+</BaseLayout>

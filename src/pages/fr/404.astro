@@ -1,0 +1,8 @@
+---
+import NotFoundPage from '@/components/pages/NotFoundPage.astro';
+
+// Ensure a real 404 status whether reached directly or via Astro.rewrite('/fr/404').
+Astro.response.status = 404;
+---
+
+<NotFoundPage lang="fr" />
