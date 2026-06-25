@@ -211,9 +211,16 @@ async function main() {
   }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(() => prisma.$disconnect());
+// Exported so the HTTPS runner (prisma/seed-translations-http.mjs) can reuse the
+// translated content over port 443 on networks that block Postgres :5432.
+export { SLUG, TRANSLATION_KEY, GALLERY_URLS, LOCALES };
+
+// Only run the Prisma (:5432) path when executed directly, not when imported.
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main()
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(() => prisma.$disconnect());
+}
