@@ -7,6 +7,7 @@ import {
   dir,
   ogLocale,
   localeAlternates,
+  useTranslations,
   LOCALES,
   type Locale,
   type Alternate,
@@ -46,6 +47,7 @@ const {
   localeSwitch,
 } = Astro.props;
 
+const t = useTranslations(lang);
 const htmlDir = dir(lang);
 const isRtl = htmlDir === 'rtl';
 const ogAlternates = LOCALES.filter((l) => l !== lang).map(ogLocale);
@@ -100,8 +102,14 @@ const ogAlternates = LOCALES.filter((l) => l !== lang).map(ogLocale);
     {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
   </head>
   <body class="bg-white text-slate-800 antialiased font-sans min-h-dvh flex flex-col">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-2 focus:start-2 focus:bg-white focus:text-[#1a4a68] focus:font-medium focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68]"
+    >
+      {t.a11y.skipToContent}
+    </a>
     {!hideChrome && <Header lang={lang} localeSwitch={localeSwitch} />}
-    <main class="flex-1">
+    <main id="main-content" class="flex-1">
       <slot />
     </main>
     {!hideChrome && <Footer lang={lang} />}

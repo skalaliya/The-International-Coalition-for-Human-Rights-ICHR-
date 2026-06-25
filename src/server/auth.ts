@@ -13,7 +13,10 @@ export interface AuthUser {
 }
 
 export function signToken(user: AuthUser): string {
-  return jwt.sign({ id: user.id, username: user.username }, secret(), { expiresIn: '12h' });
+  return jwt.sign({ id: user.id, username: user.username }, secret(), {
+    expiresIn: '2h',
+    algorithm: 'HS256',
+  });
 }
 
 /** Returns the auth payload if the request carries a valid Bearer token, else null. */
@@ -22,7 +25,10 @@ export function verifyRequest(request: Request): AuthUser | null {
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
   if (!token) return null;
   try {
-    const payload = jwt.verify(token, secret()) as { id: string; username: string };
+    const payload = jwt.verify(token, secret(), { algorithms: ['HS256'] }) as {
+      id: string;
+      username: string;
+    };
     return { id: payload.id, username: payload.username };
   } catch {
     return null;

@@ -6,13 +6,19 @@ interface Props {
   date: string;
   location?: string;
   lang?: Locale;
+  /** 'onLight' (default) uses an AA-contrast gold; 'onDark' uses the brand gold. */
+  tone?: 'onLight' | 'onDark';
   class?: string;
 }
-const { date, location, lang = 'en', class: className = '' } = Astro.props;
+const { date, location, lang = 'en', tone = 'onLight', class: className = '' } = Astro.props;
 ---
 
 <p
-  class={`inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em] text-[color:var(--color-gold)] ${className}`}
+  class:list={[
+    'inline-flex items-center text-[11px] font-semibold uppercase tracking-[0.12em]',
+    tone === 'onDark' ? 'text-[color:var(--color-gold)]' : 'text-[color:var(--color-gold-text)]',
+    className,
+  ]}
 >
   {dateline(location, date, lang)}
 </p>

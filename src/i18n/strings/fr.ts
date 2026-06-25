@@ -56,6 +56,7 @@ export const fr: Dict = {
   a11y: {
     toggleMenu: 'Ouvrir ou fermer le menu',
     switchLanguage: 'Changer de langue',
+    skipToContent: 'Aller au contenu principal',
     filterNews: 'Filtrer les actualités par catégorie',
     pagination: 'Pagination',
     tags: 'Étiquettes',

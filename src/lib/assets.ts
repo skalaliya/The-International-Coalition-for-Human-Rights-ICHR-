@@ -7,12 +7,14 @@
 const UPLOADS_BASE = (import.meta.env.PUBLIC_API_URL ?? '').replace(/\/$/, '');
 const SITE = (import.meta.env.PUBLIC_SITE_URL ?? 'http://localhost:4321').replace(/\/$/, '');
 
-/** Resolve a stored image path for use in <img src>. */
+/** Resolve a stored image path for use in <img src>. Allow-list only — never
+ *  pass through data:/blob:/javascript: (which could execute when rendered). */
 export function resolveAssetUrl(url: string | null | undefined): string {
   if (!url) return '/og-image.png';
-  if (/^(https?:|data:|blob:)/i.test(url)) return url; // already absolute
+  if (/^https?:\/\//i.test(url)) return url; // absolute http(s) (e.g. Vercel Blob)
   if (url.startsWith('/uploads/')) return `${UPLOADS_BASE}${url}`; // '' → same-origin
-  return url; // /blog/*, /images/* → same-origin public assets
+  if (/^\/(blog|images)\//.test(url)) return url; // same-origin public assets
+  return '/og-image.png'; // reject anything unexpected
 }
 
 /** Build an ABSOLUTE URL (for OG/canonical). Never double-prefixes. */

@@ -29,7 +29,7 @@ const catLabel = t.categories[post.category] ?? post.category;
         class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none motion-reduce:transition-none"
       />
       <div class="absolute top-3 start-3 bg-[#0f2f49] rounded px-3 py-1 shadow-md ring-1 ring-white/15">
-        <Dateline date={post.date} location={post.location} lang={lang} />
+        <Dateline date={post.date} location={post.location} lang={lang} tone="onDark" />
       </div>
     </div>
     <div class="p-6 flex flex-col flex-grow">

@@ -144,7 +144,7 @@ const LoginScreen: React.FC<{ onAuthed: () => void }> = ({ onAuthed }) => {
               onChange={(e) => { setPassword(e.target.value); setError(false); }}
               className={`${inputCls} ${error ? 'border-red-500 focus:ring-red-400' : ''}`}
               autoComplete="current-password"
-              placeholder="Hint: admin"
+              placeholder="Password"
             />
             {error && <p className="text-red-500 text-xs mt-2">Invalid credentials</p>}
           </div>

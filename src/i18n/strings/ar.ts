@@ -56,6 +56,7 @@ export const ar: Dict = {
   a11y: {
     toggleMenu: 'إظهار/إخفاء القائمة',
     switchLanguage: 'تغيير اللغة',
+    skipToContent: 'تخطَّ إلى المحتوى الرئيسي',
     filterNews: 'تصفية الأخبار حسب الفئة',
     pagination: 'ترقيم الصفحات',
     tags: 'الوسوم',

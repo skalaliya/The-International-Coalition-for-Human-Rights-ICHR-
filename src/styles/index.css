@@ -81,6 +81,9 @@
      stamp and the gallery accent line. */
   --color-gold: #C9A227;
   --color-gold-soft: #f3ead0;
+  /* AA-contrast gold for dateline text on light surfaces (≈4.9:1 on white).
+     The brand gold above stays for text on dark navy + the gallery accent. */
+  --color-gold-text: #8a6d12;
 
   /* Neutrals */
   --color-text: #1e293b;

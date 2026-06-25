@@ -58,6 +58,7 @@ export const en = {
   a11y: {
     toggleMenu: 'Toggle menu',
     switchLanguage: 'Change language',
+    skipToContent: 'Skip to main content',
     filterNews: 'Filter news by category',
     pagination: 'Pagination',
     tags: 'Tags',

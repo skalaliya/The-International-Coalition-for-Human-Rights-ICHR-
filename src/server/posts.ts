@@ -12,8 +12,16 @@ export const LOCALES = ['en', 'ar', 'fr'] as const;
 export const DEFAULT_LOCALE = 'en';
 
 // ---- validation ----
+// Asset URLs must be http(s) or a known same-origin public path — never data:/
+// blob:/javascript:, which could execute when rendered into <img>/<a>.
+const ASSET_URL_RE = /^(https?:\/\/|\/(uploads|blog|images)\/)/;
+const assetUrl = z
+  .string()
+  .max(2000)
+  .refine((u) => ASSET_URL_RE.test(u), 'must be an http(s) URL or an /uploads, /blog, or /images path');
+
 const gallerySchema = z.object({
-  url: z.string().min(1, 'gallery image url is required'),
+  url: assetUrl,
   caption: z.string().max(500).optional(),
   order: z.number().int().min(0).optional(),
 });
@@ -28,7 +36,7 @@ export const createPostSchema = z.object({
   date: z.coerce.date(),
   location: z.string().max(300).optional(),
   excerpt: z.string().trim().min(1, 'excerpt is required').max(1000),
-  coverImageUrl: z.string().max(2000).optional(),
+  coverImageUrl: assetUrl.optional(),
   body: z.string().min(1, 'body is required'),
   hashtags: z.array(z.string().trim().min(1).max(100)).max(50).default([]),
   authorName: z.string().max(200).optional(),
@@ -45,7 +53,7 @@ export const updatePostSchema = z.object({
   date: z.coerce.date().optional(),
   location: z.string().max(300).optional(),
   excerpt: z.string().trim().min(1).max(1000).optional(),
-  coverImageUrl: z.string().max(2000).optional(),
+  coverImageUrl: assetUrl.optional(),
   body: z.string().min(1).optional(),
   hashtags: z.array(z.string().trim().min(1).max(100)).max(50).optional(),
   authorName: z.string().max(200).optional(),
@@ -117,7 +125,7 @@ export function serializePost(p: DbPost): Post {
 }
 
 function clampPage(q: URLSearchParams) {
-  const page = Math.max(1, parseInt(q.get('page') || '', 10) || 1);
+  const page = Math.min(10000, Math.max(1, parseInt(q.get('page') || '', 10) || 1));
   const pageSize = Math.min(50, Math.max(1, parseInt(q.get('pageSize') || '', 10) || 10));
   return { page, pageSize, skip: (page - 1) * pageSize, take: pageSize };
 }
