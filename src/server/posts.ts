@@ -231,8 +231,18 @@ export async function getById(id: string): Promise<Post | null> {
 export async function createPost(d: CreateInput): Promise<Post> {
   const locale = d.locale ?? DEFAULT_LOCALE;
   const slug = await uniqueSlug(d.slug && d.slug.trim() ? d.slug : d.title, locale);
-  // New stories get a fresh translation key; translations of an existing story pass theirs.
-  const translationKey = d.translationKey && d.translationKey.trim() ? d.translationKey.trim() : randomUUID();
+  // Link translations safely: an explicit key wins; otherwise reuse the key of any
+  // same-slug post in another locale (a shared slug is ALWAYS the same story, since
+  // (slug, locale) is unique) — so a translation can never be silently orphaned even
+  // if the editor forgets the key; only a genuinely new slug starts a fresh story.
+  let translationKey = d.translationKey && d.translationKey.trim() ? d.translationKey.trim() : '';
+  if (!translationKey) {
+    const sibling = await prisma.post.findFirst({
+      where: { slug, locale: { not: locale } },
+      select: { translationKey: true },
+    });
+    translationKey = sibling?.translationKey || randomUUID();
+  }
   const post = await prisma.post.create({
     data: {
       slug,

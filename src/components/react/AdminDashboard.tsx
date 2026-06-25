@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { api, getToken, clearToken, resolveAssetUrl, errMessage, ApiError } from './apiClient';
 import { POST_CATEGORIES, type Post, type PostInput, type PostCategory, type PostStatus } from '@/types';
+import { groupByStory, buildTranslationDraft, ADMIN_LOCALES, LOCALE_LABEL, type AdminLocale } from '@/lib/adminTranslations';
 
 marked.setOptions({ gfm: true, breaks: false });
 
@@ -189,6 +190,7 @@ export const AdminDashboard: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [coverBusy, setCoverBusy] = useState(false);
   const [galleryBusy, setGalleryBusy] = useState(false);
+  const [translatingTo, setTranslatingTo] = useState<string | null>(null);
   const toast = useToasts();
 
   const refreshList = useCallback(async () => {
@@ -223,6 +225,7 @@ export const AdminDashboard: React.FC = () => {
     setSlugTouched(false);
     setHashtagText('');
     setErrors({});
+    setTranslatingTo(null);
     setView('edit');
   };
 
@@ -247,6 +250,18 @@ export const AdminDashboard: React.FC = () => {
     setSlugTouched(true);
     setHashtagText((p.hashtags ?? []).map((t) => `#${t.replace(/^#/, '')}`).join(', '));
     setErrors({});
+    setTranslatingTo(null);
+    setView('edit');
+  };
+
+  // Start a NEW translation of an existing story, pre-filled + linked so it can't orphan.
+  const openTranslation = (source: Post, locale: AdminLocale) => {
+    setDraft(buildTranslationDraft(source, locale));
+    setEditingId(null);
+    setSlugTouched(true); // keep the source slug; don't re-slugify from edits
+    setHashtagText((source.hashtags ?? []).map((t) => `#${t.replace(/^#/, '')}`).join(', '));
+    setErrors({});
+    setTranslatingTo(locale);
     setView('edit');
   };
 
@@ -433,42 +448,64 @@ export const AdminDashboard: React.FC = () => {
                 <p className="text-slate-500">No posts yet. Create your first one.</p>
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
-                {posts.map((p) => (
-                  <div key={p.id} className="flex items-center gap-4 p-4">
-                    <img
-                      src={resolveAssetUrl(p.coverImageUrl) || '/og-image.png'}
-                      alt=""
-                      className="w-16 h-16 rounded object-cover bg-slate-100 flex-shrink-0"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <StatusBadge status={p.status} />
-                        <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400 border border-slate-200 rounded px-1">{p.locale}</span>
-                        <span className="text-xs font-semibold uppercase text-[#1a4a68]">{p.category}</span>
+              <div className="space-y-3">
+                {groupByStory(posts).map((story) => {
+                  const rep = story.byLocale.en ?? Object.values(story.byLocale)[0]!;
+                  return (
+                    <div key={story.key} className="bg-white rounded-xl border border-slate-200 p-4">
+                      <div className="flex items-start gap-4">
+                        <img
+                          src={resolveAssetUrl(rep.coverImageUrl) || '/og-image.png'}
+                          alt=""
+                          className="w-16 h-16 rounded object-cover bg-slate-100 flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-semibold uppercase text-[#1a4a68]">{rep.category}</span>
+                            <span className="text-xs text-slate-400">{rep.date.slice(0, 10)}</span>
+                          </div>
+                          <h3 className="font-bold text-slate-800 truncate">{story.title}</h3>
+                          <div className="mt-2 flex flex-col gap-1.5">
+                            {ADMIN_LOCALES.map((loc) => {
+                              const p = story.byLocale[loc];
+                              if (p) {
+                                return (
+                                  <div key={loc} className="flex items-center gap-2 text-sm">
+                                    <span className="w-7 text-[10px] font-bold uppercase tracking-wide text-slate-500">{loc}</span>
+                                    <StatusBadge status={p.status} />
+                                    <span className="flex-1" />
+                                    <button
+                                      onClick={() => togglePublish(p)}
+                                      title={p.status === 'published' ? 'Unpublish' : 'Publish'}
+                                      className="p-1.5 rounded hover:bg-slate-100 text-slate-500"
+                                    >
+                                      {p.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                    <button onClick={() => openEdit(p)} title="Edit" className="p-1.5 rounded hover:bg-slate-100 text-slate-500">
+                                      <Pencil className="w-4 h-4" />
+                                    </button>
+                                    <button onClick={() => remove(p)} title="Delete" className="p-1.5 rounded hover:bg-red-50 text-[#b91c1c]">
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                );
+                              }
+                              return (
+                                <button
+                                  key={loc}
+                                  onClick={() => openTranslation(rep, loc)}
+                                  className="self-start inline-flex items-center gap-1 text-xs font-medium text-[#1a4a68] border border-dashed border-[#1a4a68]/40 rounded px-2 py-1 hover:bg-[#1a4a68]/5"
+                                >
+                                  <Plus className="w-3 h-3" /> Add {LOCALE_LABEL[loc]}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
                       </div>
-                      <h3 className="font-bold text-slate-800 truncate">{p.title}</h3>
-                      <p className="text-xs text-slate-400">
-                        {p.date.slice(0, 10)}{p.location ? ` · ${p.location}` : ''}
-                      </p>
                     </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <button
-                        onClick={() => togglePublish(p)}
-                        title={p.status === 'published' ? 'Unpublish' : 'Publish'}
-                        className="p-2 rounded hover:bg-slate-100 text-slate-500"
-                      >
-                        {p.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                      <button onClick={() => openEdit(p)} title="Edit" className="p-2 rounded hover:bg-slate-100 text-slate-500">
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => remove(p)} title="Delete" className="p-2 rounded hover:bg-red-50 text-[#b91c1c]">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </section>
@@ -495,6 +532,14 @@ export const AdminDashboard: React.FC = () => {
                 </button>
               </div>
             </div>
+
+            {translatingTo && (
+              <div className="mb-6 bg-amber-50 border border-amber-200 text-amber-900 text-sm rounded-lg px-4 py-3">
+                Translating into <strong>{LOCALE_LABEL[translatingTo as AdminLocale]}</strong> — replace the
+                English text below with the translation. Shared fields (image, date, category, and the
+                translation link) are already filled in.
+              </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Form */}
