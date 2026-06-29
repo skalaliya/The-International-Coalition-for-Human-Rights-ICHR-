@@ -66,6 +66,12 @@ const L = (href: string) => localizeHref(href, lang);
   </div>
 
   <div
+    id="mobile-scrim"
+    class="lg:hidden fixed inset-x-0 bottom-0 top-16 md:top-20 bg-slate-900/40 backdrop-blur-[1px] transition-opacity duration-300 opacity-0 invisible pointer-events-none"
+    aria-hidden="true"
+  ></div>
+
+  <div
     id="mobile-menu"
     class="lg:hidden fixed inset-x-0 top-16 md:top-20 bg-white border-t border-slate-100 shadow-lg transition-all duration-300 opacity-0 invisible pointer-events-none"
   >
@@ -101,6 +107,7 @@ const L = (href: string) => localizeHref(href, lang);
   (function () {
     const btn = document.getElementById('menu-toggle');
     const menu = document.getElementById('mobile-menu');
+    const scrim = document.getElementById('mobile-scrim');
     const iconMenu = document.getElementById('icon-menu');
     const iconClose = document.getElementById('icon-close');
     const header = document.getElementById('site-header');
@@ -113,11 +120,21 @@ const L = (href: string) => localizeHref(href, lang);
       menu.classList.toggle('opacity-0', !state);
       menu.classList.toggle('invisible', !state);
       menu.classList.toggle('pointer-events-none', !state);
+      if (scrim) {
+        scrim.classList.toggle('opacity-100', state);
+        scrim.classList.toggle('visible', state);
+        scrim.classList.toggle('opacity-0', !state);
+        scrim.classList.toggle('invisible', !state);
+        scrim.classList.toggle('pointer-events-none', !state);
+      }
       iconMenu.classList.toggle('hidden', state);
       iconClose.classList.toggle('hidden', !state);
       btn.setAttribute('aria-expanded', String(state));
+      document.body.classList.toggle('overflow-hidden', state);
     }
     btn.addEventListener('click', function () { set(!open); });
+    if (scrim) scrim.addEventListener('click', function () { set(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) set(false); });
     window.addEventListener('resize', function () { if (window.innerWidth >= 1024 && open) set(false); });
     window.addEventListener('scroll', function () {
       const s = window.scrollY > 20;
