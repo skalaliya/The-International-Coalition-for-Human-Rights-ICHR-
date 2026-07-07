@@ -43,7 +43,7 @@ export const ORG = {
   alternateName: 'ICHR',
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
-  email: 'ichr.geneva@gmail.com',
+  email: 'info@ichr-international.org',
   phone: '+33 7 68 85 10 66',
 };
 
