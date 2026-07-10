@@ -40,7 +40,7 @@ function connect() {
 }
 
 // ---------------------------------------------------------------- ARABIC (MSA)
-const AR_BODY = `يتابع التحالف الدولي لحقوق الإنسان (ICHR) بقلق بالغ وباهتمام وثيق المداولات الجارية خلال الدورة الثانية والستين لمجلس حقوق الإنسان التابع للأمم المتحدة بشأن مشروع القرار المتعلق بالوضع الإنساني في مدينة الأُبيّض.
+const AR_BODY = `يتابع التحالف الدولي لحقوق الإنسان (ICHR) بقلق بالغ وباهتمام وثيق المداولات الجارية بشأن مشروع القرار المتعلق بالوضع الإنساني في مدينة الأُبيّض.
 
 وفي حين يرحّب التحالف بكل الجهود الرامية إلى تحقيق العدالة للضحايا وحماية المدنيين، فإنه يعرب عن تحفّظاته الشديدة إزاء المنهجية الانتقائية والاختزالية التي يقوم عليها مشروع القرار. ومن ثمّ، يودّ التحالف أن يوضّح الحقائق التالية للمجتمع الدولي وللرأي العام السوداني.
 
@@ -84,10 +84,10 @@ const AR_BODY = `يتابع التحالف الدولي لحقوق الإنسا�
 جنيف، 09 يوليو 2026`;
 
 const AR_EXCERPT =
-  'يرحّب التحالف بالجهود الرامية إلى إنصاف الضحايا، لكنه يحذّر من أن مشروع القرار المعروض على الدورة الثانية والستين لمجلس حقوق الإنسان — والمحصور في مدينة الأُبيّض — يقوم على منهجية انتقائية تغفل انتهاكات جسيمة في دارفور وكردفان والنيل الأزرق. ويدعو إلى قرار شامل وإلى تحقيق دولي مستقل في الاستخدام المزعوم للأسلحة الكيميائية.';
+  'يرحّب التحالف بالجهود الرامية إلى إنصاف الضحايا، لكنه يحذّر من أن مشروع القرار، المحصور في مدينة الأُبيّض، يقوم على منهجية انتقائية تغفل انتهاكات جسيمة في دارفور وكردفان والنيل الأزرق. ويدعو إلى قرار شامل وإلى تحقيق دولي مستقل في الاستخدام المزعوم للأسلحة الكيميائية.';
 
 // ---------------------------------------------------------------- FRENCH
-const FR_BODY = `La Coalition internationale pour les droits de l'homme (ICHR) suit avec une profonde préoccupation et une vigilance particulière les délibérations en cours, lors de la 62e session du Conseil des droits de l'homme des Nations Unies, concernant le projet de résolution relatif à la situation humanitaire dans la ville d'El Obeid.
+const FR_BODY = `La Coalition internationale pour les droits de l'homme (ICHR) suit avec une profonde préoccupation et une vigilance particulière les délibérations en cours concernant le projet de résolution relatif à la situation humanitaire dans la ville d'El Obeid.
 
 Si la Coalition salue tous les efforts visant à rendre justice aux victimes et à protéger les civils, elle exprime de vives réserves quant à la méthodologie sélective et réductrice qui sous-tend ce projet de résolution. La Coalition souhaite dès lors porter les faits suivants à la connaissance de la communauté internationale et de l'opinion publique soudanaise.
 
@@ -131,7 +131,7 @@ Au vu de ce qui précède, la Coalition internationale pour les droits de l'homm
 Genève, le 9 juillet 2026`;
 
 const FR_EXCERPT =
-  "La Coalition salue les efforts visant à rendre justice aux victimes, mais met en garde contre le projet de résolution soumis à la 62e session du Conseil des droits de l'homme des Nations Unies : circonscrit à la ville d'El Obeid, il repose sur une méthodologie sélective qui passe sous silence de graves violations au Darfour, au Kordofan et au Nil Bleu. Elle appelle à une résolution globale et à une enquête internationale indépendante sur l'emploi allégué d'armes chimiques.";
+  "La Coalition salue les efforts visant à rendre justice aux victimes, mais met en garde contre le projet de résolution : circonscrit à la ville d'El Obeid, il repose sur une méthodologie sélective qui passe sous silence de graves violations au Darfour, au Kordofan et au Nil Bleu. Elle appelle à une résolution globale et à une enquête internationale indépendante sur l'emploi allégué d'armes chimiques.";
 
 export const LOCALES = [
   {
@@ -157,7 +157,7 @@ export const LOCALES = [
 const SHARED = {
   category: 'Statement',
   date: '2026-07-09',
-  hashtags: ['#international_coalition_for_h_rights', '#Sudan', '#HRC62'],
+  hashtags: ['#international_coalition_for_h_rights', '#Sudan'],
 };
 
 async function main() {

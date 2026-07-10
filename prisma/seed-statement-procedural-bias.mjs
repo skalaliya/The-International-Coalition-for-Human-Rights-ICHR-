@@ -49,7 +49,7 @@ function connect() {
   return neon(DB_URL);
 }
 
-export const BODY = `The International Coalition for Human Rights (ICHR) is following with profound concern and close scrutiny the ongoing deliberations during the 62nd session of the United Nations Human Rights Council regarding the draft resolution on the humanitarian situation in the city of El Obeid.
+export const BODY = `The International Coalition for Human Rights (ICHR) is following with profound concern and close scrutiny the ongoing deliberations regarding the draft resolution on the humanitarian situation in the city of El Obeid.
 
 While the Coalition welcomes all efforts aimed at ensuring justice for victims and protecting civilians, it expresses its strong reservations regarding the selective and reductionist methodology underpinning the draft resolution. The Coalition therefore wishes to clarify the following facts for both the international community and the Sudanese public.
 
@@ -93,7 +93,7 @@ In light of the foregoing, the International Coalition for Human Rights calls fo
 Geneva, 09 July 2026`;
 
 export const EXCERPT =
-  'The Coalition welcomes efforts to secure justice for victims, but warns that the draft resolution before the 62nd session of the UN Human Rights Council — confined to the city of El Obeid — rests on a selective methodology that overlooks grave violations across Darfur, Kordofan and Blue Nile. It calls for a comprehensive resolution and an independent international investigation into alleged chemical weapons use.';
+  'The Coalition welcomes efforts to secure justice for victims, but warns that the draft resolution — confined to the city of El Obeid — rests on a selective methodology that overlooks grave violations across Darfur, Kordofan and Blue Nile. It calls for a comprehensive resolution and an independent international investigation into alleged chemical weapons use.';
 
 export const POST = {
   slug: SLUG,
@@ -106,7 +106,7 @@ export const POST = {
   excerpt: EXCERPT,
   coverImageUrl: `/blog/${SLUG}/cover.jpg`,
   body: BODY,
-  hashtags: ['#international_coalition_for_h_rights', '#Sudan', '#HRC62'],
+  hashtags: ['#international_coalition_for_h_rights', '#Sudan'],
   authorName: 'ICHR Communications',
 };
 
