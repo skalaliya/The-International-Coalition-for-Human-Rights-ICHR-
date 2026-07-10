@@ -44,7 +44,7 @@ export const ORG = {
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
   email: 'info@ichr-international.org',
-  phone: '+33 7 68 85 10 66',
+  phone: '+41 76 241 99 63',
 };
 
 export const SAME_AS = SOCIAL_PROFILES.map((s) => s.href);

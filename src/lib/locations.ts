@@ -45,7 +45,6 @@ export const locations: Location[] = [
     region: 'Headquarters',
     address: '123 Humanitarian Avenue, Geneva, Switzerland 1202',
     email: 'info@ichr-international.org',
-    phone: '+33 7 68 85 10 66',
   },
   {
     id: 7,
@@ -61,7 +60,6 @@ export const locations: Location[] = [
     region: 'Headquarters',
     address: '25 Rue de la Paix, 75002 Paris, France',
     email: 'info@ichr-international.org',
-    phone: '+33 7 68 85 10 66',
   },
   {
     id: 3,
