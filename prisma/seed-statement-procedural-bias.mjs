@@ -49,7 +49,7 @@ function connect() {
   return neon(DB_URL);
 }
 
-export const BODY = `The International Coalition of Human Rights Organizations is following with profound concern and close scrutiny the ongoing deliberations during the 62nd session of the United Nations Human Rights Council regarding the draft resolution on the humanitarian situation in the city of El Obeid.
+export const BODY = `The International Coalition for Human Rights (ICHR) is following with profound concern and close scrutiny the ongoing deliberations during the 62nd session of the United Nations Human Rights Council regarding the draft resolution on the humanitarian situation in the city of El Obeid.
 
 While the Coalition welcomes all efforts aimed at ensuring justice for victims and protecting civilians, it expresses its strong reservations regarding the selective and reductionist methodology underpinning the draft resolution. The Coalition therefore wishes to clarify the following facts for both the international community and the Sudanese public.
 
@@ -78,7 +78,7 @@ The Coalition expresses grave concern over the omission from the Human Rights Co
 
 ## The Coalition's Calls
 
-In light of the foregoing, the International Coalition of Human Rights Organizations calls for the following:
+In light of the foregoing, the International Coalition for Human Rights calls for the following:
 
 1. **A comprehensive and balanced resolution.** The draft resolution should be revised to ensure that it is comprehensive, balanced, and reflective of the full scope of human rights violations committed throughout all regions of Sudan, without geographical selectivity or partial treatment.
 
@@ -88,7 +88,7 @@ In light of the foregoing, the International Coalition of Human Rights Organizat
 
 ---
 
-**International Coalition of Human Rights Organizations**
+**The International Coalition for Human Rights (ICHR)**
 
 Geneva, 09 July 2026`;
 
