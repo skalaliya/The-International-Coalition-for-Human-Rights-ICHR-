@@ -19,37 +19,50 @@ The newsroom (`/news`, `/news/:slug`) is **server-rendered on demand**, so each 
 ## Project layout
 
 ```
-astro.config.mjs            # SSR + @astrojs/vercel adapter + Tailwind v4
+astro.config.mjs            # SSR + @astrojs/vercel adapter + i18n (en/ar/fr)
+CLAUDE.md                   # architecture, DB workflow, gotchas — read this first
 prisma/
-  schema.prisma             # User, Post, GalleryImage (PostgreSQL)
-  seed.mjs                  # admin user + launch press release
+  schema.prisma             # User, Post (locale + translationKey), GalleryImage
+  seed.mjs                  # admin user ONLY (create-only, guarded)
+  migrate-i18n.mjs          # idempotent schema change over Neon's HTTPS driver
+  seed-*.mjs                # one per press release; mirror of the DB content
+scripts/
+  gen-statement-cover.mjs   # renders the branded cover cards (en/ar/fr)
 src/
   pages/
-    *.astro                 # routes (index, about, news/, admin, 404 …)
+    *.astro                 # English routes — thin wrappers over components/pages
+    ar/** · fr/**           # Arabic (RTL) and French route trees
     api/**                  # API endpoints (auth/login, content/posts CRUD, upload)
+    sitemap.xml.ts          # SSR sitemap with per-story hreflang alternates
+  components/pages/         # the actual page bodies, shared by all three locales
+  i18n/                     # locale helpers + strings/{en,ar,fr}.ts dictionaries
   server/                   # server-only: db (Prisma), auth (JWT), posts (zod/queries)
-  components/               # .astro UI (Header, Footer, NewsCard, Dateline …)
+  components/               # .astro UI (Header, Footer, NewsCard, LanguageSwitcher …)
   components/react/         # client islands: AdminDashboard, WorldMap, apiClient
-  lib/                      # api (SSR reads), markdown, dateline, assets, locations
+  lib/                      # api (SSR reads), markdown, jsonld, assets, locations
   styles/index.css          # design system (navy + restrained gold)
-public/blog/<slug>/         # static article images (e.g. the seed post)
+public/blog/<slug>/         # static article images and cover cards
 ```
+
+**Article text lives in the database, not in git** — `git grep` won't find it. The `prisma/seed-*.mjs` files are a mirror kept as the source-of-record. See [CLAUDE.md](./CLAUDE.md).
 
 ## Run locally
 
-**Prerequisites:** Node.js 20+ and a PostgreSQL database (a free [Neon](https://neon.tech) project works great; use its **pooled** connection string).
+**Prerequisites:** **Node.js 22.6+** (the seeds use `--env-file`, the tests use `--experimental-strip-types`) and a PostgreSQL database (a free [Neon](https://neon.tech) project works great).
 
 ```bash
 npm install
-cp .env.example .env          # set DATABASE_URL (Neon) + JWT_SECRET + ADMIN_*
-npm run db:migrate            # apply the schema (or: npx prisma migrate dev)
-npm run db:seed               # admin user + the launch press release
+cp .env.example .env.local    # DATABASE_URL + DATABASE_URL_UNPOOLED + JWT_SECRET + ADMIN_*
+npm run db:push               # apply the schema — there are NO migrations to deploy
+node --env-file=.env.local prisma/seed.mjs   # create the admin user
 npm run dev                   # http://localhost:4321
 ```
 
+> **There is no `prisma/migrations/` directory.** `prisma migrate deploy` would silently create nothing, so use `npm run db:push`. If your network blocks Postgres on port 5432 (`P1001`), apply schema changes with an idempotent script over Neon's HTTPS driver instead — see `prisma/migrate-i18n.mjs`. Database scripts read **`.env.local`**.
+
 `astro dev` serves the pages **and** the API endpoints on one origin — no separate backend process.
 
-**Admin:** open http://localhost:4321/admin and sign in with `admin` / `admin` (set via `ADMIN_*`). Create a post, upload a cover + gallery images, watch the live Markdown preview, **Save draft** (hidden from `/news`) or **Publish**. (Local image uploads need `BLOB_READ_WRITE_TOKEN`; the seed post uses static images so it works without it.)
+**Admin:** open http://localhost:4321/admin and sign in with the `ADMIN_USERNAME` / `ADMIN_PASSWORD` you set. Create a post, upload a cover + gallery images, watch the live Markdown preview, **Save draft** (hidden from `/news`) or **Publish**. Publishing is live immediately, no redeploy. (Local image uploads need `BLOB_READ_WRITE_TOKEN`; seeded posts use static images, so they work without it.)
 
 ## Deploy on Vercel
 
@@ -59,24 +72,30 @@ npm run dev                   # http://localhost:4321
    - `JWT_SECRET` — a long random string
    - `ADMIN_USERNAME`, `ADMIN_PASSWORD` — admin login
    - `PUBLIC_SITE_URL` — your production URL (for canonical/OG)
-4. **Build command** is `npm run build` (runs `prisma generate` then `astro build`). After the first deploy, run the migration + seed against the production DB:
+4. **Build command** is `npm run build` (runs `prisma generate` then `astro build`). After the first deploy, apply the schema and create the admin user against the production DB — put the production `DATABASE_URL` in `.env.local` and run:
    ```bash
-   DATABASE_URL="<neon-pooled-url>" npx prisma migrate deploy
-   DATABASE_URL="<neon-pooled-url>" ADMIN_PASSWORD="<pw>" npm run db:seed
+   npx prisma db push                            # NOT `migrate deploy` — no migrations exist
+   node --env-file=.env.local prisma/seed.mjs    # create-only; never rotates an existing password
    ```
-   (or run them locally pointed at the production `DATABASE_URL`).
+   To rotate the admin password later: `RESET_ADMIN_PASSWORD=1 node --env-file=.env.local prisma/seed.mjs`.
 
 Publishing from `/admin` is live immediately — no redeploy per post.
+
+> **Seed scripts overwrite their own slug.** Re-running `prisma/seed-<post>.mjs` reverts any edit made to that post through `/admin` and rebuilds its gallery. They all guard on a `neon.tech` target and support `DRY_RUN=1`.
 
 ## Environment variables
 
 | var | purpose |
 |---|---|
-| `DATABASE_URL` | Neon Postgres pooled connection string (required) |
-| `JWT_SECRET` | signs admin login tokens (required) |
-| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | seeded admin credentials |
+| `DATABASE_URL` | Neon Postgres **pooled** connection string (required) |
+| `DATABASE_URL_UNPOOLED` | Neon **direct** connection; required by `schema.prisma` `directUrl` |
+| `JWT_SECRET` | signs admin login tokens (required; the app throws without it) |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | seeded admin credentials — use a strong password, the login is not rate-limited |
 | `PUBLIC_SITE_URL` | canonical/OG absolute base (your domain) |
+| `PUBLIC_API_URL` | optional origin override for the admin client; empty = same-origin |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob (admin uploads); auto-set on Vercel |
+
+`.env` and `.env.local` are gitignored and must never be committed.
 
 ## How images are served
 
@@ -88,7 +107,10 @@ Publishing from `/admin` is live immediately — no redeploy per post.
 - `npm run dev` — Astro dev (pages + API)
 - `npm run build` — `prisma generate` + `astro build`
 - `npm run check` — `astro check`
-- `npm run db:migrate` / `npm run db:seed` — Prisma migrate deploy / seed
+- `npm test` — unit tests (Node's built-in runner)
+- `npm run db:push` — apply `schema.prisma` (there are no migrations)
+- `npm run db:seed` — create the admin user (create-only, guarded)
+- `node scripts/gen-statement-cover.mjs [locale]` — render the branded cover cards
 
 ## License
 
