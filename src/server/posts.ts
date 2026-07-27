@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { Prisma } from '@prisma/client';
 import { prisma } from './db';
 import { clampPageNumber } from '@/lib/pagination';
+import { classifyDbError } from '@/lib/prismaErrorCodes';
 import type { Post, PostCategory } from '@/types';
 
 export const CATEGORIES = ['Press Release', 'Statement', 'Field Update', 'News'] as const;
@@ -318,12 +319,17 @@ export async function updatePost(id: string, d: UpdateInput): Promise<Post | nul
   return post ? serializePost(post) : null;
 }
 
+// These two used to catch everything and report null/false, which the routes turned into
+// "Post not found" — so a database hiccup told the editor their post had vanished. They
+// now distinguish a missing row from an unreachable server; the routes map that to
+// 404 vs 503. See src/lib/prismaErrorCodes.ts.
 export async function setStatus(id: string, status: 'draft' | 'published'): Promise<Post | null> {
   try {
     const post = await prisma.post.update({ where: { id }, data: { status }, include: { gallery: true } });
     return serializePost(post);
-  } catch {
-    return null;
+  } catch (e) {
+    if (classifyDbError(e) === 'not-found') return null;
+    throw e;
   }
 }
 
@@ -331,8 +337,9 @@ export async function deletePost(id: string): Promise<boolean> {
   try {
     await prisma.post.delete({ where: { id } });
     return true;
-  } catch {
-    return false;
+  } catch (e) {
+    if (classifyDbError(e) === 'not-found') return false;
+    throw e;
   }
 }
 
