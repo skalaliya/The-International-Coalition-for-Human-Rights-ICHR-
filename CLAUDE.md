@@ -81,6 +81,8 @@ English at the root, Arabic under `/ar` (RTL), French under `/fr`. Configured in
 
 **Route files are ~5-line wrappers.** `src/pages/index.astro`, `src/pages/ar/index.astro` and `src/pages/fr/index.astro` each render `<HomePage lang="…" />`. The actual page body lives once in `src/components/pages/*Page.astro`.
 
+**The exception: response control belongs to the route.** The three `news/[slug].astro` wrappers load the article themselves (`loadArticle` in `src/server/article.ts`) and set `Astro.response.status = 404` before rendering `<NotFoundPage>`. This is not decoration — `Astro.rewrite()` / `Astro.response.status` from inside a *component* renders into an already-sent response, which Astro reports as `ResponseSentError` and the adapter serves as the string "Internal server error" **with HTTP 200**. That was a live bug on every missing slug, every draft and every article during a DB outage. `src/lib/pageComponents.test.ts` fails the build if a page component starts controlling the response again.
+
 > To change a page's content, edit `src/components/pages/<X>Page.astro` — **not** the three route files.
 
 - UI strings: `src/i18n/strings/{en,ar,fr}.ts`. `en` is canonical; `export type Dict = typeof en` forces `ar` and `fr` to match, so a missing key is a **compile error**. Array lengths are *not* type-enforced — keep them equal by hand.
@@ -141,13 +143,13 @@ Verified by audit. If a change would break one of these, it is wrong.
 - **Markdown is sanitized** (`src/lib/markdown.ts`): no `script`, no SVG, schemes limited to http/https/mailto, links forced to `rel="noopener noreferrer"`.
 - **Uploads** (`src/pages/api/content/posts/upload.ts`): auth + MIME allow-list + magic-byte sniff + 10 MB cap + server-generated filename. SVG rejected.
 - **Locale filtering is mandatory on every post query** — otherwise an article is served in the wrong language, or a draft leaks. Drafts 404.
-- **A DB outage degrades to a localized 404 / empty state, never a 500** (`src/lib/api.ts` wraps every query).
+- **A DB outage degrades to a localized 404 / empty state, never a 500** on *reader-facing* pages (`src/lib/api.ts` wraps every query; the article routes turn a null into a real 404). The **admin API is the opposite on purpose**: it returns 503 + `Retry-After`, never a 404, so an editor is never told a post was deleted when the database was merely unreachable (`src/lib/prismaErrorCodes.ts`, `src/server/http.ts`).
+- **Query params are clamped before they reach Prisma** (`src/lib/pagination.ts`). `Math.max(1, Number(x))` is not enough — `Number('abc')` is `NaN` and `Math.max(1, NaN)` is `NaN`, which reaches Prisma as `skip: NaN`, throws, and gets swallowed into an empty page.
 - `robots.txt` disallows `/admin`; the sitemap emits published-only, XML-escaped URLs.
 
 ### Known gaps (not yet fixed)
 
-- `POST /api/auth/login` has **no rate limiting**. The bcrypt dummy-hash timing defense is present.
-- The admin JWT is stored in `localStorage`, so it is readable by any script on the origin.
-- The CSP in `vercel.json` is `Content-Security-Policy-Report-Only` with `script-src 'unsafe-inline'` — it enforces nothing. Enforcing it means externalizing the inline scripts in `Header.astro`, `ShareButtons.astro` and `DonatePage.astro`; nonces don't work here because the marketing pages are prerendered and the CSP is a static header.
+- `POST /api/auth/login` has **no application-level rate limiting**. Handled at the edge instead — see the Vercel Firewall rule on that path. The bcrypt dummy-hash timing defence is real: `BCRYPT_COST` is shared by `login.ts` and `prisma/seed.mjs`, and `src/lib/bcryptCost.test.ts` fails the build if they drift (they did, once — cost 10 vs 12, a measured 154 ms username-enumeration oracle).
+- The admin JWT is stored in `localStorage`, so it is readable by any script on the origin. A session expiry no longer loses work: any 401 stashes the draft in `sessionStorage` and restores it after re-login (`src/lib/draftStash.ts`).
+- The CSP in `vercel.json` is still `Content-Security-Policy-Report-Only` with `script-src 'unsafe-inline'` — it enforces nothing, but it now **reports** to `/api/csp-report`, so the report-only phase produces evidence. **What blocks enforcement is not our three inline scripts.** Astro emits its island bootstrap and the `astro-island` element definition inline on every page carrying an island: measured on a real build, 4 inline `<script>` tags on `/`, 3 on `/locations`, 2 on `/admin`, 1 even on `/about`. Turning on `script-src 'self'` breaks the WorldMap in all three locales and breaks `/admin` entirely. Also verified: **dropping `is:inline` does not externalize a script** — Astro re-inlines small bundled chunks (the `Header.astro` menu script comes back as a minified inline `type="module"`). Enforcing needs Astro's `experimental.csp` hashing, and the meta CSP it emits is ANDed with this header, so the header's `script-src` must be relaxed in the same change.
 - **The Donate, Contact and Volunteer forms are inert** — no `action`, no `fetch`, no endpoint. Submissions are silently discarded. This is known and deliberate for now; don't assume they work.
-- `apiClient.ts` requests `pageSize=100` but the server clamps to 50 and the admin has no pagination, so past 50 `Post` rows older posts vanish from `/admin`.
