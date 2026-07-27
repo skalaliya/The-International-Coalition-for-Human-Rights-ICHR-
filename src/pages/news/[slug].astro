@@ -1,5 +1,14 @@
 ---
 import ArticlePage from '@/components/pages/ArticlePage.astro';
+import NotFoundPage from '@/components/pages/NotFoundPage.astro';
+import { loadArticle } from '@/server/article';
+
+// The 404 decision lives HERE, in the route, not in ArticlePage. Setting the status or
+// returning a Response from a component renders into an already-sent response
+// (ResponseSentError → a soft-200 "Internal server error"). Page frontmatter runs
+// before the body streams, so this is the assignment the final Response is built from.
+const article = await loadArticle(Astro.params.slug, 'en');
+if (!article) Astro.response.status = 404;
 ---
 
-<ArticlePage lang="en" />
+{article ? <ArticlePage lang="en" article={article} /> : <NotFoundPage lang="en" />}
