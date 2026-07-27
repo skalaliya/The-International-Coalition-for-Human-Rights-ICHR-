@@ -93,13 +93,16 @@ English at the root, Arabic under `/ar` (RTL), French under `/fr`. Configured in
 
 **Route A — the admin CMS** (`/admin`): sign in, create the post, upload a cover and gallery images, publish. Live immediately. Use "+ Add \<language\>" on a story to create a translation pre-linked to its `translationKey`.
 
-**Route B — a seed script**, for press releases that need designed cover art:
+**Route B — a seed script**, for press releases that need designed cover art. **Use the skill: `.claude/skills/publish-press-statement/`** — it drives the whole workflow, including the editorial questions that must be asked before publishing someone's signed statement.
 
-1. Generate the cover cards: `node scripts/gen-statement-cover.mjs [locale]` → writes `public/blog/<slug>/cover{,-ar,-fr}.jpg`.
-2. **Commit and deploy the images first.** The post's `coverImageUrl` points at a static path; publishing before the image is deployed renders a broken image.
-3. Write a seed modelled on `prisma/seed-statement-procedural-bias.mjs` (guard, `DRY_RUN`, read-back, exported content). Run it with `node --env-file=.env.local`.
+1. Write `prisma/seed-statement-<name>.mjs` from the skill's `reference/statement-config-skeleton.mjs`: one file, three locales, content only. The mechanism lives in **`prisma/lib/press-statement.mjs`** — validation, the neon.tech guard, an **atomic** `sql.transaction` upsert, the gallery rebuild and the read-back asserts. Don't re-implement any of it, and don't touch the two older hand-written seeds (`seed-statement-procedural-bias`, `seed-statement-cargo-trucks`) — they are the record of what was executed against production.
+2. Generate the covers: `node scripts/gen-press-cover.mjs prisma/seed-statement-<name>.mjs` → `public/blog/<slug>/cover{,-ar,-fr}.jpg`, driven by the `COVERS` the statement file exports. It measures every headline line's rendered ink and refuses to write an overflowing card; it never overwrites an existing file without `FORCE=1`.
+3. **Commit and deploy the images first.** `coverImageUrl` points at a static path; publishing before the image is deployed renders a broken image. Poll the live URLs for `200 image/jpeg` — don't assume.
+4. Seed as a **draft** (`node --env-file=.env.local prisma/seed-statement-<name>.mjs`), review at `/admin`, then take the story live with `PUBLISH=1`. `UNPUBLISH=1` drafts all three locales at once.
 
-### Cover-card rendering gotchas (already solved in `scripts/gen-statement-cover.mjs` — don't regress them)
+`npm test` covers the engine (`prisma/lib/press-statement.test.mjs`), including a drift test that fails if the zod limits in `src/server/posts.ts` change without `LIMITS` following.
+
+### Cover-card rendering gotchas (already solved in `scripts/lib/press-card.mjs` — don't regress them)
 
 The cards are SVG rasterized through `sharp`. `sharp` will happily render Arabic **incorrectly** and exit 0, so **always open the generated JPEG and look at it**.
 

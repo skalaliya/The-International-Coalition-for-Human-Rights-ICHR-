@@ -10,7 +10,7 @@
     "start": "astro preview",
     "astro": "astro",
     "check": "astro check",
-    "test": "node --experimental-strip-types --test src/lib/*.test.ts",
+    "test": "node --experimental-strip-types --test \"src/lib/**/*.test.ts\" \"prisma/lib/**/*.test.mjs\"",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
