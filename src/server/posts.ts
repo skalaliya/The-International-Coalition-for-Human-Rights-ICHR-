@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
 import { prisma } from './db';
+import { clampPageNumber } from '@/lib/pagination';
 import type { Post, PostCategory } from '@/types';
 
 export const CATEGORIES = ['Press Release', 'Statement', 'Field Update', 'News'] as const;
@@ -145,8 +146,10 @@ export async function listPublished(opts: {
   category?: string;
   locale?: string;
 }): Promise<Paged> {
-  const page = Math.max(1, opts.page ?? 1);
-  const pageSize = Math.min(50, Math.max(1, opts.pageSize ?? 9));
+  // Clamped again here, not just at the caller: the SSR page calls this directly, and
+  // Math.max(1, NaN) is NaN — which reaches Prisma as `skip: NaN` and throws.
+  const page = clampPageNumber(opts.page ?? 1);
+  const pageSize = clampPageNumber(opts.pageSize ?? 9, 50);
   const where: Prisma.PostWhereInput = { status: 'published', locale: opts.locale ?? DEFAULT_LOCALE };
   if (opts.category && CATEGORIES.includes(opts.category as PostCategory)) {
     where.category = opts.category;

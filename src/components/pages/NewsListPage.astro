@@ -5,6 +5,7 @@ import NewsCard from '@/components/NewsCard.astro';
 import Dateline from '@/components/Dateline.astro';
 import CategoryPill from '@/components/CategoryPill.astro';
 import { getPublishedPosts } from '@/lib/api';
+import { parsePageParam } from '@/lib/pagination';
 import { resolveAssetUrl } from '@/lib/assets';
 import { POST_CATEGORIES, type PostCategory } from '@/types';
 import { useTranslations, localizeHref, type Locale } from '@/i18n';
@@ -16,7 +17,8 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 
 const url = Astro.url;
-const page = Math.max(1, Number(url.searchParams.get('page') ?? '1'));
+// Number('abc') is NaN and Math.max(1, NaN) is NaN — see src/lib/pagination.ts.
+const page = parsePageParam(url.searchParams.get('page'));
 const categoryParam = url.searchParams.get('category') ?? 'All';
 const category = (POST_CATEGORIES.includes(categoryParam as PostCategory) ? categoryParam : 'All') as
   | PostCategory
