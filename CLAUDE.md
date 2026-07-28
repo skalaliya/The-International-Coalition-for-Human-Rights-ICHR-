@@ -102,6 +102,8 @@ English at the root, Arabic under `/ar` (RTL), French under `/fr`. Configured in
 3. **Commit and deploy the images first.** `coverImageUrl` points at a static path; publishing before the image is deployed renders a broken image. Poll the live URLs for `200 image/jpeg` — don't assume.
 4. Seed as a **draft** (`node --env-file=.env.local prisma/seed-statement-<name>.mjs`), review at `/admin`, then take the story live with `PUBLISH=1`. `UNPUBLISH=1` drafts all three locales at once.
 
+5. **Generate responsive image variants** — `node scripts/gen-image-variants.mjs <slug>`. `/blog/*` is served raw (no `<Image>`, no CDN transform), so without this a phone downloads the desktop original: measured at 375px, a 1200px cover painted into a 325px box and ~3.2 MB of gallery on a single article. The script writes `-400/-800/-1200` files **and** `src/generated/blog-images.json`; `src/lib/assets.ts` reads that manifest to build each `srcset`, so it can never point at a variant that was not written. Commit the manifest with the images — `npm test` fails if a published image is missing from it.
+
 `npm test` covers the engine (`prisma/lib/press-statement.test.mjs`), including a drift test that fails if the zod limits in `src/server/posts.ts` change without `LIMITS` following.
 
 ### Cover-card rendering gotchas (already solved in `scripts/lib/press-card.mjs` — don't regress them)

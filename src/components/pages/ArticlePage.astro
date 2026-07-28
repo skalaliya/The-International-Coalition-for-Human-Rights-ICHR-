@@ -5,9 +5,10 @@ import Dateline from '@/components/Dateline.astro';
 import CategoryPill from '@/components/CategoryPill.astro';
 import type { ArticleData } from '@/server/article';
 import { renderMarkdown } from '@/lib/markdown';
-import { resolveAssetUrl, absoluteUrl } from '@/lib/assets';
+import { resolveAssetUrl, absoluteUrl, srcSetFor, dimensionsFor } from '@/lib/assets';
 import ShareButtons from '@/components/ShareButtons.astro';
 import ShareRail from '@/components/ShareRail.astro';
+import Lightbox from '@/components/Lightbox.astro';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import { ORG, SAME_AS, SITE_URL } from '@/lib/site';
 import { useTranslations, localizeHref, LOCALES, type Locale, type Alternate } from '@/i18n';
@@ -86,7 +87,7 @@ const jsonLd = {
     <Section width="content" spacing="sm">
       <a
         href={L('/news')}
-        class="inline-flex items-center text-sm font-medium text-[#1a4a68] hover:text-[#2a6a96] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2 rounded"
+        class="inline-flex items-center min-h-[44px] text-sm font-medium text-[#1a4a68] hover:text-[#2a6a96] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2 rounded"
       >
         <svg class="w-4 h-4 me-1 rtl-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
         {t.article.back}
@@ -115,7 +116,17 @@ const jsonLd = {
     {post.coverImageUrl && (
       <Section width="content" spacing="sm">
         <div class="rounded-xl overflow-hidden border border-slate-200 bg-[#1a4a68] flex justify-center">
-          <img src={resolveAssetUrl(post.coverImageUrl)} alt={post.title} class="max-h-[640px] w-auto object-contain" />
+          <img
+            src={resolveAssetUrl(post.coverImageUrl)}
+            srcset={srcSetFor(post.coverImageUrl)}
+            sizes="(min-width: 768px) 720px, 100vw"
+            width={dimensionsFor(post.coverImageUrl)?.width}
+            height={dimensionsFor(post.coverImageUrl)?.height}
+            alt={post.title}
+            fetchpriority="high"
+            decoding="async"
+            class="max-h-[640px] w-auto object-contain"
+          />
         </div>
       </Section>
     )}
@@ -132,14 +143,31 @@ const jsonLd = {
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {post.gallery.map((g, i) => (
-            <figure class="bg-white rounded-lg overflow-hidden border border-slate-100 shadow-sm">
-              <div class="bg-[#1a4a68]">
-                <img src={resolveAssetUrl(g.url)} alt={g.caption ?? `${post.title} — ${i + 1}`} loading="lazy" class="w-full aspect-[4/5] object-contain" />
-              </div>
+            <figure class="bg-white rounded-lg overflow-hidden border border-slate-100 shadow-sm" data-lightbox>
+              <button
+                type="button"
+                data-lightbox-open
+                class="block w-full bg-[#1a4a68] cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-gold)] focus-visible:ring-inset"
+                aria-label={`${t.article.enlarge}: ${g.caption ?? `${post.title} — ${i + 1}`}`}
+              >
+                <img
+                  data-full={resolveAssetUrl(g.url)}
+                  src={resolveAssetUrl(g.url)}
+                  srcset={srcSetFor(g.url)}
+                  sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  width={dimensionsFor(g.url)?.width}
+                  height={dimensionsFor(g.url)?.height}
+                  alt={g.caption ?? `${post.title} — ${i + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                  class="w-full aspect-[4/5] object-contain"
+                />
+              </button>
               {g.caption && <figcaption class="px-4 py-3 text-sm text-slate-500 leading-snug">{g.caption}</figcaption>}
             </figure>
           ))}
         </div>
+        <Lightbox closeLabel={t.article.closeImage} hint={t.article.gallery} />
       </Section>
     )}
 

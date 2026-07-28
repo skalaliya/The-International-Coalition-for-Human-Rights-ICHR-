@@ -282,6 +282,8 @@ export const fr: Dict = {
   article: {
     back: 'Retour à la salle de presse',
     gallery: 'Galerie',
+    enlarge: "Agrandir l'image",
+    closeImage: "Fermer l'image",
     tags: 'Étiquettes',
     shareStory: 'Partager cet article',
     shareHelp: 'Aidez à sensibiliser — partagez-le avec votre réseau.',

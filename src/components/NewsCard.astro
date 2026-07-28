@@ -1,7 +1,7 @@
 ---
 import Dateline from '@/components/Dateline.astro';
 import CategoryPill from '@/components/CategoryPill.astro';
-import { resolveAssetUrl } from '@/lib/assets';
+import { resolveAssetUrl, srcSetFor, dimensionsFor } from '@/lib/assets';
 import { useTranslations, localizeHref, type Locale } from '@/i18n';
 import type { Post } from '@/types';
 
@@ -24,8 +24,13 @@ const catLabel = t.categories[post.category] ?? post.category;
     <div class="relative aspect-square overflow-hidden bg-[#1a4a68]">
       <img
         src={resolveAssetUrl(post.coverImageUrl)}
+        srcset={srcSetFor(post.coverImageUrl)}
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        width={dimensionsFor(post.coverImageUrl)?.width}
+        height={dimensionsFor(post.coverImageUrl)?.height}
         alt={post.title}
         loading="lazy"
+        decoding="async"
         class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none motion-reduce:transition-none"
       />
       <div class="absolute top-3 start-3 bg-[#0f2f49] rounded px-3 py-1 shadow-md ring-1 ring-white/15">

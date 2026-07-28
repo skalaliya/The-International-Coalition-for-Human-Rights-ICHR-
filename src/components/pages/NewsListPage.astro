@@ -6,7 +6,7 @@ import Dateline from '@/components/Dateline.astro';
 import CategoryPill from '@/components/CategoryPill.astro';
 import { getPublishedPosts } from '@/lib/api';
 import { parsePageParam } from '@/lib/pagination';
-import { resolveAssetUrl } from '@/lib/assets';
+import { resolveAssetUrl, srcSetFor, dimensionsFor } from '@/lib/assets';
 import { POST_CATEGORIES, type PostCategory } from '@/types';
 import { useTranslations, localizeHref, type Locale } from '@/i18n';
 
@@ -63,7 +63,7 @@ const emptyMsg =
           role="radio"
           aria-checked={category === c}
           class:list={[
-            'text-sm px-4 py-2 rounded-full border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2',
+            'text-sm px-4 min-h-[44px] inline-flex items-center rounded-full border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2',
             category === c
               ? 'bg-[#1a4a68] text-white border-[#1a4a68]'
               : 'text-slate-600 border-slate-200 hover:border-[#1a4a68]',
@@ -91,8 +91,13 @@ const emptyMsg =
             <div class="relative h-72 md:h-80 overflow-hidden bg-[#1a4a68]">
               <img
                 src={resolveAssetUrl(featured.coverImageUrl)}
+                srcset={srcSetFor(featured.coverImageUrl)}
+                sizes="(min-width: 768px) 50vw, 100vw"
+                width={dimensionsFor(featured.coverImageUrl)?.width}
+                height={dimensionsFor(featured.coverImageUrl)?.height}
                 alt={featured.title}
-                loading="lazy"
+                fetchpriority="high"
+                decoding="async"
                 class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none"
               />
             </div>

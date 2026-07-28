@@ -282,6 +282,8 @@ export const ar: Dict = {
   article: {
     back: 'العودة إلى غرفة الأخبار',
     gallery: 'معرض الصور',
+    enlarge: 'تكبير الصورة',
+    closeImage: 'إغلاق الصورة',
     tags: 'الوسوم',
     shareStory: 'شارك هذه القصة',
     shareHelp: 'ساعد في رفع الوعي — شاركها مع شبكتك.',

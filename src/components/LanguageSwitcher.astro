@@ -63,7 +63,7 @@ function hrefFor(l: Locale): string {
             'leading-none rounded-full whitespace-nowrap transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-1 focus-visible:ring-offset-white',
             panel
               ? 'flex-1 min-h-[44px] flex items-center justify-center text-center px-3 text-sm'
-              : 'px-2.5 py-1 text-[13px]',
+              : 'px-2.5 min-h-[44px] inline-flex items-center text-[13px]',
             l === lang
               ? 'bg-white text-[#1a4a68] font-semibold shadow-sm'
               : 'text-slate-500 hover:text-[#1a4a68] hover:bg-white/60 font-medium',

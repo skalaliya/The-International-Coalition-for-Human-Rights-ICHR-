@@ -104,6 +104,24 @@ for (const [src,dst] of [['press/<n>/1.jpg','card-1.jpg'],['press/<n>/2.jpg','ca
 
 Then confirm only the new directory changed: `git status --short public/blog`.
 
+## 7b. Generate responsive variants — REQUIRED
+
+`/blog/*` is served raw: no `<Image>`, no CDN transform. Without variants a phone
+downloads the desktop original — measured at 375px, a 1200px cover in a 325px box and
+~3.2 MB of gallery on one article.
+
+```bash
+node scripts/gen-image-variants.mjs <slug>
+```
+
+It writes `-400/-800/-1200` files next to each original **and** updates
+`src/generated/blog-images.json`, which `src/lib/assets.ts` reads to build every srcset.
+Commit the manifest with the images. `npm test` fails if any published image is missing
+from it, so a forgotten run cannot ship.
+
+If it reports an image it could not read, that is usually macOS quarantine:
+`xattr -c <file>`, then re-run.
+
 ## 8. Gates
 
 ```bash

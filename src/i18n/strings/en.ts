@@ -284,6 +284,8 @@ export const en = {
   article: {
     back: 'Back to Newsroom',
     gallery: 'Gallery',
+    enlarge: 'Enlarge image',
+    closeImage: 'Close image',
     tags: 'Tags',
     shareStory: 'Share this story',
     shareHelp: 'Help raise awareness — share it with your network.',
