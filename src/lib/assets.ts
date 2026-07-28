@@ -1,3 +1,5 @@
+import { resolveSiteUrl, systemEnv } from './siteUrl';
+
 // Image URL resolution.
 // - In dev, the Astro proxy maps /uploads → :3001; /blog and /images are served
 //   from public/. In single-origin prod, everything is same-origin.
@@ -5,7 +7,7 @@
 //   served from a different origin.
 
 const UPLOADS_BASE = (import.meta.env.PUBLIC_API_URL ?? '').replace(/\/$/, '');
-const SITE = (import.meta.env.PUBLIC_SITE_URL ?? 'http://localhost:4321').replace(/\/$/, '');
+const SITE = resolveSiteUrl({ ...systemEnv(), PUBLIC_SITE_URL: import.meta.env.PUBLIC_SITE_URL });
 
 /** Resolve a stored image path for use in <img src>. Allow-list only — never
  *  pass through data:/blob:/javascript: (which could execute when rendered). */

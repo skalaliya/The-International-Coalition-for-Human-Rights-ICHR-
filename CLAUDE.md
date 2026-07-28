@@ -124,11 +124,13 @@ The cards are SVG rasterized through `sharp`. `sharp` will happily render Arabic
 | `DATABASE_URL_UNPOOLED` | Neon **direct** connection; `schema.prisma` `directUrl` |
 | `JWT_SECRET` | signs admin tokens (required; the app throws without it) |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | seeded admin credentials |
-| `PUBLIC_SITE_URL` | canonical/OG absolute base |
+| `PUBLIC_SITE_URL` | canonical/OG absolute base — **set on Vercel for Production and Development only, deliberately not for Preview** (see below) |
 | `PUBLIC_API_URL` | optional origin override for the admin client; empty = same-origin |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob (admin uploads); auto-set on Vercel |
 
 `.env` and `.env.local` are gitignored and must never be committed.
+
+**Do not add `PUBLIC_SITE_URL` to the Preview environment.** A preview's hostname changes per branch, so any fixed value would be wrong for every branch but one. `src/lib/siteUrl.ts` resolves the origin instead — `PUBLIC_SITE_URL` → (in production) `VERCEL_PROJECT_PRODUCTION_URL` → `VERCEL_BRANCH_URL` → `VERCEL_URL` → `http://localhost:4321` — and `astro.config.mjs`, `src/lib/site.ts` and `src/lib/assets.ts` all go through it, so `Astro.site` and `SITE_URL` cannot drift apart. This depends on **Project Settings → Environment Variables → “Enable access to System Environment Variables”** staying enabled; turn it off and previews silently fall back to localhost again. The symptom to watch for: a preview's `/sitemap.xml` listing `http://localhost:4321/...`, which is what it did before this resolver existed.
 
 ---
 

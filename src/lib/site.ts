@@ -1,5 +1,10 @@
 // Single source of truth for org identity + official social profiles.
-export const SITE_URL = (import.meta.env.PUBLIC_SITE_URL ?? 'http://localhost:4321').replace(/\/$/, '');
+import { resolveSiteUrl, systemEnv } from './siteUrl';
+
+export const SITE_URL = resolveSiteUrl({
+  ...systemEnv(),
+  PUBLIC_SITE_URL: import.meta.env.PUBLIC_SITE_URL,
+});
 
 export interface IconLink {
   name: string;
