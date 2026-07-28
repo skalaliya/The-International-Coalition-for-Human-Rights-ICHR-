@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { listAll } from '@/server/posts';
 import { verifyRequest, json, unauthorized } from '@/server/auth';
+import { errorResponse } from '@/server/http';
 
 export const prerender = false;
 
@@ -10,7 +11,6 @@ export const GET: APIRoute = async ({ request, url }) => {
   try {
     return json(await listAll(url.searchParams));
   } catch (e) {
-    console.error(e);
-    return json({ error: 'Failed to load posts' }, 500);
+    return errorResponse(e, 'list posts');
   }
 };

@@ -2,9 +2,13 @@ import { defineConfig } from 'astro/config';
 import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import { resolveSiteUrl } from './src/lib/siteUrl.ts';
 
 // Canonical absolute origin (no trailing slash) for canonical + OG URLs.
-const SITE = process.env.PUBLIC_SITE_URL || 'http://localhost:4321';
+// Same resolver the runtime uses, so `Astro.site` and SITE_URL can never
+// disagree. Matters most on Preview, where PUBLIC_SITE_URL is unset and this
+// used to hardcode localhost into the sitemap of every preview deploy.
+const SITE = resolveSiteUrl(process.env);
 
 export default defineConfig({
   site: SITE,

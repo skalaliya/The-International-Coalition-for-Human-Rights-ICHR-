@@ -81,6 +81,8 @@ English at the root, Arabic under `/ar` (RTL), French under `/fr`. Configured in
 
 **Route files are ~5-line wrappers.** `src/pages/index.astro`, `src/pages/ar/index.astro` and `src/pages/fr/index.astro` each render `<HomePage lang="…" />`. The actual page body lives once in `src/components/pages/*Page.astro`.
 
+**The exception: response control belongs to the route.** The three `news/[slug].astro` wrappers load the article themselves (`loadArticle` in `src/server/article.ts`) and set `Astro.response.status = 404` before rendering `<NotFoundPage>`. This is not decoration — `Astro.rewrite()` / `Astro.response.status` from inside a *component* renders into an already-sent response, which Astro reports as `ResponseSentError` and the adapter serves as the string "Internal server error" **with HTTP 200**. That was a live bug on every missing slug, every draft and every article during a DB outage. `src/lib/pageComponents.test.ts` fails the build if a page component starts controlling the response again.
+
 > To change a page's content, edit `src/components/pages/<X>Page.astro` — **not** the three route files.
 
 - UI strings: `src/i18n/strings/{en,ar,fr}.ts`. `en` is canonical; `export type Dict = typeof en` forces `ar` and `fr` to match, so a missing key is a **compile error**. Array lengths are *not* type-enforced — keep them equal by hand.
@@ -122,11 +124,13 @@ The cards are SVG rasterized through `sharp`. `sharp` will happily render Arabic
 | `DATABASE_URL_UNPOOLED` | Neon **direct** connection; `schema.prisma` `directUrl` |
 | `JWT_SECRET` | signs admin tokens (required; the app throws without it) |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | seeded admin credentials |
-| `PUBLIC_SITE_URL` | canonical/OG absolute base |
+| `PUBLIC_SITE_URL` | canonical/OG absolute base — **set on Vercel for Production and Development only, deliberately not for Preview** (see below) |
 | `PUBLIC_API_URL` | optional origin override for the admin client; empty = same-origin |
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob (admin uploads); auto-set on Vercel |
 
 `.env` and `.env.local` are gitignored and must never be committed.
+
+**Do not add `PUBLIC_SITE_URL` to the Preview environment.** A preview's hostname changes per branch, so any fixed value would be wrong for every branch but one. `src/lib/siteUrl.ts` resolves the origin instead — `PUBLIC_SITE_URL` → (in production) `VERCEL_PROJECT_PRODUCTION_URL` → `VERCEL_BRANCH_URL` → `VERCEL_URL` → `http://localhost:4321` — and `astro.config.mjs`, `src/lib/site.ts` and `src/lib/assets.ts` all go through it, so `Astro.site` and `SITE_URL` cannot drift apart. This depends on **Project Settings → Environment Variables → “Enable access to System Environment Variables”** staying enabled; turn it off and previews silently fall back to localhost again. The symptom to watch for: a preview's `/sitemap.xml` listing `http://localhost:4321/...`, which is what it did before this resolver existed.
 
 ---
 
@@ -141,13 +145,22 @@ Verified by audit. If a change would break one of these, it is wrong.
 - **Markdown is sanitized** (`src/lib/markdown.ts`): no `script`, no SVG, schemes limited to http/https/mailto, links forced to `rel="noopener noreferrer"`.
 - **Uploads** (`src/pages/api/content/posts/upload.ts`): auth + MIME allow-list + magic-byte sniff + 10 MB cap + server-generated filename. SVG rejected.
 - **Locale filtering is mandatory on every post query** — otherwise an article is served in the wrong language, or a draft leaks. Drafts 404.
-- **A DB outage degrades to a localized 404 / empty state, never a 500** (`src/lib/api.ts` wraps every query).
+- **A DB outage degrades to a localized 404 / empty state, never a 500** on *reader-facing* pages (`src/lib/api.ts` wraps every query; the article routes turn a null into a real 404). The **admin API is the opposite on purpose**: it returns 503 + `Retry-After`, never a 404, so an editor is never told a post was deleted when the database was merely unreachable (`src/lib/prismaErrorCodes.ts`, `src/server/http.ts`).
+- **Query params are clamped before they reach Prisma** (`src/lib/pagination.ts`). `Math.max(1, Number(x))` is not enough — `Number('abc')` is `NaN` and `Math.max(1, NaN)` is `NaN`, which reaches Prisma as `skip: NaN`, throws, and gets swallowed into an empty page.
 - `robots.txt` disallows `/admin`; the sitemap emits published-only, XML-escaped URLs.
 
 ### Known gaps (not yet fixed)
 
-- `POST /api/auth/login` has **no rate limiting**. The bcrypt dummy-hash timing defense is present.
-- The admin JWT is stored in `localStorage`, so it is readable by any script on the origin.
-- The CSP in `vercel.json` is `Content-Security-Policy-Report-Only` with `script-src 'unsafe-inline'` — it enforces nothing. Enforcing it means externalizing the inline scripts in `Header.astro`, `ShareButtons.astro` and `DonatePage.astro`; nonces don't work here because the marketing pages are prerendered and the CSP is a static header.
+- `POST /api/auth/login` has **no application-level rate limiting**. Handled at the edge instead, by the Vercel Firewall custom rule **“Login rate limit”** (project `ichr`, Firewall → Custom Rules): `Request Path Equals /api/auth/login` → fixed window, **5 requests / 60 s keyed on IP Address**, action **Too Many Requests (429)**. Verified live on production: the 11th request in a window answers 429. It is scoped by **path only, not method** — the dashboard ORs conditions inside a rule group, so adding `Request Method = POST` would have widened the rule to every POST on the site rather than narrowing it. Only `POST` is served at that path, so path-only is a strict superset with no legitimate traffic caught. The rule is metered: allowed matching requests bill at $0.50/1M, blocked ones are free. The bcrypt dummy-hash timing defence is real: `BCRYPT_COST` is shared by `login.ts` and `prisma/seed.mjs`, and `src/lib/bcryptCost.test.ts` fails the build if they drift (they did, once — cost 10 vs 12, a measured 154 ms username-enumeration oracle).
+- **The stored admin password hash is still at bcrypt cost 10, so the username-enumeration oracle is live in production — inverted.** `login.ts` is correct and symmetric, but `bcryptCost.test.ts` only proves the two *code* constants agree; it cannot see the row in Neon. That row was hashed before the cost bump, so the real-user branch compares against a cost-10 hash while a missing user compares against the cost-12 `DUMMY_HASH`. Measured against the preview deploy on real data, interleaved, n=12 each: existing username **371 ms**, unknown username **703 ms** — a stable **332 ms** gap that now identifies a valid username by being *faster*. Calibration on the same machine: cost 10 = 87 ms, cost 12 = 351 ms, delta 264 ms, which is the gap once scaled to Vercel's slower CPU. **Now self-healing in code**: `login.ts` re-hashes the stored password at `BCRYPT_COST` after a verified sign-in whenever the row's cost is lower (`needsRehash` in `src/lib/bcryptHash.ts`), so the first successful admin login closes the gap permanently and any future cost bump migrates itself. The upgrade is wrapped so it can never fail a valid login. Only ever upgrades — a stronger hash is left alone, so lowering `BCRYPT_COST` cannot weaken stored credentials.
+
+  To fix it immediately instead of waiting for a login: `RESET_ADMIN_PASSWORD=1 node --env-file=.env.local prisma/seed.mjs`. **That script already uses the Neon HTTPS driver** (`neon()` at `prisma/seed.mjs:60`), not `PrismaClient` on :5432 — an earlier note here claimed otherwise; no separate rotate script is needed. It re-hashes whatever `ADMIN_PASSWORD` is set to in `.env.local`, so **check that value first**: if it matches the current password this is a pure cost upgrade, and if it doesn't, it silently changes the admin password.
+
+  Verify the stored cost at any time (reads the prefix only, never the hash):
+
+  ```bash
+  node --env-file=.env.local -e "import('@neondatabase/serverless').then(async({neon})=>{const sql=neon(process.env.DATABASE_URL);for(const r of await sql.query('SELECT username, substring(password from 1 for 7) AS p FROM \"User\"'))console.log(r.username, r.p)})"
+  ```
+- The admin JWT is stored in `localStorage`, so it is readable by any script on the origin. A session expiry no longer loses work: any 401 stashes the draft in `sessionStorage` and restores it after re-login (`src/lib/draftStash.ts`).
+- The CSP in `vercel.json` is still `Content-Security-Policy-Report-Only` with `script-src 'unsafe-inline'` — it enforces nothing, but it now **reports** to `/api/csp-report`, so the report-only phase produces evidence. **What blocks enforcement is not our three inline scripts.** Astro emits its island bootstrap and the `astro-island` element definition inline on every page carrying an island: measured on a real build, 4 inline `<script>` tags on `/`, 3 on `/locations`, 2 on `/admin`, 1 even on `/about`. Turning on `script-src 'self'` breaks the WorldMap in all three locales and breaks `/admin` entirely. Also verified: **dropping `is:inline` does not externalize a script** — Astro re-inlines small bundled chunks (the `Header.astro` menu script comes back as a minified inline `type="module"`). Enforcing needs Astro's `experimental.csp` hashing, and the meta CSP it emits is ANDed with this header, so the header's `script-src` must be relaxed in the same change.
 - **The Donate, Contact and Volunteer forms are inert** — no `action`, no `fetch`, no endpoint. Submissions are silently discarded. This is known and deliberate for now; don't assume they work.
-- `apiClient.ts` requests `pageSize=100` but the server clamps to 50 and the admin has no pagination, so past 50 `Post` rows older posts vanish from `/admin`.

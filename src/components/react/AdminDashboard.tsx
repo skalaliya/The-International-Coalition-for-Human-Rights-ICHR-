@@ -8,6 +8,7 @@ import {
 import { api, getToken, clearToken, resolveAssetUrl, errMessage, ApiError } from './apiClient';
 import { POST_CATEGORIES, type Post, type PostInput, type PostCategory, type PostStatus } from '@/types';
 import { groupByStory, buildTranslationDraft, ADMIN_LOCALES, LOCALE_LABEL, type AdminLocale } from '@/lib/adminTranslations';
+import { stashDraft, takeStashedDraft } from '@/lib/draftStash';
 
 marked.setOptions({ gfm: true, breaks: false });
 
@@ -180,6 +181,9 @@ const StatusBadge: React.FC<{ status: PostStatus }> = ({ status }) => (
 export const AdminDashboard: React.FC = () => {
   const [authed, setAuthed] = useState<boolean>(() => !!getToken());
   const [posts, setPosts] = useState<Post[]>([]);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [listPage, setListPage] = useState(1);
+  const [totalListPages, setTotalListPages] = useState(1);
   const [loadingList, setLoadingList] = useState(false);
   const [view, setView] = useState<'list' | 'edit'>('list');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -193,25 +197,80 @@ export const AdminDashboard: React.FC = () => {
   const [translatingTo, setTranslatingTo] = useState<string | null>(null);
   const toast = useToasts();
 
-  const refreshList = useCallback(async () => {
-    setLoadingList(true);
-    try {
-      const data = await api.getAllPosts();
-      setPosts(data.items);
-    } catch (e) {
+  // Mirrors of the editor state, so the 401 handler can stash the CURRENT draft without
+  // taking draft/editingId as dependencies (which would rebuild every callback on each
+  // keystroke, and risk stashing a stale closure's copy).
+  const draftRef = React.useRef(draft);
+  const editingIdRef = React.useRef(editingId);
+  draftRef.current = draft;
+  editingIdRef.current = editingId;
+  // Which admin list page is showing, readable by refreshList without re-creating it.
+  const listPageRef = React.useRef(1);
+
+  // ONE place that reacts to an expired session. Previously only refreshList did, so a
+  // Save after the 2h token expiry cleared the token, toasted "session expired", and
+  // left the editor mounted with authed=true — every retry then went out with no
+  // Authorization header and the draft was unrecoverable. Now any 401/403 stashes the
+  // in-progress draft and drops to the login screen; signing back in restores it.
+  const handleError = useCallback(
+    (e: unknown, fallback?: string) => {
       if (e instanceof ApiError && (e.status === 401 || e.status === 403)) {
+        stashDraft(typeof window === 'undefined' ? null : window.sessionStorage, draftRef.current, editingIdRef.current);
         setAuthed(false);
-      } else {
-        toast.error(errMessage(e));
+        toast.error('Your session expired. Sign in again — your work has been kept.');
+        return;
       }
-    } finally {
-      setLoadingList(false);
-    }
-  }, [toast]);
+      toast.error(fallback ? `${fallback}: ${errMessage(e)}` : errMessage(e));
+    },
+    [toast],
+  );
+
+  const refreshList = useCallback(
+    async (page = listPageRef.current) => {
+      setLoadingList(true);
+      try {
+        const data = await api.getAllPosts(page);
+        // If a page empties out (everything on it was deleted), fall back a page rather
+        // than showing a blank list with no explanation.
+        if (data.items.length === 0 && page > 1) {
+          listPageRef.current = page - 1;
+          setListPage(page - 1);
+          const prev = await api.getAllPosts(page - 1);
+          setPosts(prev.items);
+          setTotalPosts(prev.total);
+          setTotalListPages(prev.totalPages);
+          return;
+        }
+        setPosts(data.items);
+        setTotalPosts(data.total);
+        setTotalListPages(data.totalPages);
+        listPageRef.current = data.page;
+        setListPage(data.page);
+      } catch (e) {
+        handleError(e);
+      } finally {
+        setLoadingList(false);
+      }
+    },
+    [handleError],
+  );
 
   useEffect(() => {
     if (authed) refreshList();
   }, [authed, refreshList]);
+
+  // Restore a draft stashed when the session expired, once, on sign-in.
+  useEffect(() => {
+    if (!authed || typeof window === 'undefined') return;
+    const stashed = takeStashedDraft<PostInput>(window.sessionStorage);
+    if (!stashed) return;
+    setDraft(stashed.draft);
+    setEditingId(stashed.editingId);
+    setSlugTouched(true); // never re-slugify a title the user already had
+    setHashtagText((stashed.draft.hashtags ?? []).join(', '));
+    setView('edit');
+    toast.success('Restored the draft you were working on.');
+  }, [authed, toast]);
 
   const logout = () => {
     clearToken();
@@ -290,7 +349,7 @@ export const AdminDashboard: React.FC = () => {
       setDraft((d) => ({ ...d, coverImageUrl: url }));
       toast.success('Cover image uploaded');
     } catch (e) {
-      toast.error(errMessage(e));
+      handleError(e);
     } finally {
       setCoverBusy(false);
     }
@@ -305,7 +364,7 @@ export const AdminDashboard: React.FC = () => {
       }
       toast.success('Gallery updated');
     } catch (e) {
-      toast.error(errMessage(e));
+      handleError(e);
     } finally {
       setGalleryBusy(false);
     }
@@ -362,7 +421,7 @@ export const AdminDashboard: React.FC = () => {
         }
         setErrors(mapped);
       }
-      toast.error(errMessage(e));
+      handleError(e);
     } finally {
       setSaving(false);
     }
@@ -375,7 +434,7 @@ export const AdminDashboard: React.FC = () => {
       toast.success(p.status === 'published' ? 'Moved to draft' : 'Published');
       await refreshList();
     } catch (e) {
-      toast.error(errMessage(e));
+      handleError(e);
     }
   };
 
@@ -386,7 +445,7 @@ export const AdminDashboard: React.FC = () => {
       toast.success('Post deleted');
       await refreshList();
     } catch (e) {
-      toast.error(errMessage(e));
+      handleError(e);
     }
   };
 
@@ -427,7 +486,12 @@ export const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Posts</h1>
-                <p className="text-sm text-slate-500">{posts.length} total</p>
+                {/* The real total, not posts.length — the list is one page of it, and a
+                    silently truncated list used to hide older posts entirely. */}
+                <p className="text-sm text-slate-500">
+                  {totalPosts} total
+                  {totalListPages > 1 && ` · showing ${posts.length} on page ${listPage} of ${totalListPages}`}
+                </p>
               </div>
               <button
                 onClick={openNew}
@@ -507,6 +571,28 @@ export const AdminDashboard: React.FC = () => {
                   );
                 })}
               </div>
+            )}
+
+            {totalListPages > 1 && (
+              <nav className="flex items-center justify-between mt-6" aria-label="Posts pagination">
+                <button
+                  onClick={() => refreshList(listPage - 1)}
+                  disabled={listPage <= 1 || loadingList}
+                  className="px-4 py-2 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 disabled:opacity-40 hover:bg-slate-50 transition-colors"
+                >
+                  ← Newer
+                </button>
+                <span className="text-sm text-slate-500">
+                  Page {listPage} of {totalListPages}
+                </span>
+                <button
+                  onClick={() => refreshList(listPage + 1)}
+                  disabled={listPage >= totalListPages || loadingList}
+                  className="px-4 py-2 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 disabled:opacity-40 hover:bg-slate-50 transition-colors"
+                >
+                  Older →
+                </button>
+              </nav>
             )}
           </section>
         ) : (

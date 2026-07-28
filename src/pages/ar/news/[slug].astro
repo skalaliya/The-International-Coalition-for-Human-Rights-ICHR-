@@ -1,5 +1,11 @@
 ---
 import ArticlePage from '@/components/pages/ArticlePage.astro';
+import NotFoundPage from '@/components/pages/NotFoundPage.astro';
+import { loadArticle } from '@/server/article';
+
+// See src/pages/news/[slug].astro — the 404 decision must stay in the route.
+const article = await loadArticle(Astro.params.slug, 'ar');
+if (!article) Astro.response.status = 404;
 ---
 
-<ArticlePage lang="ar" />
+{article ? <ArticlePage lang="ar" article={article} /> : <NotFoundPage lang="ar" />}

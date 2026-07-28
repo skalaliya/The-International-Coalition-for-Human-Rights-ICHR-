@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Section from '@/components/Section.astro';
 import Dateline from '@/components/Dateline.astro';
 import CategoryPill from '@/components/CategoryPill.astro';
-import { getPostBySlug, getPostTranslations } from '@/lib/api';
+import type { ArticleData } from '@/server/article';
 import { renderMarkdown } from '@/lib/markdown';
 import { resolveAssetUrl, absoluteUrl } from '@/lib/assets';
 import ShareButtons from '@/components/ShareButtons.astro';
@@ -14,17 +14,16 @@ import { useTranslations, localizeHref, LOCALES, type Locale, type Alternate } f
 
 interface Props {
   lang: Locale;
+  /** Loaded by the route wrapper under src/pages, never fetched here. */
+  article: ArticleData;
 }
-const { lang } = Astro.props;
+// This component renders a KNOWN-GOOD article. The missing/draft/DB-outage decision
+// belongs to the route: returning a Response or setting Astro.response.status from a
+// component renders into an already-sent response (ResponseSentError → a soft-200
+// "Internal server error"). Keep this file free of awaits and early returns.
+const { lang, article } = Astro.props;
+const { post, translations } = article;
 const t = useTranslations(lang);
-
-const { slug } = Astro.params;
-const post = slug ? await getPostBySlug(slug, lang) : null;
-
-// Drafts/missing → friendly localized 404 page WITH a 404 status.
-if (!post || post.status !== 'published') {
-  return Astro.rewrite(localizeHref('/404', lang));
-}
 
 const bodyHtml = renderMarkdown(post.body);
 const coverAbs = absoluteUrl(post.coverImageUrl);
@@ -32,7 +31,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 const L = (href: string) => localizeHref(href, lang);
 
 // Published translations of this story → language toggle + hreflang alternates.
-const translations = await getPostTranslations(post.translationKey);
 const byLocale = new Map(translations.map((tr) => [tr.locale, tr] as const));
 if (!byLocale.has(lang)) byLocale.set(lang, { locale: lang, slug: post.slug, title: post.title });
 const availableLocales = LOCALES.filter((l) => byLocale.has(l));

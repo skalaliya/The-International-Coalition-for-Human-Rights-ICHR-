@@ -21,6 +21,12 @@ import { randomUUID } from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import { neon } from '@neondatabase/serverless';
 
+// MUST equal BCRYPT_COST in src/pages/api/auth/login.ts. If the login route compares
+// against a dummy hash of a different cost, the "both branches take equal time" defence
+// stops working and response time reveals whether a username exists.
+// src/lib/bcryptCost.test.ts fails the build if these drift apart.
+const BCRYPT_COST = 12;
+
 const RESET = process.env.RESET_ADMIN_PASSWORD === '1';
 
 function maskedHost(url) {
@@ -52,7 +58,7 @@ async function main() {
   }
 
   const sql = neon(DB_URL);
-  const hashed = await bcrypt.hash(password, 12);
+  const hashed = await bcrypt.hash(password, BCRYPT_COST);
 
   if (RESET) {
     const updated = await sql.query(

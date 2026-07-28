@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getPublishedBySlug, updatePost, deletePost, updatePostSchema, isUniqueViolation } from '@/server/posts';
 import { verifyRequest, json, unauthorized } from '@/server/auth';
+import { errorResponse } from '@/server/http';
 
 export const prerender = false;
 
@@ -11,8 +12,7 @@ export const GET: APIRoute = async ({ params }) => {
     if (!post) return json({ error: 'Post not found' }, 404);
     return json(post);
   } catch (e) {
-    console.error(e);
-    return json({ error: 'Failed to load post' }, 500);
+    return errorResponse(e, 'load post by slug');
   }
 };
 
@@ -43,7 +43,13 @@ export const PATCH = update;
 // Admin: delete by id (gallery cascades).
 export const DELETE: APIRoute = async ({ request, params }) => {
   if (!verifyRequest(request)) return unauthorized();
-  const ok = await deletePost(params.key!);
-  if (!ok) return json({ error: 'Post not found' }, 404);
-  return json({ success: true });
+  try {
+    const ok = await deletePost(params.key!);
+    // false means the row is genuinely gone; an unreachable database throws, so an
+    // outage no longer reports as "already deleted".
+    if (!ok) return json({ error: 'Post not found' }, 404);
+    return json({ success: true });
+  } catch (e) {
+    return errorResponse(e, 'delete post');
+  }
 };

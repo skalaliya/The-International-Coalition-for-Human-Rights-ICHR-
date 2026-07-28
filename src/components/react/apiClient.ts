@@ -80,8 +80,13 @@ export const api = {
   logout() {
     clearToken();
   },
-  getAllPosts(): Promise<PaginatedPosts> {
-    return fetch(`${BASE}/api/content/admin/posts?pageSize=100`, { headers: authHeaders() }).then(handle);
+  // pageSize is capped at 50 server-side (clampPage in src/server/posts.ts). Asking for
+  // 100 didn't fetch 100 — it silently returned the 50 most recently updated posts, and
+  // the dashboard showed no sign that older ones existed.
+  getAllPosts(page = 1): Promise<PaginatedPosts> {
+    return fetch(`${BASE}/api/content/admin/posts?pageSize=50&page=${page}`, {
+      headers: authHeaders(),
+    }).then(handle);
   },
   createPost(input: PostInput): Promise<Post> {
     return fetch(`${BASE}/api/content/posts`, {
