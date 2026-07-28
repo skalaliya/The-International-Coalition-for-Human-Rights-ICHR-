@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { prisma } from '@/server/db';
 import { signToken, json } from '@/server/auth';
+import { needsRehash } from '@/lib/bcryptHash';
 
 export const prerender = false;
 
@@ -47,6 +48,22 @@ export const POST: APIRoute = async ({ request }) => {
     const user = await prisma.user.findUnique({ where: { username } });
     const ok = await bcrypt.compare(password, user?.password ?? DUMMY_HASH);
     if (!user || !ok) return json({ error: 'Invalid credentials' }, 401);
+
+    // Matching DUMMY_HASH's cost to BCRYPT_COST is not enough on its own: a row created
+    // before the cost was raised keeps its old, FASTER hash, and prisma/seed.mjs is
+    // create-only so it never fixes one. The production admin row was found at cost 10
+    // against a cost-12 dummy — the oracle survived, inverted, with a valid username
+    // answering ~2x faster. Upgrading in place after a verified sign-in self-heals it.
+    if (needsRehash(user.password, BCRYPT_COST)) {
+      try {
+        const upgraded = await bcrypt.hash(password, BCRYPT_COST);
+        await prisma.user.update({ where: { id: user.id }, data: { password: upgraded } });
+        console.log(`[auth] upgraded password hash for "${user.username}" to cost ${BCRYPT_COST}`);
+      } catch (e) {
+        // Never fail a valid sign-in over this — it retries on the next login.
+        console.error('[auth] password hash upgrade failed:', e);
+      }
+    }
 
     return json({ token: signToken({ id: user.id, username: user.username }) });
   } catch (e) {
