@@ -442,6 +442,15 @@ body {
   text-underline-offset: 2px;
 }
 
+/* A link alone in its own paragraph is a call to action, not prose — give it a real
+   44px tap target. Links inside a sentence are deliberately left alone: stretching
+   those would break the line rhythm, and WCAG 2.5.8 exempts inline text links. */
+.prose-article p > a:only-child {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 .prose-article a:hover {
   color: var(--color-primary);
 }
