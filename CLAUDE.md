@@ -134,6 +134,16 @@ The cards are SVG rasterized through `sharp`. `sharp` will happily render Arabic
 
 **Do not add `PUBLIC_SITE_URL` to the Preview environment.** A preview's hostname changes per branch, so any fixed value would be wrong for every branch but one. `src/lib/siteUrl.ts` resolves the origin instead — `PUBLIC_SITE_URL` → (in production) `VERCEL_PROJECT_PRODUCTION_URL` → `VERCEL_BRANCH_URL` → `VERCEL_URL` → `http://localhost:4321` — and `astro.config.mjs`, `src/lib/site.ts` and `src/lib/assets.ts` all go through it, so `Astro.site` and `SITE_URL` cannot drift apart. This depends on **Project Settings → Environment Variables → “Enable access to System Environment Variables”** staying enabled; turn it off and previews silently fall back to localhost again. The symptom to watch for: a preview's `/sitemap.xml` listing `http://localhost:4321/...`, which is what it did before this resolver existed.
 
+### A push to `main` can silently fail to deploy (observed once, 28 July 2026)
+
+Commit `5bc6361` was pushed at 09:49:53 UTC and Vercel never created a deployment for it — no build, no error, nothing. The pushes either side of it built within 3–5 seconds. Investigated and ruled out on 28–29 July: no `[skip ci]`/`[vercel skip]` marker; no `ignoreCommand` in `vercel.json`; **Ignored Build Step is "Automatic"** (dashboard-checked); "Skip deployments when there are no changes to the root directory" is **Disabled**; repo connection healthy; no classic repo webhook exists (the integration is the Vercel **GitHub App**, so delivery logs are visible to no one on our side); no Vercel status-page incident in the window. Conclusion: a transient dropped event at Vercel. The GitHub App's then-pending "Permission updates requested" flag was reviewed and **accepted 29 July 2026** — the one anomaly in the chain, now cleared.
+
+Operational consequences:
+
+- **Never assume a push deployed.** The publish-press-statement skill's gate — poll the live asset URLs for `200 image/jpeg` before seeding — is the defence that caught this; keep it.
+- **Recovery:** an empty commit re-fires the event — `git commit --allow-empty -m "chore: trigger deploy" && git push`. Deployment appears within seconds.
+- **Do not use `vercel --prod` from the CLI as the fallback**: it uploads the working directory, not the git tree, and `press/` (~60 MB of untracked source PDFs/originals) would ship. Add a `.vercelignore` covering `press/` first if the CLI path is ever needed.
+
 ---
 
 ## Security invariants — preserve these
