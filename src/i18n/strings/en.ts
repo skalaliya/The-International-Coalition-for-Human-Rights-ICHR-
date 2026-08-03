@@ -61,8 +61,7 @@ export const en = {
     skipToContent: 'Skip to main content',
     filterNews: 'Filter news by category',
     pagination: 'Pagination',
-    tags: 'Tags',
-  },
+    tags: 'Tags',  },
 
   footer: {
     blurb:
@@ -282,6 +281,11 @@ export const en = {
   },
 
   article: {
+    // Downloadable document (scripts/gen-attachments.mjs → src/lib/attachments.ts)
+    documentTitle: 'Full document',
+    documentDownload: 'Download PDF',
+    documentMegabytes: 'MB',
+    documentInLanguage: { en: 'in English', ar: 'in Arabic', fr: 'in French' },
     back: 'Back to Newsroom',
     gallery: 'Gallery',
     enlarge: 'Enlarge image',

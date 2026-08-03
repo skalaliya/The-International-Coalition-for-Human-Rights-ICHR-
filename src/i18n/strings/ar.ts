@@ -59,8 +59,7 @@ export const ar: Dict = {
     skipToContent: 'تخطَّ إلى المحتوى الرئيسي',
     filterNews: 'تصفية الأخبار حسب الفئة',
     pagination: 'ترقيم الصفحات',
-    tags: 'الوسوم',
-  },
+    tags: 'الوسوم',  },
 
   footer: {
     blurb:
@@ -280,6 +279,11 @@ export const ar: Dict = {
   },
 
   article: {
+    // المستند القابل للتنزيل
+    documentTitle: 'المستند الكامل',
+    documentDownload: 'تنزيل ملف PDF',
+    documentMegabytes: 'ميغابايت',
+    documentInLanguage: { en: 'بالإنجليزية', ar: 'بالعربية', fr: 'بالفرنسية' },
     back: 'العودة إلى غرفة الأخبار',
     gallery: 'معرض الصور',
     enlarge: 'تكبير الصورة',

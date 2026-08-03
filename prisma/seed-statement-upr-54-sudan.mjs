@@ -33,10 +33,12 @@ import { pathToFileURL } from 'node:url';
 import { publishStatement, envOpts } from './lib/press-statement.mjs';
 
 export const SLUG = 'upr-54th-session-procedural-bias-sudan-july-2026';
+// The joint submission PDF is no longer linked inline: it is committed at
+// public/blog/<slug>/upr-54-joint-submission.pdf and surfaced by the download card
+// (scripts/gen-attachments.mjs -> src/lib/attachments.ts -> ArticlePage.astro), so
+// every article offers its document the same way. Re-seed this story after changing it.
 // Minted once for this story. NEVER regenerate.
 export const TRANSLATION_KEY = '14538685-5b77-4445-9ba7-3042b6ab6c5a';
-
-const PDF_URL = `https://www.ichr-international.org/blog/${SLUG}/upr-54-joint-submission.pdf`;
 
 const EN_BODY = `The International Coalition of Human Rights Organizations (ICHRO) and Omnium des Libertés (ODL) have filed a joint stakeholder submission to the Working Group on the Universal Periodic Review ahead of its Fifty-Fourth Session (January–February 2027), for the fourth-cycle review of the Republic of the Sudan.
 
@@ -60,8 +62,6 @@ A further section addresses matters omitted from the Council's agenda: documente
 The submitting organizations call upon the Sudanese authorities and all parties to the conflict to ensure access for international human rights mechanisms; ensure independent investigations and accountability; protect civilians; guarantee humanitarian access; engage in a ceasefire and an inclusive peace process; strengthen follow-up to the Universal Periodic Review; restore civilian-led governance; and resume full cooperation with the International Criminal Court. They further recommend that any Human Rights Council resolution concerning the Sudan be comprehensive, balanced and fully reflective of the armed conflict.
 
 "The fourth review will constitute a defining test," the submission concludes: "either the universal periodic review confines itself to a formal exercise in which commitments are recorded and forgotten, or it becomes the framework within which the gap between the commitments of February 2022 and the reality of July 2026 is named, measured and redressed."
-
-[Read the full submission (PDF, 10 pages)](${PDF_URL})
 
 ---
 
@@ -95,8 +95,6 @@ const AR_BODY = `قدّم التحالف الدولي لمنظمات حقوق ا
 
 وتخلص المساهمة إلى أن «الاستعراض الرابع سيشكّل اختبارًا فاصلًا»: فإما أن يقتصر الاستعراض الدوري الشامل على ممارسة شكلية تُسجَّل فيها الالتزامات ثم تُنسى، وإما أن يصبح الإطار الذي تُسمّى فيه الفجوة بين التزامات شباط/فبراير 2022 وواقع تموز/يوليو 2026 وتُقاس وتُعالَج.
 
-[اقرأ المساهمة الكاملة (PDF، 10 صفحات)](${PDF_URL})
-
 ---
 
 **مقدَّمة من التحالف الدولي لمنظمات حقوق الإنسان (ICHRO) ومنظمة أومنيوم دي ليبرتيه (ODL)**
@@ -128,8 +126,6 @@ Une autre section porte sur des questions absentes de l'ordre du jour du Conseil
 Les organisations soumettantes appellent les autorités soudanaises et toutes les parties au conflit à garantir l'accès des mécanismes internationaux des droits de l'homme ; à assurer des enquêtes indépendantes et la reddition de comptes ; à protéger les civils ; à garantir l'accès humanitaire ; à s'engager dans un cessez-le-feu et un processus de paix inclusif ; à renforcer le suivi de l'Examen périodique universel ; à rétablir une gouvernance civile ; et à reprendre une pleine coopération avec la Cour pénale internationale. Elles recommandent en outre que toute résolution du Conseil des droits de l'homme concernant le Soudan soit globale, équilibrée et pleinement représentative du conflit armé.
 
 « Le quatrième examen constituera un test décisif », conclut la contribution : soit l'Examen périodique universel se limite à un exercice formel où les engagements sont consignés puis oubliés, soit il devient le cadre dans lequel l'écart entre les engagements de février 2022 et la réalité de juillet 2026 est nommé, mesuré et corrigé.
-
-[Lire la contribution intégrale (PDF, 10 pages)](${PDF_URL})
 
 ---
 

@@ -11,6 +11,8 @@ import ShareRail from '@/components/ShareRail.astro';
 import Lightbox from '@/components/Lightbox.astro';
 import LanguageSwitcher from '@/components/LanguageSwitcher.astro';
 import { ORG, SAME_AS, SITE_URL } from '@/lib/site';
+import attachmentsManifest from '@/generated/blog-attachments.json';
+import { attachmentFor, megabytes, showsLanguageNote } from '@/lib/attachments';
 import { useTranslations, localizeHref, LOCALES, type Locale, type Alternate } from '@/i18n';
 
 interface Props {
@@ -27,6 +29,8 @@ const { post, translations } = article;
 const t = useTranslations(lang);
 
 const bodyHtml = renderMarkdown(post.body);
+// The downloadable document for this story, if one is committed under public/blog/<slug>/.
+const doc = attachmentFor(attachmentsManifest, post.slug);
 const coverAbs = absoluteUrl(post.coverImageUrl);
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 const L = (href: string) => localizeHref(href, lang);
@@ -168,6 +172,43 @@ const jsonLd = {
           ))}
         </div>
         <Lightbox closeLabel={t.article.closeImage} hint={t.article.gallery} />
+      </Section>
+    )}
+
+    {doc && (
+      <Section width="prose" spacing="sm">
+        <a
+          href={doc.url}
+          download={`${post.slug}.pdf`}
+          type="application/pdf"
+          hreflang={doc.lang}
+          class="group flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm transition hover:border-[color:var(--color-gold)] hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-gold)]"
+        >
+          <span
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded bg-[#1a4a68]/10 text-[#1a4a68]"
+            aria-hidden="true"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <path d="M14 2v6h6" />
+              <path d="M12 12v5" />
+              <path d="m9.5 14.5 2.5-2.5 2.5 2.5" />
+            </svg>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-semibold text-slate-900">{t.article.documentTitle}</span>
+            <span class="block text-sm text-slate-500">
+              PDF · {megabytes(doc.bytes, lang)} {t.article.documentMegabytes}{
+                showsLanguageNote(doc.lang, lang)
+                  ? ` · ${t.article.documentInLanguage[doc.lang as Locale]}`
+                  : ''
+              }
+            </span>
+          </span>
+          <span class="shrink-0 text-sm font-semibold text-[#1a4a68] group-hover:underline">
+            {t.article.documentDownload}
+          </span>
+        </a>
       </Section>
     )}
 

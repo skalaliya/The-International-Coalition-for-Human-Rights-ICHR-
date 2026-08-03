@@ -59,8 +59,7 @@ export const fr: Dict = {
     skipToContent: 'Aller au contenu principal',
     filterNews: 'Filtrer les actualités par catégorie',
     pagination: 'Pagination',
-    tags: 'Étiquettes',
-  },
+    tags: 'Étiquettes',  },
 
   footer: {
     blurb:
@@ -280,6 +279,11 @@ export const fr: Dict = {
   },
 
   article: {
+    // Document téléchargeable
+    documentTitle: 'Document intégral',
+    documentDownload: 'Télécharger le PDF',
+    documentMegabytes: 'Mo',
+    documentInLanguage: { en: 'en anglais', ar: 'en arabe', fr: 'en français' },
     back: 'Retour à la salle de presse',
     gallery: 'Galerie',
     enlarge: "Agrandir l'image",
