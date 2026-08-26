@@ -66,7 +66,7 @@ Women are not only affected by these conflicts. They are also builders of peace,
 - **Ramon Rahangmetan** — Co-founder, Circle of Sustainable Europe
 - **Manel Msalmi** — President, EADM; Advisor on MENA Affairs, European Parliament
 - **Andy Vermaut** — Vice President, EADM; President, World Council for Public Diplomacy and Community Dialogue
-- **Abdel-Rahim Grein** — Representative, International Coalition for Human Rights
+- **Abderrahim Grein** — Representative, International Coalition for Human Rights
 - **Dr. Mohamed Ali** — International Coalition for Human Rights
 
 The event was previewed by panellist and journalist Andy Vermaut in the Belgian outlet *In de Gazette*: [Genève zet situatie van vrouwen in oorlog centraal](${SOURCE_URL}) (in Dutch).
@@ -80,7 +80,7 @@ Advancing Human Rights • Peace • Justice
 Geneva / Brussels / New York, 23 August 2026`;
 
 const EN_EXCERPT =
-  'The International Coalition for Human Rights is a co-organiser of "Women’s Condition and Violence in Wartime — Focus: The Sudan Crisis", a side event held at the Club Suisse de la Presse in Geneva on Tuesday 25 August 2026, 15:00–17:00. ICHR is represented on the panel by Abdel-Rahim Grein and Dr. Mohamed Ali.';
+  'The International Coalition for Human Rights is a co-organiser of "Women’s Condition and Violence in Wartime — Focus: The Sudan Crisis", a side event held at the Club Suisse de la Presse in Geneva on Tuesday 25 August 2026, 15:00–17:00. ICHR is represented on the panel by Abderrahim Grein and Dr. Mohamed Ali.';
 
 const AR_BODY = `يشارك **التحالف الدولي لحقوق الإنسان** في تنظيم فعالية جانبية بعنوان **«أوضاع النساء والعنف في زمن الحرب — تركيز: الأزمة السودانية»**، تُقام في النادي السويسري للصحافة بجنيف.
 
@@ -146,7 +146,7 @@ Les femmes ne sont pas seulement affectées par ces conflits. Elles sont aussi d
 - **Ramon Rahangmetan** — cofondateur, Circle of Sustainable Europe
 - **Manel Msalmi** — présidente de l'EADM ; conseillère pour les affaires MENA au Parlement européen
 - **Andy Vermaut** — vice-président de l'EADM ; président du World Council for Public Diplomacy and Community Dialogue
-- **Abdel-Rahim Grein** — représentant de la Coalition internationale pour les droits de l'homme
+- **Abderrahim Grein** — représentant de la Coalition internationale pour les droits de l'homme
 - **Dr Mohamed Ali** — Coalition internationale pour les droits de l'homme
 
 L'événement a fait l'objet d'une présentation par le panéliste et journaliste Andy Vermaut dans le média belge *In de Gazette* : [Genève zet situatie van vrouwen in oorlog centraal](${SOURCE_URL}) (en néerlandais).
@@ -160,7 +160,7 @@ Promouvoir les droits de l'homme • La paix • La justice
 Genève / Bruxelles / New York, le 23 août 2026`;
 
 const FR_EXCERPT =
-  "La Coalition internationale pour les droits de l'homme est coorganisatrice de « Women's Condition and Violence in Wartime — Focus: The Sudan Crisis », un événement parallèle qui se tient au Club Suisse de la Presse à Genève, le mardi 25 août 2026 de 15h00 à 17h00. La Coalition est représentée sur le panel par Abdel-Rahim Grein et le Dr Mohamed Ali.";
+  "La Coalition internationale pour les droits de l'homme est coorganisatrice de « Women's Condition and Violence in Wartime — Focus: The Sudan Crisis », un événement parallèle qui se tient au Club Suisse de la Presse à Genève, le mardi 25 août 2026 de 15h00 à 17h00. La Coalition est représentée sur le panel par Abderrahim Grein et le Dr Mohamed Ali.";
 
 // The event card is a photograph of the event banner (English-only) and the only
 // visual that exists for this event. It therefore appears on all three locales

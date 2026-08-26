@@ -168,6 +168,27 @@ PUBLISH=1 node --env-file=.env.local prisma/seed-statement-<name>.mjs
 Rollback drafts all three locales at once:
 `UNPUBLISH=1 node --env-file=.env.local prisma/seed-statement-<name>.mjs`
 
+### Correcting a story that is ALREADY published
+
+**`PUBLISH=1` does not write content. It only flips status.** On an article that is already
+published it is a no-op, and the live page will still show the old text while the run reports
+success.
+
+The content write is the **plain** seed run — its `ON CONFLICT` preserves the existing
+`published` status, so a correction goes live immediately without a status change:
+
+```bash
+node --env-file=.env.local prisma/seed-statement-<name>.mjs
+```
+
+Observed 26 August 2026 correcting the venue on the 23 August side-event article: the first
+`PUBLISH=1` run reported success and changed nothing (the grep for the wrong venue still
+returned 7 / 6 / 7 across the three locales). The plain run fixed it immediately.
+
+So: **new story → plain run (drafts), then `PUBLISH=1`. Existing story → plain run only.**
+And always verify with a grep against the live pages for a string that must no longer appear —
+not by trusting the script's exit code.
+
 ## 11. Verify live
 
 See `reference/verify-checklist.md`. In short: the `/news` card, the article in all three

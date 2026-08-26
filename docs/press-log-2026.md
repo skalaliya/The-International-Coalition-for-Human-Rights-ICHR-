@@ -51,6 +51,7 @@ Source folder numbering is receipt order, not publication order: `press-1` (16 J
 |---|---|---|---|---|---|---|
 | 03 Aug | Geneva | Statement | `condemnation-al-zawiya-ghara-north-darfur-august-2026` | `7a57f6f3…` | `AUG/press-6` | `48df8b1` |
 | 23 Aug | Geneva | **News** | `womens-condition-violence-wartime-geneva-august-2026` | `526df883…` | `AUG/press-8` | `8864ae1` |
+| 25 Aug | Geneva | Press Release | `civil-society-panel-women-sudan-geneva-august-2026` | `0e88f954…` | `AUG/press-9` | `76e007d` |
 
 `womens-condition-…` is the **first article in the `News` category**; its `/news` filter chip
 went live with it.
@@ -62,6 +63,8 @@ went live with it.
 | 23 Aug | `condemnation-shirshar-north-kordofan-july-2026` | PDF attached | `345c071` |
 | 23 Aug | `upr-54th-session-procedural-bias-sudan-july-2026` | inline PDF links → download card | `345c071` |
 | 23 Aug | `62nd-session-palais-des-nations-june-2026` | PDF attached | `a85c165` |
+| 26 Aug | `womens-condition-violence-wartime-geneva-august-2026` | **Factual correction** — the event was held at the Club Suisse de la Presse, not the Palais des Nations; co-organisers were ICHR, EADM, TYFA and Post Versa, not CAP; the panel was 5, not 8. Poster replaced with the real event card. No correction notice, by client decision. | `76e007d` |
+| 26 Aug | both August articles | Name normalised to **Abderrahim Grein** — house spelling chosen by the client over the source RTF's "Abdel-Rahim". | — |
 
 `345c071` also introduced the download card itself (`src/lib/attachments.ts`,
 `scripts/gen-attachments.mjs`, `src/generated/blog-attachments.json`). It is now the single
@@ -97,6 +100,10 @@ with magic-byte sniffing; adding PDF would widen that surface for no gain.
 - **Never chain a re-seed behind a gate with `&&`.** On 23 Aug an `&&` chain broke at
   `npm run check`; the push never ran but a re-seed on the same block did, briefly leaving a
   live article's PDF unreachable.
+- **`PUBLISH=1` does not write content — it only flips status.** To correct an
+  already-published article, run the seed **plain**; its `ON CONFLICT` keeps the published
+  status and writes the new text. A `PUBLISH=1` run on a live article reports success and
+  changes nothing. Observed 26 August 2026.
 - **Never assume a push deployed.** See the 28 July incident in `CLAUDE.md`. Poll the live
   asset URLs for `200` before seeding.
 
