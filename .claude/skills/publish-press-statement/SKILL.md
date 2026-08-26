@@ -170,24 +170,33 @@ Rollback drafts all three locales at once:
 
 ### Correcting a story that is ALREADY published
 
-**`PUBLISH=1` does not write content. It only flips status.** On an article that is already
-published it is a no-op, and the live page will still show the old text while the run reports
-success.
+The two runs do different jobs, and the axis is **content vs status** — not new vs existing:
 
-The content write is the **plain** seed run — its `ON CONFLICT` preserves the existing
-`published` status, so a correction goes live immediately without a status change:
+| Run | What it does |
+|---|---|
+| plain (`node … seed-….mjs`) | **Writes the text.** The only thing that ever does. Its `ON CONFLICT` preserves whatever status the row already has. |
+| `PUBLISH=1` | **Flips status draft → published. Never writes content.** |
+
+So the rule is: **every content change needs a plain run, always.** `PUBLISH=1` is needed
+*additionally*, and only when the article is not yet public.
+
+- **New story** → plain run (writes text as drafts), then `PUBLISH=1` (takes it live).
+- **Correction to a live story** → plain run only. It goes live the instant it lands, because
+  the row is already `published`.
+
+Do not read "already published, so skip the plain run" — that is the trap. `PUBLISH=1` on a
+live article reports success and changes nothing.
 
 ```bash
 node --env-file=.env.local prisma/seed-statement-<name>.mjs
 ```
 
 Observed 26 August 2026 correcting the venue on the 23 August side-event article: the first
-`PUBLISH=1` run reported success and changed nothing (the grep for the wrong venue still
-returned 7 / 6 / 7 across the three locales). The plain run fixed it immediately.
+`PUBLISH=1` run reported success and changed nothing — the grep for the wrong venue still
+returned 7 / 6 / 7 across the three locales. The plain run fixed it immediately.
 
-So: **new story → plain run (drafts), then `PUBLISH=1`. Existing story → plain run only.**
-And always verify with a grep against the live pages for a string that must no longer appear —
-not by trusting the script's exit code.
+**Always verify against the live pages with a grep for a string that must no longer appear.**
+The script's exit code cannot tell you whether the text changed.
 
 ## 11. Verify live
 

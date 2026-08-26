@@ -100,10 +100,12 @@ with magic-byte sniffing; adding PDF would widen that surface for no gain.
 - **Never chain a re-seed behind a gate with `&&`.** On 23 Aug an `&&` chain broke at
   `npm run check`; the push never ran but a re-seed on the same block did, briefly leaving a
   live article's PDF unreachable.
-- **`PUBLISH=1` does not write content — it only flips status.** To correct an
-  already-published article, run the seed **plain**; its `ON CONFLICT` keeps the published
-  status and writes the new text. A `PUBLISH=1` run on a live article reports success and
-  changes nothing. Observed 26 August 2026.
+- **The plain seed run is the only thing that writes text. `PUBLISH=1` only flips status
+  draft → published, and never writes content.** So every content change needs a plain run —
+  new story or correction alike; `PUBLISH=1` is needed additionally, and only when the article
+  is not yet public. A `PUBLISH=1` run on a live article reports success and changes nothing.
+  Observed 26 August 2026. Verify corrections by grepping the live pages for a string that
+  must no longer appear, never by the script's exit code.
 - **Never assume a push deployed.** See the 28 July incident in `CLAUDE.md`. Poll the live
   asset URLs for `200` before seeding.
 
