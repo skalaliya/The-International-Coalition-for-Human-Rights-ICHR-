@@ -1,20 +1,30 @@
-// Advance notice: ICHR co-organises the side event
+// ICHR co-organises the side event
 // "Women's Condition and Violence in Wartime — Focus: The Sudan Crisis"
-// at the Palais des Nations, Geneva, on 25 August 2026.
+// at the Club Suisse de la Presse, Geneva, on 25 August 2026.
 //
 // This is the first article on the site in the `News` category. It is an
-// EVENT ANNOUNCEMENT, not an ICHR statement — the copy is ICHR's own, written
-// from the official CAP poster. It deliberately does NOT translate or reproduce
-// the In de Gazette article, which is Andy Vermaut's copyright; that piece is
-// credited and linked at the foot of each locale instead.
+// EVENT ANNOUNCEMENT, not an ICHR statement — the copy is ICHR's own. It
+// deliberately does NOT translate or reproduce the In de Gazette article, which
+// is Andy Vermaut's copyright; that piece is credited and linked at the foot of
+// each locale instead.
 //
-// Two things were corrected against the source, on purpose:
-//   1. The CAP poster names ICHR twice, differently, and neither matches our own
-//      name: "International Coalition OF Human Rights" (Grein) and "International
-//      Coalition of Human Rights ORGANIZATIONS" (Dr. Ali). The body uses our real
-//      name throughout. The poster itself is published unaltered.
-//   2. In de Gazette is not independent coverage — Andy Vermaut wrote it AND sits
+// CORRECTION (26 August 2026, after the event). This article was first published
+// on 23 August from the In de Gazette preview and the CAP poster, which put the
+// event at Room VIII, Palais des Nations, convened by CAP Liberté de Conscience.
+// The event moved after that preview: photographs from the day (press-9) show it
+// was held at the Club Suisse de la Presse, Domaine de Penthes, with no CAP
+// branding on the banner, co-organised by ICHR, EADM, The Youth Future Alliance
+// and Post Versa, and a five-person panel (Valle, Wachsmuth and Thierrée did not
+// take part). Venue, co-organisers, panel, the gallery image (the CAP poster is
+// replaced by the real event card) and all three cover standfirsts were corrected
+// in place — same SLUG and TRANSLATION_KEY — at the client's decision, with no
+// on-page correction notice.
+//
+// Two notes carried over from the first cut:
+//   1. In de Gazette is not independent coverage — Andy Vermaut wrote it AND sits
 //      on the panel. The credit line says so rather than calling it press coverage.
+//   2. The body uses ICHR's real name throughout, not the two variants the CAP
+//      poster carried.
 //
 //   DRY_RUN=1   node --env-file=.env.local prisma/seed-event-womens-condition-geneva.mjs
 //               node --env-file=.env.local prisma/seed-event-womens-condition-geneva.mjs   # draft
@@ -32,15 +42,14 @@ export const TRANSLATION_KEY = '526df883-538b-4141-aaa4-64336577f4ef';
 
 const SOURCE_URL = 'https://www.indegazette.be/geneve-zet-situatie-van-vrouwen-in-oorlog-centraal/';
 
-const EN_BODY = `The **International Coalition for Human Rights** is a co-organiser of **"Women's Condition and Violence in Wartime — Focus: The Sudan Crisis"**, a side event convened by CAP Liberté de Conscience at the Palais des Nations in Geneva.
+const EN_BODY = `The **International Coalition for Human Rights** is a co-organiser of **"Women's Condition and Violence in Wartime — Focus: The Sudan Crisis"**, a side event held at the Club Suisse de la Presse in Geneva.
 
 ## Event details
 
 - **Date:** Tuesday, 25 August 2026
 - **Time:** 15:00 – 17:00
-- **Venue:** Room VIII, Palais des Nations, Geneva
-- **Convened by:** CAP Liberté de Conscience
-- **Co-organised by:** the International Coalition for Human Rights and the European Association for the Defence of Minorities
+- **Venue:** Club Suisse de la Presse, Domaine de Penthes, Chemin de l'Impératrice 18, Geneva
+- **Co-organised by:** the International Coalition for Human Rights, the European Association for the Defence of Minorities, The Youth Future Alliance and Post Versa
 
 ## What the panel will examine
 
@@ -54,14 +63,11 @@ Women are not only affected by these conflicts. They are also builders of peace,
 
 ## Panel
 
-- **Thierry Valle** — President, CAP Liberté de Conscience
-- **Isabelle Wachsmuth** — Project Manager, World Health Organization
-- **Sarah Thierrée** — Psychologist, IPC expert on torture and institutional violence
-- **Andy Vermaut** — Founder and President, Postversa; journalist
-- **Manel Msalmi** — Founder and President, European Association for the Defence of Minorities
-- **Ramon Rahangmetan** — Co-Founder, Circle for Sustainable Europe
-- **Abderrahim Grein** — Representative, International Coalition for Human Rights
-- **Dr. Mohamed Ali** — Director of International Relations, International Coalition for Human Rights
+- **Ramon Rahangmetan** — Co-founder, Circle of Sustainable Europe
+- **Manel Msalmi** — President, EADM; Advisor on MENA Affairs, European Parliament
+- **Andy Vermaut** — Vice President, EADM; President, World Council for Public Diplomacy and Community Dialogue
+- **Abdel-Rahim Grein** — Representative, International Coalition for Human Rights
+- **Dr. Mohamed Ali** — International Coalition for Human Rights
 
 The event was previewed by panellist and journalist Andy Vermaut in the Belgian outlet *In de Gazette*: [Genève zet situatie van vrouwen in oorlog centraal](${SOURCE_URL}) (in Dutch).
 
@@ -74,17 +80,16 @@ Advancing Human Rights • Peace • Justice
 Geneva / Brussels / New York, 23 August 2026`;
 
 const EN_EXCERPT =
-  'The International Coalition for Human Rights is a co-organiser of "Women’s Condition and Violence in Wartime — Focus: The Sudan Crisis", a side event convened by CAP Liberté de Conscience at the Palais des Nations in Geneva on Tuesday 25 August 2026, 15:00–17:00, in Room VIII. ICHR is represented on the panel by Abderrahim Grein and Dr. Mohamed Ali.';
+  'The International Coalition for Human Rights is a co-organiser of "Women’s Condition and Violence in Wartime — Focus: The Sudan Crisis", a side event held at the Club Suisse de la Presse in Geneva on Tuesday 25 August 2026, 15:00–17:00. ICHR is represented on the panel by Abdel-Rahim Grein and Dr. Mohamed Ali.';
 
-const AR_BODY = `يشارك **التحالف الدولي لحقوق الإنسان** في تنظيم فعالية جانبية بعنوان **«أوضاع النساء والعنف في زمن الحرب — تركيز: الأزمة السودانية»**، تعقدها منظمة CAP Liberté de Conscience في قصر الأمم بجنيف.
+const AR_BODY = `يشارك **التحالف الدولي لحقوق الإنسان** في تنظيم فعالية جانبية بعنوان **«أوضاع النساء والعنف في زمن الحرب — تركيز: الأزمة السودانية»**، تُقام في النادي السويسري للصحافة بجنيف.
 
 ## تفاصيل الفعالية
 
 - **التاريخ:** الثلاثاء 25 أغسطس 2026
 - **التوقيت:** 15:00 – 17:00
-- **المكان:** القاعة الثامنة، قصر الأمم، جنيف
-- **الجهة المنظِّمة:** CAP Liberté de Conscience
-- **بالاشتراك مع:** التحالف الدولي لحقوق الإنسان والرابطة الأوروبية للدفاع عن الأقليات
+- **المكان:** النادي السويسري للصحافة، دومين دو بانت، شومان دو ليمبيراتريس 18، جنيف
+- **بتنظيم مشترك من:** التحالف الدولي لحقوق الإنسان والرابطة الأوروبية للدفاع عن الأقليات وتحالف مستقبل الشباب وPost Versa
 
 ## محاور النقاش
 
@@ -98,14 +103,11 @@ const AR_BODY = `يشارك **التحالف الدولي لحقوق الإنس�
 
 ## المتحدثون
 
-- **تييري فال** — رئيس منظمة CAP Liberté de Conscience
-- **إيزابيل فاكسموت** — مديرة مشاريع، منظمة الصحة العالمية
-- **سارة تييريه** — أخصائية نفسية، خبيرة في التعذيب والعنف المؤسسي
-- **آندي فيرمو** — مؤسس ورئيس Postversa، وصحفي
-- **مانيل مسلمي** — مؤسِّسة ورئيسة الرابطة الأوروبية للدفاع عن الأقليات
-- **رامون راهانغميتان** — شريك مؤسِّس، Circle for Sustainable Europe
+- **رامون راهانغميتان** — شريك مؤسِّس، Circle of Sustainable Europe
+- **مانيل مسلمي** — رئيسة الرابطة الأوروبية للدفاع عن الأقليات؛ مستشارة لشؤون الشرق الأوسط وشمال أفريقيا في البرلمان الأوروبي
+- **آندي فيرمو** — نائب رئيس الرابطة الأوروبية للدفاع عن الأقليات؛ رئيس المجلس العالمي للدبلوماسية العامة والحوار المجتمعي
 - **عبد الرحيم قرين** — ممثل التحالف الدولي لحقوق الإنسان
-- **الدكتور محمد علي** — مدير العلاقات الدولية، التحالف الدولي لحقوق الإنسان
+- **الدكتور محمد علي** — التحالف الدولي لحقوق الإنسان
 
 وقد نشر عضو حلقة النقاش والصحفي آندي فيرمو عرضًا تمهيديًا للفعالية في الصحيفة البلجيكية *In de Gazette*: [Genève zet situatie van vrouwen in oorlog centraal](${SOURCE_URL}) (بالهولندية).
 
@@ -118,17 +120,16 @@ const AR_BODY = `يشارك **التحالف الدولي لحقوق الإنس�
 جنيف، بروكسل، نيويورك، 23 أغسطس 2026`;
 
 const AR_EXCERPT =
-  'يشارك التحالف الدولي لحقوق الإنسان في تنظيم فعالية جانبية بعنوان «أوضاع النساء والعنف في زمن الحرب — تركيز: الأزمة السودانية»، تعقدها منظمة CAP Liberté de Conscience في قصر الأمم بجنيف يوم الثلاثاء 25 أغسطس 2026، من الساعة 15:00 إلى 17:00 في القاعة الثامنة. ويمثّل التحالف في حلقة النقاش عبد الرحيم قرين والدكتور محمد علي.';
+  'يشارك التحالف الدولي لحقوق الإنسان في تنظيم فعالية جانبية بعنوان «أوضاع النساء والعنف في زمن الحرب — تركيز: الأزمة السودانية»، تُقام في النادي السويسري للصحافة بجنيف يوم الثلاثاء 25 أغسطس 2026، من الساعة 15:00 إلى 17:00. ويمثّل التحالف في حلقة النقاش عبد الرحيم قرين والدكتور محمد علي.';
 
-const FR_BODY = `La **Coalition internationale pour les droits de l'homme** est coorganisatrice de **« Women's Condition and Violence in Wartime — Focus: The Sudan Crisis »**, un événement parallèle organisé par CAP Liberté de Conscience au Palais des Nations à Genève.
+const FR_BODY = `La **Coalition internationale pour les droits de l'homme** est coorganisatrice de **« Women's Condition and Violence in Wartime — Focus: The Sudan Crisis »**, un événement parallèle qui se tient au Club Suisse de la Presse à Genève.
 
 ## Informations pratiques
 
 - **Date :** mardi 25 août 2026
 - **Horaire :** 15h00 – 17h00
-- **Lieu :** salle VIII, Palais des Nations, Genève
-- **À l'initiative de :** CAP Liberté de Conscience
-- **Coorganisé par :** la Coalition internationale pour les droits de l'homme et l'Association européenne pour la défense des minorités
+- **Lieu :** Club Suisse de la Presse, Domaine de Penthes, chemin de l'Impératrice 18, Genève
+- **Coorganisé par :** la Coalition internationale pour les droits de l'homme, l'Association européenne pour la défense des minorités, The Youth Future Alliance et Post Versa
 
 ## Les thèmes de la table ronde
 
@@ -142,14 +143,11 @@ Les femmes ne sont pas seulement affectées par ces conflits. Elles sont aussi d
 
 ## Intervenants
 
-- **Thierry Valle** — président, CAP Liberté de Conscience
-- **Isabelle Wachsmuth** — cheffe de projet, Organisation mondiale de la santé
-- **Sarah Thierrée** — psychologue, experte IPC en torture et violences institutionnelles
-- **Andy Vermaut** — fondateur et président de Postversa ; journaliste
-- **Manel Msalmi** — fondatrice et présidente de l'Association européenne pour la défense des minorités
-- **Ramon Rahangmetan** — cofondateur, Circle for Sustainable Europe
-- **Abderrahim Grein** — représentant de la Coalition internationale pour les droits de l'homme
-- **Dr Mohamed Ali** — directeur des relations internationales, Coalition internationale pour les droits de l'homme
+- **Ramon Rahangmetan** — cofondateur, Circle of Sustainable Europe
+- **Manel Msalmi** — présidente de l'EADM ; conseillère pour les affaires MENA au Parlement européen
+- **Andy Vermaut** — vice-président de l'EADM ; président du World Council for Public Diplomacy and Community Dialogue
+- **Abdel-Rahim Grein** — représentant de la Coalition internationale pour les droits de l'homme
+- **Dr Mohamed Ali** — Coalition internationale pour les droits de l'homme
 
 L'événement a fait l'objet d'une présentation par le panéliste et journaliste Andy Vermaut dans le média belge *In de Gazette* : [Genève zet situatie van vrouwen in oorlog centraal](${SOURCE_URL}) (en néerlandais).
 
@@ -162,12 +160,12 @@ Promouvoir les droits de l'homme • La paix • La justice
 Genève / Bruxelles / New York, le 23 août 2026`;
 
 const FR_EXCERPT =
-  "La Coalition internationale pour les droits de l'homme est coorganisatrice de « Women's Condition and Violence in Wartime — Focus: The Sudan Crisis », un événement parallèle organisé par CAP Liberté de Conscience au Palais des Nations à Genève, le mardi 25 août 2026 de 15h00 à 17h00, en salle VIII. La Coalition est représentée sur le panel par Abderrahim Grein et le Dr Mohamed Ali.";
+  "La Coalition internationale pour les droits de l'homme est coorganisatrice de « Women's Condition and Violence in Wartime — Focus: The Sudan Crisis », un événement parallèle qui se tient au Club Suisse de la Presse à Genève, le mardi 25 août 2026 de 15h00 à 17h00. La Coalition est représentée sur le panel par Abdel-Rahim Grein et le Dr Mohamed Ali.";
 
-// The official CAP poster is English-only artwork and the only visual that exists
-// for this event. It therefore appears on all three locales rather than the English
-// row alone; the caption is written in the page language.
-const POSTER = `/blog/${SLUG}/poster.jpg`;
+// The event card is a photograph of the event banner (English-only) and the only
+// visual that exists for this event. It therefore appears on all three locales
+// rather than the English row alone; the caption is written in the page language.
+const POSTER = `/blog/${SLUG}/event-card.jpg`;
 
 export const STATEMENT = {
   slug: SLUG,
@@ -179,7 +177,7 @@ export const STATEMENT = {
     {
       locale: 'en',
       title:
-        "ICHR Co-Organises a Palais des Nations Side Event on Women's Condition and Violence in Wartime",
+        "ICHR Co-Organises a Geneva Side Event on Women's Condition and Violence in Wartime",
       excerpt: EN_EXCERPT,
       body: EN_BODY,
       location: 'Geneva',
@@ -189,7 +187,7 @@ export const STATEMENT = {
         {
           url: POSTER,
           caption:
-            "Official poster for the side event “Women's Condition and Violence in Wartime — Focus: The Sudan Crisis”, convened by CAP Liberté de Conscience with the International Coalition for Human Rights and the European Association for the Defence of Minorities. Room VIII, Palais des Nations, Geneva, 25 August 2026, 15:00–17:00.",
+            "Event card for the side event “Women's Condition and Violence in Wartime — Focus: The Sudan Crisis”, co-organised by the International Coalition for Human Rights, the European Association for the Defence of Minorities, The Youth Future Alliance and Post Versa. Club Suisse de la Presse, Domaine de Penthes, Geneva, 25 August 2026, 15:00–17:00.",
           order: 0,
         },
       ],
@@ -197,7 +195,7 @@ export const STATEMENT = {
     {
       locale: 'ar',
       title:
-        'التحالف الدولي لحقوق الإنسان يشارك في تنظيم فعالية جانبية في قصر الأمم حول أوضاع النساء والعنف في زمن الحرب',
+        'التحالف الدولي لحقوق الإنسان يشارك في تنظيم فعالية جانبية في جنيف حول أوضاع النساء والعنف في زمن الحرب',
       excerpt: AR_EXCERPT,
       body: AR_BODY,
       location: 'جنيف',
@@ -207,7 +205,7 @@ export const STATEMENT = {
         {
           url: POSTER,
           caption:
-            'الملصق الرسمي للفعالية الجانبية «أوضاع النساء والعنف في زمن الحرب — تركيز: الأزمة السودانية»، التي تعقدها منظمة CAP Liberté de Conscience بالاشتراك مع التحالف الدولي لحقوق الإنسان والرابطة الأوروبية للدفاع عن الأقليات. القاعة الثامنة، قصر الأمم، جنيف، 25 أغسطس 2026، من 15:00 إلى 17:00. (الملصق بالإنجليزية.)',
+            'بطاقة الفعالية الجانبية «أوضاع النساء والعنف في زمن الحرب — تركيز: الأزمة السودانية»، التي ينظّمها بالاشتراك التحالف الدولي لحقوق الإنسان والرابطة الأوروبية للدفاع عن الأقليات وتحالف مستقبل الشباب وPost Versa. النادي السويسري للصحافة، دومين دو بانت، جنيف، 25 أغسطس 2026، من 15:00 إلى 17:00. (البطاقة بالإنجليزية.)',
           order: 0,
         },
       ],
@@ -215,7 +213,7 @@ export const STATEMENT = {
     {
       locale: 'fr',
       title:
-        "L'ICHR coorganise au Palais des Nations un événement parallèle sur la condition des femmes et les violences en temps de guerre",
+        "L'ICHR coorganise à Genève un événement parallèle sur la condition des femmes et les violences en temps de guerre",
       excerpt: FR_EXCERPT,
       body: FR_BODY,
       location: 'Genève',
@@ -225,7 +223,7 @@ export const STATEMENT = {
         {
           url: POSTER,
           caption:
-            "Affiche officielle de l'événement parallèle « Women's Condition and Violence in Wartime — Focus: The Sudan Crisis », organisé par CAP Liberté de Conscience avec la Coalition internationale pour les droits de l'homme et l'Association européenne pour la défense des minorités. Salle VIII, Palais des Nations, Genève, 25 août 2026, 15h00–17h00. (Affiche en anglais.)",
+            "Carte de l'événement parallèle « Women's Condition and Violence in Wartime — Focus: The Sudan Crisis », coorganisé par la Coalition internationale pour les droits de l'homme, l'Association européenne pour la défense des minorités, The Youth Future Alliance et Post Versa. Club Suisse de la Presse, Domaine de Penthes, Genève, 25 août 2026, 15h00–17h00. (Carte en anglais.)",
           order: 0,
         },
       ],
@@ -247,7 +245,7 @@ export const COVERS = {
     headSize: 58,
     headLh: 78,
     headTop: 452,
-    standfirst: ['Palais des Nations, Geneva, 25 August 2026'],
+    standfirst: ['Club Suisse de la Presse, Geneva, 25 August 2026'],
     city: 'Geneva',
     date: '23 AUGUST 2026',
     chipW: 248,
@@ -262,7 +260,7 @@ export const COVERS = {
     headSize: 54,
     headLh: 74,
     headTop: 452,
-    standfirst: ['Palais des Nations, Genève, 25 août 2026'],
+    standfirst: ['Club Suisse de la Presse, Genève, 25 août 2026'],
     city: 'Genève',
     date: '23 AOÛT 2026',
     chipW: 248,
@@ -277,7 +275,7 @@ export const COVERS = {
     headSize: 56,
     headLh: 88,
     headTop: 468,
-    standfirst: ['قصر الأمم، جنيف، 25 أغسطس 2026'],
+    standfirst: ['النادي السويسري للصحافة، جنيف، 25 أغسطس 2026'],
     city: 'جنيف',
     date: '23 أغسطس 2026',
     chipW: 240,
