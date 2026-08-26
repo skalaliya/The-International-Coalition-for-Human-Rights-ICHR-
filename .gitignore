@@ -28,3 +28,9 @@ dist-ssr
 *.sln
 *.sw?
 .env*.local
+
+# Algorythmos business documents (private — never commit)
+algorythmos/
+
+# Press source material (originals, cards, supplied PDFs — never commit, ~140 MB)
+press/
