@@ -65,6 +65,7 @@ went live with it.
 | 23 Aug | `62nd-session-palais-des-nations-june-2026` | PDF attached | `a85c165` |
 | 26 Aug | `womens-condition-violence-wartime-geneva-august-2026` | **Factual correction** — the event was held at the Club Suisse de la Presse, not the Palais des Nations; co-organisers were ICHR, EADM, TYFA and Post Versa, not CAP; the panel was 5, not 8. Poster replaced with the real event card. No correction notice, by client decision. | `76e007d` |
 | 26 Aug | both August articles | Name normalised to **Abderrahim Grein** — house spelling chosen by the client over the source RTF's "Abdel-Rahim". | — |
+| 27 Aug | `civil-society-panel-women-sudan-geneva-august-2026` | **Retraction** — the UN Fact-Finding Mission "indicators of genocidal intent" paragraph removed from all three locales, per the client's polished source. Designed cards (card-1 … card-5) replace the generated covers and the photo gallery; card-1 is now the hero on all three locales; `statement.en.pdf` (1,286,066 B) attached. | `a8fe027` |
 
 `345c071` also introduced the download card itself (`src/lib/attachments.ts`,
 `scripts/gen-attachments.mjs`, `src/generated/blog-attachments.json`). It is now the single
@@ -80,13 +81,15 @@ convention for attached documents — no inline markdown PDF links anywhere in t
 | Shirshar | `statement.en.pdf` | 1,223,980 |
 | Al-Zawiya Ghara | `statement.en.pdf` | 1,090,633 |
 | UPR-54 | `upr-54-joint-submission.pdf` | 5,768,269 |
+| Geneva civil-society panel | `statement.en.pdf` | 1,286,066 |
 
 Language comes from the `<name>.<lang>.pdf` filename suffix, so no hand-maintained map can
 drift. A document whose language differs from the page shows an "in English" note.
 
 The 62nd-session PDF was rebuilt from 4.12 MB to 1.84 MB with **page 2's text layer spliced
 through untouched** (1,472 characters). If it is ever regenerated, verify with `pdftotext`
-before shipping. Shirshar and Al-Zawiya Ghara had no text layer and were rebuilt flat.
+before shipping. Shirshar and Al-Zawiya Ghara had no text layer and were rebuilt flat. So was the Geneva
+panel PDF: 8.63 MB of five flattened pages rebuilt to 1.23 MB.
 
 PDFs are **seed-only and never admin-uploadable.** The upload route has a raster allow-list
 with magic-byte sniffing; adding PDF would widen that surface for no gain.

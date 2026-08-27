@@ -122,6 +122,33 @@ from it, so a forgotten run cannot ship.
 If it reports an image it could not read, that is usually macOS quarantine:
 `xattr -c <file>`, then re-run.
 
+## 7c. Rebuilding a supplied PDF
+
+Client PDFs arrive as flattened pictures far larger than they need to be. Check for a text
+layer before deciding:
+
+```bash
+python3 -c "import pypdf;r=pypdf.PdfReader('<file>');print(len(r.pages),'pages,',len(''.join((p.extract_text() or '') for p in r.pages).strip()),'chars')"
+```
+
+- **Zero characters** → five flattened pictures. Rebuild from the published 1600px cards.
+  press-5 went 7.75 → 1.22 MB, press-6 6.66 → 1.09 MB, press-9 8.63 → 1.23 MB.
+- **Real text layer** → rebuild only the picture pages and **splice the text page through
+  untouched**. The 62nd-session PDF has 1,472 characters on page 2; ghostscript alone only
+  reached 3.42 MB, so pages 1/3/4 were rebuilt and page 2 passed through: 4.12 → 1.84 MB.
+  Verify with `pdftotext` before shipping.
+
+Name it `<name>.<lang>.pdf` — `scripts/gen-attachments.mjs` reads the language off that suffix
+and the download card appears with no code change.
+
+**Homebrew Python on this machine is PEP-668 externally-managed**, so a bare
+`pip install Pillow` fails with `error: externally-managed-environment`. Use a throwaway venv
+rather than `--break-system-packages`, and keep it out of the repo:
+
+```bash
+python3 -m venv /tmp/ichr-pdf && /tmp/ichr-pdf/bin/pip -q install Pillow && /tmp/ichr-pdf/bin/python <script>
+```
+
 ## 8. Gates
 
 ```bash
