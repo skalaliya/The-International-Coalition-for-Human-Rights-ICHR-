@@ -9,6 +9,25 @@
 // banner. The 23 August announcement was corrected to match — see
 // seed-event-womens-condition-geneva.mjs.
 //
+// UPDATE 27 August 2026 — press-9/polished-content supersedes press-9/content.rtf.
+//   * RETRACTION. The polished source DELETES the "International Determinations" paragraph
+//     — the one attributing "indicators of genocidal intent" in Darfur and Kordofan to the UN
+//     International Fact-Finding Mission. It was live in all three locales from 26 August and
+//     has been removed. This is deliberate, not a truncation: the revised RTF and the five
+//     independently-produced designed cards both omit it, the cut lands exactly on a paragraph
+//     boundary, and NOTHING else in the text changed — not one of the source's typos was fixed.
+//     Client confirmed 27 August. Do not reinstate it from content.rtf.
+//   * The hero is now supplied artwork, card-1.jpg (P1), on all three locales — it carries the
+//     ICHR seal, the dateline, the four co-issuers and a landscape crop of the panel photograph.
+//     COVERS was therefore removed and gen-press-cover.mjs is not run for this statement.
+//   * Gallery is the full statement as designed cards (card-2 … card-5) plus panel-2.jpg.
+//     panel-1.jpg and event-card.jpg were dropped — card-1 is a better crop of the same frame,
+//     and the event card is promotional and lives on the 23 August announcement.
+//   * The supplied PDF has NO text layer (5 flattened pages, 8.63 MB) and was rebuilt from the
+//     2000px cards, as with press-5 and press-6.
+//   * The cards print "Abdel-Rahim Grein"; the body says "Abderrahim Grein" per the client's
+//     26 August decision. The artwork is the client's and was not retouched.
+//
 // EDITORIAL DECISIONS — do not "improve" these on a re-run:
 //   * The chemical-weapons attribution to the Sudanese Armed Forces (SAF), the Omdurman
 //     (2024) incidents, the congenital-deformity finding and the UN Fact-Finding Mission's
@@ -95,8 +114,6 @@ The co-organising human rights organisations call upon the United Nations, the E
 
 **Ongoing violence in Kordofan.** UN OCHA reports confirm that over 200,000 individuals have experienced recent displacement in the Kordofan region following sustained strikes on civilian infrastructure.
 
-**International determinations.** The findings align with reports by the UN International Fact-Finding Mission for Sudan, which documented widespread gender-based atrocities and noted that actions in Darfur and Kordofan display indicators of genocidal intent.
-
 ## Media contacts
 
 **European Association for the Defence of Minorities (EADM)** — [WCPDCD.eadm@gmail.com](mailto:WCPDCD.eadm@gmail.com) · [Facebook](${EADM_FB})
@@ -161,8 +178,6 @@ const AR_BODY = `*صادر بصورة مشتركة عن التحالف الدو�
 **انعدام الأمن الغذائي الحاد.** يواجه أكثر من نصف السكان المدنيين مستويات طارئة من انعدام الأمن الغذائي، مع تأكّد ظروف المجاعة في مناطق متعددة.
 
 **استمرار العنف في كردفان.** تؤكد تقارير مكتب الأمم المتحدة لتنسيق الشؤون الإنسانية نزوح أكثر من 200 ألف شخص مؤخرًا في إقليم كردفان في أعقاب ضربات متواصلة على البنية التحتية المدنية.
-
-**التقييمات الدولية.** تتسق هذه النتائج مع تقارير بعثة الأمم المتحدة الدولية لتقصي الحقائق بشأن السودان، التي وثّقت فظائع واسعة النطاق قائمة على النوع الاجتماعي وأشارت إلى أن ما يجري في دارفور وكردفان يحمل مؤشرات على نية الإبادة الجماعية.
 
 ## جهات الاتصال الإعلامية
 
@@ -229,8 +244,6 @@ Les organisations de défense des droits humains coorganisatrices appellent les 
 
 **Violences persistantes au Kordofan.** Les rapports d'OCHA confirment que plus de 200 000 personnes ont récemment été déplacées dans la région du Kordofan à la suite de frappes soutenues sur des infrastructures civiles.
 
-**Qualifications internationales.** Ces constats concordent avec les rapports de la Mission internationale indépendante d'établissement des faits des Nations Unies pour le Soudan, qui a documenté des atrocités généralisées fondées sur le genre et relevé que les actions menées au Darfour et au Kordofan présentent des indices d'intention génocidaire.
-
 ## Contacts presse
 
 **Association européenne pour la défense des minorités (EADM)** — [WCPDCD.eadm@gmail.com](mailto:WCPDCD.eadm@gmail.com) · [Facebook](${EADM_FB})
@@ -250,9 +263,15 @@ Genève, le 25 août 2026`;
 const FR_EXCERPT =
   "Des responsables de la société civile, des défenseurs des droits humains et des experts juridiques se sont réunis à Genève le 25 août 2026 pour la table ronde « Women's Condition and Violence in Wartime: Focus on the Sudan Crisis ». Publiée conjointement par l'ICHR, l'EADM, TYFA et Post Versa, la déclaration appelle à une mission indépendante d'établissement des faits avec participation de l'OIAC, à un renvoi devant la CPI sans immunité, et à la participation effective des femmes soudanaises à tous les processus de paix.";
 
-const CARD = `/blog/${SLUG}/event-card.jpg`;
-const P1 = `/blog/${SLUG}/panel-1.jpg`;
-const P2 = `/blog/${SLUG}/panel-2.jpg`;
+// Designed statement cards supplied 27 August (press-9/polished-content, P1–P5, 2000x2000).
+// C1 is the hero: it already carries the ICHR seal, the dateline, the four co-issuers and a
+// properly-cropped landscape version of the panel photograph. It heads all three locales.
+const C1 = `/blog/${SLUG}/card-1.jpg`;
+const C2 = `/blog/${SLUG}/card-2.jpg`;
+const C3 = `/blog/${SLUG}/card-3.jpg`;
+const C4 = `/blog/${SLUG}/card-4.jpg`;
+const C5 = `/blog/${SLUG}/card-5.jpg`;
+const PANEL = `/blog/${SLUG}/panel-2.jpg`;
 
 export const STATEMENT = {
   slug: SLUG,
@@ -269,11 +288,13 @@ export const STATEMENT = {
       body: EN_BODY,
       location: 'Geneva',
       authorName: 'ICHR Communications',
-      coverImageUrl: `/blog/${SLUG}/cover.jpg`,
+      coverImageUrl: C1,
       gallery: [
-        { url: CARD, caption: 'Event card for the side event “Women’s Condition and Violence in Wartime — Focus: The Sudan Crisis”, held at the Club Suisse de la Presse, Domaine de Penthes, Geneva, on 25 August 2026. Co-organised by ICHR, EADM, The Youth Future Alliance and Post Versa.', order: 0 },
-        { url: P1, caption: 'Panellists and organisers at the Club Suisse de la Presse, Geneva, 25 August 2026.', order: 1 },
-        { url: P2, caption: 'Abderrahim Grein and Dr. Mohamed Ali representing the International Coalition for Human Rights at the Geneva panel, 25 August 2026.', order: 2 },
+        { url: C2, caption: 'Statement card 1 of 4: the scope of the session, the five panellists, and the core findings on gender-based and sexual violence and on the chemical weapons allegations.', order: 0 },
+        { url: C3, caption: 'Statement card 2 of 4: the militarisation of essential infrastructure, and the joint call to action on accountability and justice, civilian protection, humanitarian access and survivors’ support.', order: 1 },
+        { url: C4, caption: 'Statement card 3 of 4: women, peace and security under UN Security Council Resolution 1325, and contextual data on forced displacement, acute food insecurity and continuing violence in Kordofan.', order: 2 },
+        { url: C5, caption: 'Statement card 4 of 4: media contacts for the International Coalition for Human Rights, the European Association for the Defence of Minorities and The Youth Future Alliance.', order: 3 },
+        { url: PANEL, caption: 'Abderrahim Grein and Dr. Mohamed Ali representing the International Coalition for Human Rights at the Geneva panel, 25 August 2026.', order: 4 },
       ],
     },
     {
@@ -284,11 +305,13 @@ export const STATEMENT = {
       body: AR_BODY,
       location: 'جنيف',
       authorName: 'إعلام ICHR',
-      coverImageUrl: `/blog/${SLUG}/cover-ar.jpg`,
+      coverImageUrl: C1,
       gallery: [
-        { url: CARD, caption: 'بطاقة الفعالية الجانبية «أوضاع النساء والعنف في زمن الحرب — تركيز: الأزمة السودانية»، التي عُقدت في النادي السويسري للصحافة، دومين دو بانت، جنيف، في 25 أغسطس 2026، بتنظيم مشترك من التحالف الدولي لحقوق الإنسان والرابطة الأوروبية للدفاع عن الأقليات وتحالف مستقبل الشباب وPost Versa. (البطاقة بالإنجليزية.)', order: 0 },
-        { url: P1, caption: 'المتحدثون والمنظمون في النادي السويسري للصحافة، جنيف، 25 أغسطس 2026.', order: 1 },
-        { url: P2, caption: 'عبد الرحيم قرين والدكتور محمد علي ممثلَين التحالف الدولي لحقوق الإنسان في حلقة النقاش بجنيف، 25 أغسطس 2026.', order: 2 },
+        { url: C2, caption: 'بطاقة البيان 1 من 4: نطاق الجلسة، والمتحدثون الخمسة، وأبرز النتائج بشأن العنف الجنسي والعنف القائم على النوع الاجتماعي وادعاءات استخدام الأسلحة الكيميائية. (البطاقة بالإنجليزية.)', order: 0 },
+        { url: C3, caption: 'بطاقة البيان 2 من 4: عسكرة البنية التحتية الأساسية، والنداء المشترك للعمل بشأن المساءلة والعدالة وحماية المدنيين ووصول المساعدات الإنسانية ودعم الناجين. (البطاقة بالإنجليزية.)', order: 1 },
+        { url: C4, caption: 'بطاقة البيان 3 من 4: المرأة والسلام والأمن عملًا بقرار مجلس الأمن 1325، وبيانات سياقية عن النزوح القسري وانعدام الأمن الغذائي الحاد واستمرار العنف في كردفان. (البطاقة بالإنجليزية.)', order: 2 },
+        { url: C5, caption: 'بطاقة البيان 4 من 4: جهات الاتصال الإعلامية للتحالف الدولي لحقوق الإنسان والرابطة الأوروبية للدفاع عن الأقليات وتحالف مستقبل الشباب. (البطاقة بالإنجليزية.)', order: 3 },
+        { url: PANEL, caption: 'عبد الرحيم قرين والدكتور محمد علي ممثلَين التحالف الدولي لحقوق الإنسان في حلقة النقاش بجنيف، 25 أغسطس 2026.', order: 4 },
       ],
     },
     {
@@ -299,63 +322,21 @@ export const STATEMENT = {
       body: FR_BODY,
       location: 'Genève',
       authorName: 'Communication ICHR',
-      coverImageUrl: `/blog/${SLUG}/cover-fr.jpg`,
+      coverImageUrl: C1,
       gallery: [
-        { url: CARD, caption: "Carte de l'événement parallèle « Women's Condition and Violence in Wartime — Focus: The Sudan Crisis », tenu au Club Suisse de la Presse, Domaine de Penthes, Genève, le 25 août 2026. Coorganisé par l'ICHR, l'EADM, The Youth Future Alliance et Post Versa. (Carte en anglais.)", order: 0 },
-        { url: P1, caption: 'Intervenants et organisateurs au Club Suisse de la Presse, Genève, le 25 août 2026.', order: 1 },
-        { url: P2, caption: "Abderrahim Grein et le Dr Mohamed Ali représentant la Coalition internationale pour les droits de l'homme lors de la table ronde de Genève, le 25 août 2026.", order: 2 },
+        { url: C2, caption: "Carte 1 sur 4 : le périmètre de la séance, les cinq intervenants, et les constats principaux sur les violences sexuelles et fondées sur le genre et sur les allégations d'emploi d'armes chimiques. (Carte en anglais.)", order: 0 },
+        { url: C3, caption: "Carte 2 sur 4 : la militarisation des infrastructures essentielles, et l'appel commun à l'action sur la responsabilité et la justice, la protection des civils, l'accès humanitaire et le soutien aux survivantes. (Carte en anglais.)", order: 1 },
+        { url: C4, caption: "Carte 3 sur 4 : femmes, paix et sécurité au titre de la résolution 1325 du Conseil de sécurité, et données de contexte sur les déplacements forcés, l'insécurité alimentaire aiguë et les violences persistantes au Kordofan. (Carte en anglais.)", order: 2 },
+        { url: C5, caption: "Carte 4 sur 4 : contacts presse de la Coalition internationale pour les droits de l'homme, de l'Association européenne pour la défense des minorités et de The Youth Future Alliance. (Carte en anglais.)", order: 3 },
+        { url: PANEL, caption: "Abderrahim Grein et le Dr Mohamed Ali représentant la Coalition internationale pour les droits de l'homme lors de la table ronde de Genève, le 25 août 2026.", order: 4 },
       ],
     },
   ],
 };
 
-export const COVERS = {
-  en: {
-    file: 'cover.jpg',
-    rtl: false,
-    font: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-    org: 'INTERNATIONAL COALITION FOR HUMAN RIGHTS',
-    eyebrow: 'JOINT PRESS STATEMENT',
-    headline: ['Geneva Panel on', 'Violations Against', 'Women in Sudan'],
-    headSize: 58,
-    headLh: 78,
-    headTop: 452,
-    standfirst: ['ICC referral and an OPCW investigation urged'],
-    city: 'Geneva',
-    date: '25 AUGUST 2026',
-    chipW: 248,
-  },
-  fr: {
-    file: 'cover-fr.jpg',
-    rtl: false,
-    font: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-    org: "COALITION INTERNATIONALE POUR LES DROITS DE L'HOMME",
-    eyebrow: 'DÉCLARATION DE PRESSE COMMUNE',
-    headline: ['Table ronde à Genève', 'sur les violations', 'visant les Soudanaises'],
-    headSize: 54,
-    headLh: 74,
-    headTop: 452,
-    standfirst: ["Renvoi devant la CPI et enquête de l'OIAC réclamés"],
-    city: 'Genève',
-    date: '25 AOÛT 2026',
-    chipW: 248,
-  },
-  ar: {
-    file: 'cover-ar.jpg',
-    rtl: true,
-    font: "'Geeza Pro', 'Al Bayan', sans-serif",
-    org: 'التحالف الدولي لحقوق الإنسان',
-    eyebrow: 'بيان صحفي مشترك',
-    headline: ['حلقة نقاش في جنيف', 'حول الانتهاكات بحق', 'النساء في السودان'],
-    headSize: 56,
-    headLh: 88,
-    headTop: 468,
-    standfirst: ['دعوة إلى الإحالة إلى المحكمة الجنائية الدولية'],
-    city: 'جنيف',
-    date: '25 أغسطس 2026',
-    chipW: 240,
-  },
-};
+// No COVERS export: all three locales are headed by supplied artwork (card-1.jpg), so
+// scripts/gen-press-cover.mjs is not run for this statement. The generated cover.jpg /
+// cover-ar.jpg / cover-fr.jpg from the 26 August version remain on disk, unreferenced.
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   publishStatement(STATEMENT, envOpts()).catch((e) => {
