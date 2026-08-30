@@ -94,7 +94,7 @@ const channel = SOCIAL_PROFILES.find((s) => s.name === 'YouTube')?.href;
     </a>
 
     <header class="mt-6 mb-6">
-      <Dateline date={video.eventDate} location={video.location} lang={lang} class="mb-3" />
+      <Dateline date={video.eventDate} location={copy.location} lang={lang} class="mb-3" />
       <CategoryPill category={playlistLabel} class="mb-4" />
       <!-- NO <bdi> here, deliberately. Measured in the browser at /ar/media: <bdi> resolves
            its own direction from the first strong character, so a Latin-first string

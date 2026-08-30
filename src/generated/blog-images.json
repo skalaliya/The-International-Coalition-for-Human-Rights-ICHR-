@@ -600,6 +600,15 @@
       800
     ]
   },
+  "/media/abderrahim-grein-human-rights-2025/poster.jpg": {
+    "w": 1280,
+    "h": 720,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
   "/media/abderrahim-grein-icc-accountability-geneva-2026/poster.jpg": {
     "w": 1280,
     "h": 720,
@@ -619,6 +628,15 @@
     ]
   },
   "/media/hiba-elwassilla-women-families-geneva-2026/poster.jpg": {
+    "w": 1280,
+    "h": 720,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "/media/icj-stand-sudanese-civil-society-hague-2025/poster.jpg": {
     "w": 1280,
     "h": 720,
     "widths": [
