@@ -118,6 +118,71 @@ The cards are SVG rasterized through `sharp`. `sharp` will happily render Arabic
 
 ---
 
+## Adding a YouTube video to `/media`
+
+Videos are **not** in the database. They are rows in `src/data/videos.ts`, committed to
+git — see the header comment there for why (the DB workflow's risk buys nothing for a
+handful of entries that change monthly). Revisit at ~20 videos, or when a non-developer
+needs to publish one without a deploy.
+
+```bash
+node scripts/add-video.mjs <youtube-url-or-id> [slug]
+```
+
+It reads the real ID, duration and upload date off the watch page, downloads the poster
+to `public/media/<slug>/poster.jpg`, runs `gen-image-variants.mjs`, and prints an entry to
+paste into the `VIDEOS` array. `DRY_RUN=1` prints without writing; `FORCE=1` re-downloads
+an existing poster. Nothing is retyped by hand, because retyping is where the bugs are: a
+mistyped ID is a dead embed and a hand-written `PT14M16S` that disagrees with the badge
+makes Google drop the video rich result silently.
+
+Then, by hand:
+
+1. Translate `title`, `speaker` and `summary` for **all three** locales. Write a clean
+   headline — the YouTube title is truncated and speaker-first; the speaker belongs in
+   `speaker`.
+2. Set `eventDate` to when the footage was **recorded** (the dateline the reader sees),
+   which is usually earlier than `uploadDate` (the Schema.org `uploadDate`).
+3. Set `relatedPostSlug` if there is a newsroom article, and `playlist` (adding a new
+   `PlaylistId` also needs a label in `media.playlists` in all three `src/i18n/strings/*`).
+4. `npx tsc --noEmit && npm run check && npm run build && npm test`
+5. Commit `public/media/<slug>/**` **with** `src/generated/blog-images.json`.
+6. **Deploy the images before treating the video as live**, and poll the poster URL for
+   `200 image/jpeg` — same gate as press covers, and the one that catches a push that
+   silently failed to deploy.
+
+`src/lib/videos.test.ts` fails the build on: a malformed ID, a duplicate slug, a future
+or swapped date, a poster missing from the image manifest, empty or placeholder copy,
+Arabic text with no Arabic script, French text identical to the English, or a playlist
+with no label. Ten of those produce **no runtime error** — the build is the only place
+they can be caught.
+
+### Media gotchas (already solved — don't regress them)
+
+- **`resolveAssetUrl` has a path allow-list.** `/media/` had to be added to it; without
+  that, every poster silently resolves to `/og-image.png` with no error anywhere.
+- **The player is a facade, deliberately.** `VideoEmbed.astro` renders a local poster and
+  a real `<button>`, and only builds the `youtube-nocookie.com` iframe on click. A stock
+  embed ships ~1 MB of JS and sets tracking cookies on first paint — which would both undo
+  the responsive-image work and force a cookie banner onto a site that needs none. Verify
+  it by loading `/media` with the network panel open: **zero** requests to any
+  `youtube.com` / `ytimg.com` / `googlevideo.com` host until you press play.
+- **Focus must move into the iframe on play.** The button that had focus is removed;
+  without the explicit `.focus()` a keyboard user is dumped back at `<body>`.
+- **Do NOT wrap Arabic titles, speakers or datelines in `<bdi>`.** Measured in the browser
+  at `/ar/media`: `<bdi>` resolves its own direction from the first strong character, so a
+  Latin-first string (`Andy Vermaut · بوست فيرسا`, `Geneva · 25 أغسطس 2026`) becomes an
+  LTR island and **reverses** against the surrounding Arabic. The page already sets
+  `dir="rtl"` on `<html>`, which is the correct base direction. Isolation is the fix for
+  the **SVG press cards**, where there is no inherited direction — not for HTML.
+- **The play triangle never gets `.rtl-flip`.** It means "play", not "forward"; mirroring
+  it in Arabic points it at the rewind direction and reads as a bug.
+- `scripts/gen-image-variants.mjs` now walks **two** roots (`public/blog` and
+  `public/media`) into one manifest. A single-slug run still rebuilds the whole manifest,
+  so it can never silently drop the other entries.
+
+---
+
 ## Environment variables
 
 | var | purpose |

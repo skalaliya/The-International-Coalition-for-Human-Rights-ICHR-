@@ -13,7 +13,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 
 const SRC = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PAGE_COMPONENTS = join(SRC, 'components', 'pages');
@@ -44,17 +44,45 @@ for (const file of componentFiles) {
   });
 }
 
-test('the article routes own the 404 decision', () => {
-  const routes = [
-    join(SRC, 'pages', 'news', '[slug].astro'),
-    join(SRC, 'pages', 'ar', 'news', '[slug].astro'),
-    join(SRC, 'pages', 'fr', 'news', '[slug].astro'),
+test('every [slug] route owns its own 404 decision', () => {
+  // Each route must RESOLVE its content itself and set the status from the route file.
+  // The resolver differs per section (the newsroom hits the database, /media reads the
+  // static registry), so the loader is named per route rather than assumed.
+  const routes: { file: string; resolver: RegExp }[] = [
+    { file: join(SRC, 'pages', 'news', '[slug].astro'), resolver: /loadArticle\(/ },
+    { file: join(SRC, 'pages', 'ar', 'news', '[slug].astro'), resolver: /loadArticle\(/ },
+    { file: join(SRC, 'pages', 'fr', 'news', '[slug].astro'), resolver: /loadArticle\(/ },
+    { file: join(SRC, 'pages', 'media', '[slug].astro'), resolver: /getVideo\(/ },
+    { file: join(SRC, 'pages', 'ar', 'media', '[slug].astro'), resolver: /getVideo\(/ },
+    { file: join(SRC, 'pages', 'fr', 'media', '[slug].astro'), resolver: /getVideo\(/ },
   ];
-  for (const route of routes) {
-    const src = readFileSync(route, 'utf8');
-    assert.match(src, /loadArticle\(/, `${route} should load the article itself`);
-    assert.match(src, /Astro\.response\.status = 404/, `${route} should set a 404 status when the article is missing`);
-    assert.match(src, /NotFoundPage/, `${route} should render the localized not-found body`);
+  for (const { file, resolver } of routes) {
+    const src = readFileSync(file, 'utf8');
+    assert.match(src, resolver, `${file} should resolve its own content`);
+    assert.match(src, /Astro\.response\.status = 404/, `${file} should set a 404 status when the content is missing`);
+    assert.match(src, /NotFoundPage/, `${file} should render the localized not-found body`);
+  }
+});
+
+test('every dynamic route under src/pages is covered by the 404 test above', () => {
+  // The list above is hand-written, so a NEW section could add a [slug] route and quietly
+  // skip the check that this whole file exists to enforce. This finds that.
+  const known = new Set(['news', 'media']);
+  const found = new Set<string>();
+  const walk = (dir: string) => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name.startsWith('[') && entry.name.endsWith('.astro')) found.add(basename(dirname(full)));
+    }
+  };
+  walk(join(SRC, 'pages'));
+  for (const section of found) {
+    assert.ok(
+      known.has(section),
+      `src/pages/**/${section}/[...].astro is a dynamic route with no entry in the 404 test — ` +
+        'add it there, or a missing slug will serve a soft 200.',
+    );
   }
 });
 

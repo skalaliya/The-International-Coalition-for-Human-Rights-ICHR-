@@ -31,6 +31,10 @@ export const fr: Dict = {
       title: "Communiqués et déclarations — Salle de presse de l'ICHR",
       desc: "Communiqués de presse, déclarations et actualités de terrain officiels de la Coalition internationale pour les droits de l'homme.",
     },
+    media: {
+      title: 'Vidéos — Médias de l’ICHR',
+      desc: 'Discours, panels et images de terrain de la Coalition internationale pour les droits de l’homme.',
+    },
     notFound: { title: "Page introuvable — ICHR" },
   },
 
@@ -47,6 +51,7 @@ export const fr: Dict = {
     about: 'À propos',
     locations: 'Implantations',
     news: 'Actualités',
+    media: 'Médias',
     contact: 'Contact',
     support: 'Nous soutenir',
   },
@@ -58,6 +63,8 @@ export const fr: Dict = {
     switchLanguage: 'Changer de langue',
     skipToContent: 'Aller au contenu principal',
     filterNews: 'Filtrer les actualités par catégorie',
+    filterVideos: 'Filtrer les vidéos par série',
+    playVideo: 'Lire la vidéo : {title}', // {title}
     pagination: 'Pagination',
     tags: 'Étiquettes',  },
 
@@ -271,6 +278,22 @@ export const fr: Dict = {
   },
 
   // Display labels for the DB-stored canonical English categories.
+  media: {
+    eyebrow: 'Médias',
+    title: 'Vidéos',
+    intro: 'Discours, interventions en panel et images de terrain de l’ICHR et de ses partenaires.',
+    filterAll: 'Toutes',
+    playlists: { 'geneva-panel-2026': 'Panel de Genève 2026' },
+    watchOnYouTube: 'Regarder sur YouTube',
+    relatedStatement: 'Lire la déclaration associée',
+    back: 'Retour aux médias',
+    emptyTitle: 'Aucune vidéo pour l’instant',
+    emptyBody: 'Aucune vidéo publiée pour le moment. Revenez bientôt.',
+    channelTitle: 'Les dernières vidéos de notre chaîne',
+    channelCta: 'Voir toutes les vidéos',
+    duration: 'Durée',
+  },
+
   categories: {
     'Press Release': 'Communiqué de presse',
     Statement: 'Déclaration',

@@ -1,0 +1,14 @@
+---
+import MediaDetailPage from '@/components/pages/MediaDetailPage.astro';
+import NotFoundPage from '@/components/pages/NotFoundPage.astro';
+import { getVideo } from '@/data/videos';
+
+// The 404 decision lives HERE, in the route, not in MediaDetailPage. Setting the status
+// or returning a Response from a component renders into an already-sent response
+// (ResponseSentError → a soft-200 "Internal server error"). Page frontmatter runs before
+// the body streams, so this is the assignment the final Response is built from.
+const video = getVideo(Astro.params.slug);
+if (!video) Astro.response.status = 404;
+---
+
+{video ? <MediaDetailPage lang="en" video={video} /> : <NotFoundPage lang="en" />}

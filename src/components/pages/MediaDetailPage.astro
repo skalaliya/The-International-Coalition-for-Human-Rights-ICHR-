@@ -1,0 +1,161 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Section from '@/components/Section.astro';
+import Dateline from '@/components/Dateline.astro';
+import CategoryPill from '@/components/CategoryPill.astro';
+import VideoEmbed from '@/components/VideoEmbed.astro';
+import ShareButtons from '@/components/ShareButtons.astro';
+import ShareRail from '@/components/ShareRail.astro';
+import { absoluteUrl } from '@/lib/assets';
+import { toIso8601 } from '@/lib/duration';
+import { ORG, SAME_AS, SITE_URL, SOCIAL_PROFILES } from '@/lib/site';
+import { copyFor, type Video } from '@/data/videos';
+import { useTranslations, localizeHref, LOCALES, type Locale, type Alternate } from '@/i18n';
+
+interface Props {
+  lang: Locale;
+  /** Resolved by the route wrapper under src/pages, never looked up here. */
+  video: Video;
+}
+// Like ArticlePage: this renders a KNOWN-GOOD video. The not-found decision belongs to
+// the route — setting Astro.response.status from a component renders into an already-sent
+// response (ResponseSentError → a soft-200 "Internal server error"). No awaits, no early
+// returns in this file. src/lib/pageComponents.test.ts enforces it.
+const { lang, video } = Astro.props;
+const t = useTranslations(lang);
+const copy = copyFor(video, lang);
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const posterAbs = absoluteUrl(video.poster);
+const playlistLabel = (t.media.playlists as Record<string, string>)[video.playlist] ?? video.playlist;
+const watchUrl = `https://www.youtube.com/watch?v=${video.youtubeId}`;
+
+// One slug serves all three locales, so the alternates are a straight map — no lookup,
+// and no way for a translation to be missing.
+const transHrefs: Partial<Record<Locale, string>> = {};
+for (const l of LOCALES) transHrefs[l] = localizeHref(`/media/${video.slug}`, l);
+const alternates: Alternate[] = LOCALES.map((l) => ({
+  hreflang: l,
+  href: new URL(transHrefs[l]!, Astro.site ?? Astro.url).href,
+}));
+alternates.push({
+  hreflang: 'x-default',
+  href: new URL(localizeHref(`/media/${video.slug}`, 'en'), Astro.site ?? Astro.url).href,
+});
+
+// Every field Google needs for a video rich result. thumbnailUrl MUST be absolute and
+// duration MUST be ISO-8601 — src/lib/videos.test.ts asserts both hold for every entry,
+// because a malformed one is dropped silently rather than reported.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoObject',
+  inLanguage: lang,
+  name: copy.title,
+  description: copy.summary,
+  thumbnailUrl: [posterAbs],
+  uploadDate: video.uploadDate,
+  duration: toIso8601(video.durationSeconds),
+  embedUrl: `https://www.youtube-nocookie.com/embed/${video.youtubeId}`,
+  contentUrl: watchUrl,
+  publisher: {
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: ORG.name,
+    url: SITE_URL,
+    logo: { '@type': 'ImageObject', url: ORG.logo },
+    sameAs: SAME_AS,
+  },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+};
+
+const channel = SOCIAL_PROFILES.find((s) => s.name === 'YouTube')?.href;
+---
+
+<BaseLayout
+  title={`${copy.title} — ICHR`}
+  description={copy.summary}
+  canonical={canonical}
+  ogType="article"
+  ogImage={posterAbs}
+  jsonLd={jsonLd}
+  lang={lang}
+  alternates={alternates}
+  localeSwitch={{ hrefs: transHrefs, available: LOCALES }}
+>
+  <ShareRail url={canonical} title={copy.title} lang={lang} />
+
+  <Section width="content" spacing="default">
+    <a
+      href={localizeHref('/media', lang)}
+      class="inline-flex items-center min-h-[44px] text-sm font-semibold text-[#1a4a68] hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] rounded"
+    >
+      <span class="me-1 rtl-flip" aria-hidden="true">←</span>
+      {t.media.back}
+    </a>
+
+    <header class="mt-6 mb-6">
+      <Dateline date={video.eventDate} location={video.location} lang={lang} class="mb-3" />
+      <CategoryPill category={playlistLabel} class="mb-4" />
+      <!-- NO <bdi> here, deliberately. Measured in the browser at /ar/media: <bdi> resolves
+           its own direction from the first strong character, so a Latin-first string
+           ("Andy Vermaut · بوست فيرسا", "ICC والعدالة في السودان 2026") becomes an LTR
+           island and REVERSES against the surrounding Arabic. The page already sets
+           dir="rtl" on <html>, which is the correct base direction, and inheriting it
+           renders these strings correctly. Isolation is the fix for SVG press cards,
+           where there is no inherited direction — not for HTML. -->
+      <h1 class="text-2xl md:text-4xl font-bold text-slate-900 leading-tight mb-3">
+        {copy.title}
+      </h1>
+      <p class="text-base md:text-lg text-slate-600 font-medium">{copy.speaker}</p>
+    </header>
+
+    <VideoEmbed
+      youtubeId={video.youtubeId}
+      poster={video.poster}
+      title={copy.title}
+      durationSeconds={video.durationSeconds}
+      lang={lang}
+      loading="eager"
+      sizes="(min-width: 960px) 960px, 100vw"
+    />
+
+    <p class="mt-8 text-lg text-slate-700 leading-relaxed">{copy.summary}</p>
+
+    <div class="mt-8 flex flex-wrap items-center gap-3">
+      {
+        video.relatedPostSlug && (
+          <a
+            href={localizeHref(`/news/${video.relatedPostSlug}`, lang)}
+            class="inline-flex items-center min-h-[44px] px-6 rounded-full bg-[#1a4a68] text-white text-sm font-semibold hover:bg-[#133549] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2"
+          >
+            {t.media.relatedStatement}
+          </a>
+        )
+      }
+      <!-- Also the no-JavaScript escape hatch: the facade button is inert without JS, so
+           there is always a plain link to the video itself. -->
+      <a
+        href={watchUrl}
+        rel="noopener noreferrer"
+        target="_blank"
+        class="inline-flex items-center min-h-[44px] px-6 rounded-full border border-slate-300 text-sm font-semibold text-[#1a4a68] hover:border-[#1a4a68] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2"
+      >
+        {t.media.watchOnYouTube}
+      </a>
+    </div>
+
+    <div class="mt-10 pt-8 border-t border-slate-200">
+      <ShareButtons url={canonical} title={copy.title} label={t.article.shareStory} lang={lang} />
+    </div>
+
+    {
+      channel && (
+        <p class="mt-10 text-sm text-slate-500">
+          <a href={channel} rel="noopener noreferrer" target="_blank" class="hover:text-[#1a4a68] underline">
+            {t.media.channelTitle}
+          </a>
+        </p>
+      )
+    }
+  </Section>
+</BaseLayout>

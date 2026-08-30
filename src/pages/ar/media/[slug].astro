@@ -1,0 +1,11 @@
+---
+import MediaDetailPage from '@/components/pages/MediaDetailPage.astro';
+import NotFoundPage from '@/components/pages/NotFoundPage.astro';
+import { getVideo } from '@/data/videos';
+
+// See src/pages/media/[slug].astro — the 404 decision must stay in the route.
+const video = getVideo(Astro.params.slug);
+if (!video) Astro.response.status = 404;
+---
+
+{video ? <MediaDetailPage lang="ar" video={video} /> : <NotFoundPage lang="ar" />}

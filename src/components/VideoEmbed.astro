@@ -1,0 +1,136 @@
+---
+// A YouTube player that costs nothing until someone presses play.
+//
+// WHY NOT A PLAIN <iframe>: a stock YouTube embed pulls roughly a megabyte of JavaScript
+// and sets third-party tracking cookies on FIRST PAINT — before anyone has chosen to
+// watch anything. This site generates 400/800/1200px variants for every image precisely
+// because of what it costs a reader on mobile data in Sudan and the Horn of Africa;
+// shipping an unsolicited megabyte of tracker would undo that work in one component.
+// It is also the wrong posture for a human-rights NGO, and it is what would force a
+// cookie banner onto a site that currently needs none.
+//
+// So: a local poster and a real button. The iframe is created on click, pointed at
+// youtube-nocookie.com. Nothing reaches Google until the reader asks for it.
+//
+// Progressive enhancement: without JavaScript the button is inert, so it degrades to a
+// plain link out to YouTube rendered alongside it by the caller.
+import { resolveAssetUrl, srcSetFor, dimensionsFor } from '@/lib/assets';
+import { toClock, toSpoken } from '@/lib/duration';
+import { useTranslations, type Locale } from '@/i18n';
+
+interface Props {
+  youtubeId: string;
+  /** Site-absolute poster path under /media/<slug>/. */
+  poster: string;
+  /** The video's title, for the button's accessible name and the iframe title. */
+  title: string;
+  durationSeconds: number;
+  lang?: Locale;
+  /** `eager` for the one player on a detail page; the grid uses cards, not embeds. */
+  loading?: 'eager' | 'lazy';
+  /** Wider `sizes` on a detail page than in a grid. */
+  sizes?: string;
+  class?: string;
+}
+
+const {
+  youtubeId,
+  poster,
+  title,
+  durationSeconds,
+  lang = 'en',
+  loading = 'eager',
+  sizes = '(min-width: 1024px) 960px, 100vw',
+  class: className = '',
+} = Astro.props;
+
+const t = useTranslations(lang);
+const dims = dimensionsFor(poster);
+// `&rel=0` keeps the end-screen suggestions to this channel rather than sending a reader
+// off into unrelated recommendations from an ICHR page.
+const embedSrc = `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0`;
+const playLabel = t.a11y.playVideo.replace('{title}', title);
+---
+
+<div
+  class:list={['relative w-full overflow-hidden rounded-xl bg-[#0f2f49] aspect-video', className]}
+  data-video-facade
+  data-embed-src={embedSrc}
+  data-embed-title={title}
+>
+  <img
+    src={resolveAssetUrl(poster)}
+    srcset={srcSetFor(poster)}
+    sizes={sizes}
+    width={dims?.width}
+    height={dims?.height}
+    alt=""
+    loading={loading}
+    decoding="async"
+    class="absolute inset-0 w-full h-full object-cover"
+  />
+
+  <!-- A real <button>, so it is keyboard-reachable and announced, rather than a click
+       handler bolted onto the poster. The label carries the title and is translated. -->
+  <button
+    type="button"
+    data-video-play
+    aria-label={playLabel}
+    class="group absolute inset-0 flex items-center justify-center w-full h-full cursor-pointer bg-black/10 hover:bg-black/25 transition-colors focus:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--color-gold)] focus-visible:ring-inset motion-reduce:transition-none"
+  >
+    <span
+      class="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#1a4a68]/90 ring-2 ring-white/70 shadow-lg transition-transform duration-300 group-hover:scale-110 motion-reduce:transform-none motion-reduce:transition-none"
+    >
+      <!-- NOT .rtl-flip: a play glyph means "play", not "forward". Mirroring it in Arabic
+           would point it at the rewind direction and read as a bug. -->
+      <svg
+        class="w-7 h-7 md:w-9 md:h-9 text-white ms-1"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path d="M8 5v14l11-7z"></path>
+      </svg>
+    </span>
+  </button>
+
+  <span
+    class="absolute bottom-3 end-3 rounded bg-black/75 px-2 py-0.5 text-xs font-semibold text-white tabular-nums pointer-events-none"
+    aria-hidden="true">{toClock(durationSeconds)}</span
+  >
+  <!-- "14:16" is announced as "fourteen colon sixteen", or as a time of day. The spoken
+       form is the one a screen reader gets. -->
+  <span class="sr-only">{t.media.duration}: {toSpoken(durationSeconds, lang)}</span>
+</div>
+
+<script>
+  (() => {
+    // Guarded so a page carrying more than one facade (or a re-render) never binds twice.
+    const w = window as unknown as { __ichrVideoFacadeInit?: boolean };
+    if (w.__ichrVideoFacadeInit) return;
+    w.__ichrVideoFacadeInit = true;
+
+    document.addEventListener('click', (event) => {
+      const trigger = (event.target as Element | null)?.closest<HTMLElement>('[data-video-play]');
+      if (!trigger) return;
+
+      const facade = trigger.closest<HTMLElement>('[data-video-facade]');
+      const src = facade?.dataset.embedSrc;
+      if (!facade || !src) return;
+
+      const frame = document.createElement('iframe');
+      frame.src = src;
+      frame.title = facade.dataset.embedTitle ?? '';
+      frame.className = 'absolute inset-0 w-full h-full border-0';
+      frame.allow =
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      frame.allowFullscreen = true;
+      // The button that had focus is about to be removed. Without this, focus falls back
+      // to <body> and a keyboard user loses their place on the page entirely.
+      frame.tabIndex = -1;
+
+      facade.replaceChildren(frame);
+      frame.focus({ preventScroll: true });
+    });
+  })();
+</script>

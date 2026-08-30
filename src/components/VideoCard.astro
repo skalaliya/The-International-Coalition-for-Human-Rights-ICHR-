@@ -1,0 +1,104 @@
+---
+// Grid card for one video. Modelled on NewsCard.astro — same shadow/ring/hover idiom and
+// the same `rtl-flip` arrow — but 16:9 rather than square, because a YouTube poster is
+// 16:9 and cropping it to a square cuts the speaker's head off.
+//
+// Deliberately NOT a player: a grid of live embeds is the exact cost VideoEmbed exists to
+// avoid. The card is a link; the player lives on the detail page.
+import Dateline from '@/components/Dateline.astro';
+import CategoryPill from '@/components/CategoryPill.astro';
+import { resolveAssetUrl, srcSetFor, dimensionsFor } from '@/lib/assets';
+import { toClock, toSpoken } from '@/lib/duration';
+import { useTranslations, localizeHref, type Locale } from '@/i18n';
+import { copyFor, type Video } from '@/data/videos';
+
+interface Props {
+  video: Video;
+  lang?: Locale;
+  /** Smaller `sizes` for the 3-up homepage strip than the full grid. */
+  sizes?: string;
+}
+const { video, lang = 'en', sizes = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw' } = Astro.props;
+
+const t = useTranslations(lang);
+const copy = copyFor(video, lang);
+const href = localizeHref(`/media/${video.slug}`, lang);
+const playlistLabel = (t.media.playlists as Record<string, string>)[video.playlist] ?? video.playlist;
+const dims = dimensionsFor(video.poster);
+---
+
+<a
+  href={href}
+  aria-label={`${copy.title} — ${toSpoken(video.durationSeconds, lang)}`}
+  class="group block bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300 h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a4a68] focus-visible:ring-offset-2 motion-reduce:transition-none"
+>
+  <article class="flex flex-col h-full">
+    <div class="relative aspect-video overflow-hidden bg-[#1a4a68]">
+      <img
+        src={resolveAssetUrl(video.poster)}
+        srcset={srcSetFor(video.poster)}
+        sizes={sizes}
+        width={dims?.width}
+        height={dims?.height}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transform-none motion-reduce:transition-none"
+      />
+
+      <!-- A play affordance so the card reads as video at a glance. Decorative: the link
+           already carries the title and the duration in its accessible name. -->
+      <span
+        class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/25 transition-colors motion-reduce:transition-none"
+        aria-hidden="true"
+      >
+        <span
+          class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#1a4a68]/90 ring-2 ring-white/70 shadow-md transition-transform duration-300 group-hover:scale-110 motion-reduce:transform-none motion-reduce:transition-none"
+        >
+          <!-- Never .rtl-flip — a play glyph is not directional navigation. -->
+          <svg class="w-5 h-5 text-white ms-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"
+            ></path></svg>
+        </span>
+      </span>
+
+      <div class="absolute top-3 start-3 bg-[#0f2f49] rounded px-3 py-1 shadow-md ring-1 ring-white/15">
+        <Dateline date={video.eventDate} location={video.location} lang={lang} tone="onDark" />
+      </div>
+
+      <span
+        class="absolute bottom-3 end-3 rounded bg-black/75 px-2 py-0.5 text-xs font-semibold text-white tabular-nums"
+        aria-hidden="true">{toClock(video.durationSeconds)}</span
+      >
+    </div>
+
+    <div class="p-6 flex flex-col flex-grow">
+      <CategoryPill category={playlistLabel} class="mb-3 self-start" />
+      <!-- NO <bdi> here, deliberately. Measured in the browser at /ar/media: <bdi> resolves
+           its own direction from the first strong character, so a Latin-first string
+           ("Andy Vermaut · بوست فيرسا", "ICC والعدالة في السودان 2026") becomes an LTR
+           island and REVERSES against the surrounding Arabic. The page already sets
+           dir="rtl" on <html>, which is the correct base direction, and inheriting it
+           renders these strings correctly. Isolation is the fix for SVG press cards,
+           where there is no inherited direction — not for HTML. -->
+      <h3 class="text-lg font-bold text-slate-900 mb-1 group-hover:text-[#1a4a68] transition-colors line-clamp-2">
+        {copy.title}
+      </h3>
+      <p class="text-slate-600 text-sm font-medium mb-2 line-clamp-2">{copy.speaker}</p>
+      <p class="text-slate-500 text-sm leading-relaxed mb-4 line-clamp-3 flex-grow">
+        {copy.summary}
+      </p>
+      <span class="flex items-center text-[#1a4a68] font-semibold text-sm mt-auto">
+        {t.common.readMore}
+        <svg
+          class="w-4 h-4 ms-1 rtl-flip transition-transform group-hover:translate-x-1 motion-reduce:transform-none"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg
+        >
+      </span>
+    </div>
+  </article>
+</a>

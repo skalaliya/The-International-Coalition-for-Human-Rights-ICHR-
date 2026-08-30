@@ -33,6 +33,10 @@ export const en = {
       title: 'Press Releases & Statements — ICHR Newsroom',
       desc: 'Official press releases, statements and field updates from the International Coalition for Human Rights.',
     },
+    media: {
+      title: 'Videos — ICHR Media',
+      desc: 'Speeches, panels and field footage from the International Coalition for Human Rights.',
+    },
     notFound: { title: 'Page not found — ICHR' },
   },
 
@@ -49,6 +53,7 @@ export const en = {
     about: 'About',
     locations: 'Locations',
     news: 'News',
+    media: 'Media',
     contact: 'Contact',
     support: 'Support Us',
   },
@@ -60,6 +65,8 @@ export const en = {
     switchLanguage: 'Change language',
     skipToContent: 'Skip to main content',
     filterNews: 'Filter news by category',
+    filterVideos: 'Filter videos by series',
+    playVideo: 'Play video: {title}', // {title}
     pagination: 'Pagination',
     tags: 'Tags',  },
 
@@ -270,6 +277,23 @@ export const en = {
     prev: 'Previous',
     next: 'Next',
     pageOf: 'Page {page} of {total}', // {page}, {total}
+  },
+
+  media: {
+    eyebrow: 'Media',
+    title: 'Videos',
+    intro: 'Speeches, panel interventions and field footage from ICHR and its partners.',
+    filterAll: 'All',
+    // Keyed by PlaylistId in src/data/videos.ts — videos.test.ts fails if one is missing.
+    playlists: { 'geneva-panel-2026': 'Geneva Panel 2026' },
+    watchOnYouTube: 'Watch on YouTube',
+    relatedStatement: 'Read the related statement',
+    back: 'Back to Media',
+    emptyTitle: 'No videos yet',
+    emptyBody: 'There are no published videos at this time. Please check back soon.',
+    channelTitle: 'Latest from our channel',
+    channelCta: 'See all videos',
+    duration: 'Duration',
   },
 
   // Display labels for the DB-stored canonical English categories.

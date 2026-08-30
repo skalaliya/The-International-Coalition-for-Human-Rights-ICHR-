@@ -1,4 +1,4 @@
-// Generates responsive width variants for every image under public/blog/.
+// Generates responsive width variants for every image under public/blog/ and public/media/.
 //
 // WHY: /blog/* is served raw — there is no Astro <Image>, no CDN transform, nothing.
 // Measured on a 375px phone against production: the article cover is a 1200px JPEG
@@ -16,8 +16,8 @@
 // RUN THIS FOR EVERY NEW ARTICLE and commit the manifest with the images. An image with
 // no manifest entry still renders — it just gets the full-size original.
 //
-//   node scripts/gen-image-variants.mjs                 # every article, skip existing
-//   node scripts/gen-image-variants.mjs <slug>          # one article
+//   node scripts/gen-image-variants.mjs                 # everything, skip existing
+//   node scripts/gen-image-variants.mjs <slug>          # one article or video
 //   FORCE=1 node scripts/gen-image-variants.mjs         # regenerate
 //
 // Idempotent and additive: it never rewrites an original, never upscales, and skips a
@@ -28,7 +28,12 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
-const BLOG = join(REPO, 'public', 'blog');
+// Two roots share one pipeline and one manifest: /blog/* (article covers and galleries)
+// and /media/* (video posters). Both are served raw from public/, so both need variants.
+// Manifest keys are site-absolute paths, so src/lib/assets.ts needs no change to read
+// either — but resolveAssetUrl's allow-list DOES have to admit /media/, or every poster
+// silently resolves to /og-image.png with no error anywhere.
+const ROOTS = ['blog', 'media'];
 // The manifest is the contract between this script and src/lib/assets.ts. Without it the
 // components would have to GUESS which widths exist, and a guess that is wrong is a 404
 // inside a srcset — which browsers resolve by showing nothing at all. It also carries the
@@ -50,8 +55,8 @@ export function variantPath(file, width) {
   return file.replace(SOURCE_RE, (ext) => `-${width}${ext.toLowerCase() === '.png' ? '.png' : '.jpg'}`);
 }
 
-async function processDir(slug, manifest) {
-  const dir = join(BLOG, slug);
+async function processDir(root, slug, manifest) {
+  const dir = join(REPO, 'public', root, slug);
   if (!statSync(dir, { throwIfNoEntry: false })?.isDirectory()) return null;
 
   const originals = readdirSync(dir).filter((f) => SOURCE_RE.test(f) && !VARIANT_RE.test(f));
@@ -70,7 +75,7 @@ async function processDir(slug, manifest) {
     try {
       meta = await sharp(src).metadata();
     } catch (e) {
-      unreadable.push({ file: `/blog/${slug}/${file}`, reason: e.code ?? e.message?.slice(0, 60) });
+      unreadable.push({ file: `/${root}/${slug}/${file}`, reason: e.code ?? e.message?.slice(0, 60) });
       continue;
     }
 
@@ -88,36 +93,43 @@ async function processDir(slug, manifest) {
           await sharp(src).resize({ width: w, withoutEnlargement: true }).jpeg({ quality: 82, mozjpeg: true }).toFile(out);
           made++;
         } catch (e) {
-          unreadable.push({ file: `/blog/${slug}/${file}`, reason: `${w}px: ${e.code ?? e.message?.slice(0, 40)}` });
+          unreadable.push({ file: `/${root}/${slug}/${file}`, reason: `${w}px: ${e.code ?? e.message?.slice(0, 40)}` });
           continue;
         }
       }
       widths.push(w);
     }
 
-    manifest[`/blog/${slug}/${file}`] = { w: meta.width ?? null, h: meta.height ?? null, widths };
+    manifest[`/${root}/${slug}/${file}`] = { w: meta.width ?? null, h: meta.height ?? null, widths };
   }
   return { slug, originals: originals.length, made, skipped };
 }
 
 const only = process.argv[2];
-// The manifest always describes EVERY article, even when regenerating one, so a
-// single-slug run can never silently drop the others' entries.
-const allSlugs = readdirSync(BLOG).filter((d) => !d.startsWith('.'));
-const targets = only ? [only] : allSlugs;
+
+// EVERY root is walked on EVERY run, even when one slug is named, so the manifest always
+// describes every image — a single-slug run can never silently drop the others' entries.
+const found = [];
+for (const root of ROOTS) {
+  const rootDir = join(REPO, 'public', root);
+  if (!statSync(rootDir, { throwIfNoEntry: false })?.isDirectory()) continue; // a root may not exist yet
+  for (const slug of readdirSync(rootDir).filter((d) => !d.startsWith('.'))) found.push({ root, slug });
+}
+
+if (only && !found.some((f) => f.slug === only)) {
+  console.error(`ABORT: no such directory: ${ROOTS.map((r) => `public/${r}/${only}`).join(' or ')}`);
+  process.exit(1);
+}
 
 const manifest = {};
 let totalMade = 0;
-for (const slug of allSlugs) {
-  const r = await processDir(slug, manifest);
-  if (!r) {
-    console.error(`ABORT: no such article directory: public/blog/${slug}`);
-    process.exit(1);
-  }
-  if (!targets.includes(slug)) continue;
+for (const { root, slug } of found) {
+  const r = await processDir(root, slug, manifest);
+  if (!r) continue; // a stray file rather than a directory
+  if (only && slug !== only) continue;
   totalMade += r.made;
   console.log(
-    `${r.made ? '✅' : '·'} ${r.slug} — ${r.originals} original${r.originals === 1 ? '' : 's'}, ` +
+    `${r.made ? '✅' : '·'} ${root}/${r.slug} — ${r.originals} original${r.originals === 1 ? '' : 's'}, ` +
       `${r.made} variant${r.made === 1 ? '' : 's'} written${r.skipped ? `, ${r.skipped} already present` : ''}`,
   );
 }

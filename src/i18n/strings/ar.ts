@@ -31,6 +31,10 @@ export const ar: Dict = {
       title: 'البيانات الصحفية والتصريحات — غرفة أخبار ICHR',
       desc: 'البيانات الصحفية الرسمية والتصريحات والمستجدات الميدانية الصادرة عن التحالف الدولي لحقوق الإنسان.',
     },
+    media: {
+      title: 'مقاطع الفيديو — وسائط التحالف الدولي لحقوق الإنسان',
+      desc: 'كلمات وندوات ولقطات ميدانية من التحالف الدولي لحقوق الإنسان.',
+    },
     notFound: { title: 'الصفحة غير موجودة — ICHR' },
   },
 
@@ -47,6 +51,7 @@ export const ar: Dict = {
     about: 'من نحن',
     locations: 'المواقع',
     news: 'الأخبار',
+    media: 'الوسائط',
     contact: 'تواصل معنا',
     support: 'ادعمنا',
   },
@@ -58,6 +63,8 @@ export const ar: Dict = {
     switchLanguage: 'تغيير اللغة',
     skipToContent: 'تخطَّ إلى المحتوى الرئيسي',
     filterNews: 'تصفية الأخبار حسب الفئة',
+    filterVideos: 'تصفية المقاطع حسب السلسلة',
+    playVideo: 'تشغيل الفيديو: {title}', // {title}
     pagination: 'ترقيم الصفحات',
     tags: 'الوسوم',  },
 
@@ -271,6 +278,22 @@ export const ar: Dict = {
   },
 
   // Display labels for the DB-stored canonical English categories.
+  media: {
+    eyebrow: 'الوسائط',
+    title: 'مقاطع الفيديو',
+    intro: 'كلمات ومداخلات في ندوات ولقطات ميدانية من التحالف الدولي لحقوق الإنسان وشركائه.',
+    filterAll: 'الكل',
+    playlists: { 'geneva-panel-2026': 'ندوة جنيف 2026' },
+    watchOnYouTube: 'شاهد على يوتيوب',
+    relatedStatement: 'اقرأ البيان ذا الصلة',
+    back: 'العودة إلى الوسائط',
+    emptyTitle: 'لا توجد مقاطع فيديو بعد',
+    emptyBody: 'لا توجد مقاطع فيديو منشورة في الوقت الحالي. يرجى العودة قريبًا.',
+    channelTitle: 'أحدث ما في قناتنا',
+    channelCta: 'مشاهدة كل المقاطع',
+    duration: 'المدة',
+  },
+
   categories: {
     'Press Release': 'بيان صحفي',
     Statement: 'تصريح',

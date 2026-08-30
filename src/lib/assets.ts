@@ -16,7 +16,7 @@ export function resolveAssetUrl(url: string | null | undefined): string {
   if (!url) return '/og-image.png';
   if (/^https?:\/\//i.test(url)) return url; // absolute http(s) (e.g. Vercel Blob)
   if (url.startsWith('/uploads/')) return `${UPLOADS_BASE}${url}`; // '' → same-origin
-  if (/^\/(blog|images)\//.test(url)) return url; // same-origin public assets
+  if (/^\/(blog|images|media)\//.test(url)) return url; // same-origin public assets (/media = video posters)
   return '/og-image.png'; // reject anything unexpected
 }
 
