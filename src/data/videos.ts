@@ -227,6 +227,39 @@ const VIDEOS: Video[] = [
       },
     },
   },
+  {
+    slug: 'mohamed-ali-violations-civilian-protection-geneva-2026',
+    youtubeId: 'rqObnyqW52g',
+    uploadDate: '2026-08-31',
+    eventDate: '2026-08-25',
+    durationSeconds: 801,
+    playlist: 'geneva-panel-2026',
+    poster: '/media/mohamed-ali-violations-civilian-protection-geneva-2026/poster.jpg',
+    relatedPostSlug: 'civil-society-panel-women-sudan-geneva-august-2026',
+    i18n: {
+      en: {
+        title: 'Human Rights Violations and Civilian Protection in Sudan',
+        speaker: 'Dr. Mohamed Ali · International Coalition for Human Rights',
+        location: 'Geneva',
+        summary:
+          'Key findings on human rights violations and the humanitarian deterioration in Sudan, with a call for an urgent ceasefire, the protection of civilians, and international accountability.',
+      },
+      ar: {
+        title: 'انتهاكات حقوق الإنسان وحماية المدنيين في السودان',
+        speaker: 'الدكتور محمد علي · التحالف الدولي لحقوق الإنسان',
+        location: 'جنيف',
+        summary:
+          'أبرز النتائج المتعلقة بانتهاكات حقوق الإنسان والتدهور الإنساني في السودان، مع الدعوة إلى وقف فوري لإطلاق النار، وحماية المدنيين، والمساءلة الدولية.',
+      },
+      fr: {
+        title: 'Violations des droits humains et protection des civils au Soudan',
+        speaker: 'Dr Mohamed Ali · Coalition internationale pour les droits de l’homme',
+        location: 'Genève',
+        summary:
+          'Les principaux constats sur les violations des droits humains et la dégradation humanitaire au Soudan, avec un appel à un cessez-le-feu immédiat, à la protection des civils et à la responsabilité internationale.',
+      },
+    },
+  },
   // ---- Advocacy, 2025 ----
   // Deliberately NOT included from the channel: "Participation of the Peace in the joint
   // meeting…" (MkOllAEEwOo). Its description carries #UAE_supports_Sudan,

@@ -10,6 +10,10 @@
 // makes Google drop the video rich result silently. So this reads them off the watch page,
 // downloads the poster to our own origin, and prints a ready-to-paste entry.
 //
+// The upload date comes from the channel FEED, not the watch page: the page embeds it with
+// the uploader's timezone offset, so its date prefix is the local day and can sit one day
+// behind the UTC date that Studio shows and that every existing entry uses.
+//
 // It never edits src/data/videos.ts — pasting is deliberate, so the translated strings are
 // written by a person and reviewed in the diff.
 //
@@ -22,6 +26,9 @@ import { dirname, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 const REPO = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+/** The ICHR channel. Used only to read the public feed for the UTC upload date. */
+const CHANNEL_ID = 'UCAjisJCwaixTxfyONHkN-0Q';
 const DRY_RUN = process.env.DRY_RUN === '1';
 const FORCE = process.env.FORCE === '1';
 
@@ -83,10 +90,37 @@ function scrape(html) {
   return {
     durationSeconds: num(/"lengthSeconds":"(\d+)"/),
     title: str(/"title":"((?:[^"\\]|\\.)*)","lengthSeconds"/) ?? str(/<meta name="title" content="([^"]*)"/),
-    uploadDate: (html.match(/"uploadDate":"(\d{4}-\d{2}-\d{2})/) ?? html.match(/"publishDate":"(\d{4}-\d{2}-\d{2})/))?.[1] ?? null,
+    // NOTE: the watch page embeds these with the UPLOADER'S timezone offset
+    // ("2026-08-30T19:36:02-07:00"), so slicing the date prefix yields the local
+    // day, not the UTC one. Every entry in src/data/videos.ts uses UTC — which is
+    // what the channel feed reports and what Studio displays — so this value is
+    // only a FALLBACK. uploadDateUtc() below is the preferred source. Same class of
+    // off-by-one that src/lib/dateline.ts formats in UTC to avoid.
+    uploadDateLocal:
+      (html.match(/"uploadDate":"(\d{4}-\d{2}-\d{2})/) ?? html.match(/"publishDate":"(\d{4}-\d{2}-\d{2})/))?.[1] ?? null,
     isUnlisted: /"isUnlisted":true/.test(html),
     isPrivate: /"isPrivate":true/.test(html),
   };
+}
+
+/**
+ * The channel feed reports <published> in UTC, which is the convention every entry in
+ * src/data/videos.ts follows. Preferred over the watch page's local-offset date.
+ * Returns null for a video older than the feed's window (it lists only the latest 15),
+ * in which case the caller falls back and says so.
+ */
+async function uploadDateUtc(id) {
+  try {
+    const xml = await fetchText(`https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`);
+    // Match within one <entry> so a videoId is never paired with a sibling's date.
+    for (const entry of xml.split('<entry>').slice(1)) {
+      if (!entry.includes(`<yt:videoId>${id}</yt:videoId>`)) continue;
+      return entry.match(/<published>(\d{4}-\d{2}-\d{2})/)?.[1] ?? null;
+    }
+  } catch {
+    // A feed outage must not block adding a video; the watch-page date still works.
+  }
+  return null;
 }
 
 async function fetchText(url) {
@@ -122,6 +156,15 @@ async function main() {
 
   console.log(`Reading https://www.youtube.com/watch?v=${id} …`);
   const meta = scrape(await fetchText(`https://www.youtube.com/watch?v=${id}`));
+  // Prefer the feed's UTC date over the watch page's uploader-local one — see scrape().
+  const utc = await uploadDateUtc(id);
+  meta.uploadDate = utc ?? meta.uploadDateLocal;
+  if (!utc && meta.uploadDateLocal) {
+    console.warn(
+      `⚠️  Not in the channel feed (it lists only the latest 15). Falling back to the watch page's\n` +
+        `   local-timezone date, ${meta.uploadDateLocal} — CHECK IT against Studio; it can be a day off.`,
+    );
+  }
 
   if (meta.isPrivate) die('that video is private — it cannot be embedded.');
   if (meta.isUnlisted) console.warn('⚠️  This video is UNLISTED. It will embed, but it is not on the channel page.');
@@ -135,7 +178,7 @@ async function main() {
 
   console.log(`  title:    ${meta.title}`);
   console.log(`  duration: ${meta.durationSeconds}s`);
-  console.log(`  uploaded: ${meta.uploadDate ?? '(unknown — fill in by hand)'}`);
+  console.log(`  uploaded: ${meta.uploadDate ?? '(unknown — fill in by hand)'}${utc ? ' (UTC, from the channel feed)' : ''}`);
   console.log(`  slug:     ${slug}`);
 
   if (DRY_RUN) {
@@ -167,15 +210,16 @@ async function main() {
       youtubeId: '${id}',
       uploadDate: '${meta.uploadDate ?? 'YYYY-MM-DD'}',
       eventDate: '${meta.uploadDate ?? 'YYYY-MM-DD'}', // when it was RECORDED — usually earlier
-      location: 'Geneva',
       durationSeconds: ${meta.durationSeconds},
       playlist: 'geneva-panel-2026',
       poster: '${posterUrl}',
       relatedPostSlug: undefined, // slug of the newsroom article, if there is one
       i18n: {
-        en: { title: ${JSON.stringify(meta.title)}, speaker: 'Name · Affiliation', summary: '' },
-        ar: { title: '', speaker: '', summary: '' },
-        fr: { title: '', speaker: '', summary: '' },
+        // location is the dateline place IN THIS LANGUAGE — 'Geneva' / 'جنيف' / 'Genève'.
+        // Set it in all three or none; a half-set dateline fails videos.test.ts.
+        en: { title: ${JSON.stringify(meta.title)}, speaker: 'Name · Affiliation', location: 'Geneva', summary: '' },
+        ar: { title: '', speaker: '', location: '', summary: '' },
+        fr: { title: '', speaker: '', location: '', summary: '' },
       },
     },
   ────────────────────────────────────────────────────────────────
