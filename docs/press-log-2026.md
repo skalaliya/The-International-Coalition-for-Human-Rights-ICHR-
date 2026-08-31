@@ -64,7 +64,7 @@ went live with it.
 | 23 Aug | `upr-54th-session-procedural-bias-sudan-july-2026` | inline PDF links → download card | `345c071` |
 | 23 Aug | `62nd-session-palais-des-nations-june-2026` | PDF attached | `a85c165` |
 | 26 Aug | `womens-condition-violence-wartime-geneva-august-2026` | **Factual correction** — the event was held at the Club Suisse de la Presse, not the Palais des Nations; co-organisers were ICHR, EADM, TYFA and Post Versa, not CAP; the panel was 5, not 8. Poster replaced with the real event card. No correction notice, by client decision. | `76e007d` |
-| 26 Aug | both August articles | Name normalised to **Abderrahim Grein** — house spelling chosen by the client over the source RTF's "Abdel-Rahim". | — |
+| 26 Aug | both August articles | Name normalised to **Abdelrahim Grein** — house spelling chosen by the client over the source RTF's "Abdel-Rahim". | — |
 | 27 Aug | `civil-society-panel-women-sudan-geneva-august-2026` | **Retraction** — the UN Fact-Finding Mission "indicators of genocidal intent" paragraph removed from all three locales, per the client's polished source. Designed cards (card-1 … card-5) replace the generated covers and the photo gallery; card-1 is now the hero on all three locales; `statement.en.pdf` (1,286,066 B) attached. | `a8fe027` |
 
 `345c071` also introduced the download card itself (`src/lib/attachments.ts`,

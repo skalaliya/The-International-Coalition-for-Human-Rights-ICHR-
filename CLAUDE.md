@@ -91,6 +91,35 @@ English at the root, Arabic under `/ar` (RTL), French under `/fr`. Configured in
 
 ---
 
+## House style: names
+
+**"Abdelrahim Grein"** — with an **L**. Settled 31 August 2026, **verified by Abdelrahim
+Grein himself**. That confirmation is the authority: do not re-derive the spelling from a
+supplied document, a press card, or an older article, and do not "correct" it back.
+
+The full name is **Abdelrahim Grein Sadam**; "Abdelrahim Grein" is the short form used in
+bylines and body text.
+
+This flip-flopped once, and the history is recorded so it does not happen a third time:
+
+| date | spelling | where it came from |
+|---|---|---|
+| source RTF | `Abdel-Rahim Grein` | the supplied press-9 document, hyphenated |
+| 26 Aug 2026 | `Abderrahim Grein` | chosen as house spelling; two live articles normalised to it |
+| **31 Aug 2026** | **`Abdelrahim Grein`** | **confirmed by the subject — current and final** |
+
+Notes that matter when touching this:
+
+- **The Arabic is unaffected.** عبد الرحيم قرين transliterates to both Latin forms, so the
+  Arabic copy has never changed and must not be "fixed" to match a Latin edit.
+- **The printed press cards still read "Abdel-Rahim Grein."** That artwork is the client's
+  and is not retouched; only body text and captions follow the house spelling.
+- **Re-importing press-9 from its source RTF reintroduces the hyphenated form.**
+- Two `/media` slugs were published with the old spelling on 31 August and corrected the
+  same day; `astro.config.mjs` carries redirects from the old URLs. Keep them.
+
+---
+
 ## Publishing an article
 
 **Route A — the admin CMS** (`/admin`): sign in, create the post, upload a cover and gallery images, publish. Live immediately. Use "+ Add \<language\>" on a story to create a translation pre-linked to its `translationKey`.

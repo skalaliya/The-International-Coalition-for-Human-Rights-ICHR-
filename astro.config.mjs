@@ -25,6 +25,16 @@ export default defineConfig({
   redirects: {
     '/en': '/',
     '/en/[...rest]': '/[...rest]',
+    // The two /media slugs published on 31 August 2026 spelled the name "abderrahim".
+    // The subject confirmed it is "Abdelrahim", so the slugs were corrected the same day.
+    // These keep the already-published URLs alive rather than 404ing anyone who saved or
+    // shared one in the hours they were live. Cheap to keep; do not remove.
+    '/media/abderrahim-grein-icc-accountability-geneva-2026': '/media/abdelrahim-grein-icc-accountability-geneva-2026',
+    '/ar/media/abderrahim-grein-icc-accountability-geneva-2026': '/ar/media/abdelrahim-grein-icc-accountability-geneva-2026',
+    '/fr/media/abderrahim-grein-icc-accountability-geneva-2026': '/fr/media/abdelrahim-grein-icc-accountability-geneva-2026',
+    '/media/abderrahim-grein-human-rights-2025': '/media/abdelrahim-grein-human-rights-2025',
+    '/ar/media/abderrahim-grein-human-rights-2025': '/ar/media/abdelrahim-grein-human-rights-2025',
+    '/fr/media/abderrahim-grein-human-rights-2025': '/fr/media/abdelrahim-grein-human-rights-2025',
   },
   // The admin API authenticates with Bearer tokens (not cookies), so CSRF is not
   // a threat. Astro's checkOrigin would otherwise 403 same-origin POST/DELETE

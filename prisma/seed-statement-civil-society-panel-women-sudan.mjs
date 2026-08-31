@@ -1,7 +1,7 @@
 // Joint press statement, 25 August 2026 — the report of the Geneva panel
 // "Women's Condition and Violence in Wartime: Focus on the Sudan Crisis".
 //
-// Source: press/AUG/press-9 (content.rtf + 3 photographs). Supplied by Abderrahim Grein.
+// Source: press/AUG/press-9 (content.rtf + 3 photographs). Supplied by Abdelrahim Grein.
 //
 // Issued jointly by ICHR, EADM, The Youth Future Alliance (TYFA) and Post Versa.
 // NOTE the co-issuers: CAP Liberté de Conscience convened the event as originally
@@ -25,8 +25,9 @@
 //     and the event card is promotional and lives on the 23 August announcement.
 //   * The supplied PDF has NO text layer (5 flattened pages, 8.63 MB) and was rebuilt from the
 //     2000px cards, as with press-5 and press-6.
-//   * The cards print "Abdel-Rahim Grein"; the body says "Abderrahim Grein" per the client's
-//     26 August decision. The artwork is the client's and was not retouched.
+//   * The cards print "Abdel-Rahim Grein"; the body says "Abdelrahim Grein" (see NAME
+//     SPELLING below). The artwork is the client's and was not retouched, so the printed
+//     cards keep the hyphenated form.
 //
 // EDITORIAL DECISIONS — do not "improve" these on a re-run:
 //   * The chemical-weapons attribution to the Sudanese Armed Forces (SAF), the Omdurman
@@ -47,12 +48,18 @@
 //   * "14 million peoplenearly one-quarter of Sudan's populationhave been displaced"
 //       → em-dashes restored around the parenthetical
 //   * Five headings ended ":-" — normalised
-//   * NAME SPELLING — resolved by the client, 26 August 2026. The supplied RTF read
-//     "Abdel-Rahim Grein"; the CAP poster and the 23 August article read "Abderrahim
-//     Grein". ICHR chose "Abderrahim Grein" as the house spelling, so this statement and
-//     the 23 August announcement were both normalised to it. The Arabic (عبد الرحيم قرين)
-//     was already consistent and is unchanged. The client's original RTF still carries
-//     "Abdel-Rahim" — a re-import from source will reintroduce it.
+//   * NAME SPELLING — settled 31 August 2026: "Abdelrahim Grein", VERIFIED BY ABDELRAHIM
+//     GREIN HIMSELF. This is the authority; do not re-derive it from any document.
+//     History, because this flip-flopped once and the reasoning must not be lost: the
+//     supplied RTF read "Abdel-Rahim Grein"; on 26 August the house spelling was set to
+//     "Abderrahim Grein" (with an R) and this statement, the 23 August announcement and
+//     the /media entries were normalised to that. The subject then confirmed the correct
+//     spelling is "Abdelrahim" (with an L), and everything was normalised again on
+//     31 August. The YouTube channel had it right the whole time.
+//     The Arabic (عبد الرحيم قرين) is unaffected either way — عبد الرحيم transliterates
+//     to both Latin forms — and was never changed.
+//     The client's original RTF still carries the hyphenated "Abdel-Rahim"; a re-import
+//     from source will reintroduce it.
 //
 //   DRY_RUN=1   node --env-file=.env.local prisma/seed-statement-civil-society-panel-women-sudan.mjs
 //               node --env-file=.env.local prisma/seed-statement-civil-society-panel-women-sudan.mjs
@@ -79,7 +86,7 @@ The panel comprised:
 - **Ramon Rahangmetan** — Co-founder, Circle of Sustainable Europe
 - **Manel Msalmi** — President, EADM; Advisor on MENA Affairs, European Parliament
 - **Andy Vermaut** — Vice President, EADM; President, World Council for Public Diplomacy and Community Dialogue
-- **Abderrahim Grein** — Representative, ICHR
+- **Abdelrahim Grein** — Representative, ICHR
 - **Dr. Mohamed Ali** — ICHR
 
 ## Core human rights findings presented
@@ -209,7 +216,7 @@ La table ronde réunissait :
 - **Ramon Rahangmetan** — cofondateur, Circle of Sustainable Europe
 - **Manel Msalmi** — présidente de l'EADM ; conseillère pour les affaires MENA au Parlement européen
 - **Andy Vermaut** — vice-président de l'EADM ; président du World Council for Public Diplomacy and Community Dialogue
-- **Abderrahim Grein** — représentant de l'ICHR
+- **Abdelrahim Grein** — représentant de l'ICHR
 - **Dr Mohamed Ali** — ICHR
 
 ## Principaux constats présentés en matière de droits humains
@@ -294,7 +301,7 @@ export const STATEMENT = {
         { url: C3, caption: 'Statement card 2 of 4: the militarisation of essential infrastructure, and the joint call to action on accountability and justice, civilian protection, humanitarian access and survivors’ support.', order: 1 },
         { url: C4, caption: 'Statement card 3 of 4: women, peace and security under UN Security Council Resolution 1325, and contextual data on forced displacement, acute food insecurity and continuing violence in Kordofan.', order: 2 },
         { url: C5, caption: 'Statement card 4 of 4: media contacts for the International Coalition for Human Rights, the European Association for the Defence of Minorities and The Youth Future Alliance.', order: 3 },
-        { url: PANEL, caption: 'Abderrahim Grein and Dr. Mohamed Ali representing the International Coalition for Human Rights at the Geneva panel, 25 August 2026.', order: 4 },
+        { url: PANEL, caption: 'Abdelrahim Grein and Dr. Mohamed Ali representing the International Coalition for Human Rights at the Geneva panel, 25 August 2026.', order: 4 },
       ],
     },
     {
@@ -328,7 +335,7 @@ export const STATEMENT = {
         { url: C3, caption: "Carte 2 sur 4 : la militarisation des infrastructures essentielles, et l'appel commun à l'action sur la responsabilité et la justice, la protection des civils, l'accès humanitaire et le soutien aux survivantes. (Carte en anglais.)", order: 1 },
         { url: C4, caption: "Carte 3 sur 4 : femmes, paix et sécurité au titre de la résolution 1325 du Conseil de sécurité, et données de contexte sur les déplacements forcés, l'insécurité alimentaire aiguë et les violences persistantes au Kordofan. (Carte en anglais.)", order: 2 },
         { url: C5, caption: "Carte 4 sur 4 : contacts presse de la Coalition internationale pour les droits de l'homme, de l'Association européenne pour la défense des minorités et de The Youth Future Alliance. (Carte en anglais.)", order: 3 },
-        { url: PANEL, caption: "Abderrahim Grein et le Dr Mohamed Ali représentant la Coalition internationale pour les droits de l'homme lors de la table ronde de Genève, le 25 août 2026.", order: 4 },
+        { url: PANEL, caption: "Abdelrahim Grein et le Dr Mohamed Ali représentant la Coalition internationale pour les droits de l'homme lors de la table ronde de Genève, le 25 août 2026.", order: 4 },
       ],
     },
   ],

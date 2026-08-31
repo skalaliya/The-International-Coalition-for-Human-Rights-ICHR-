@@ -77,7 +77,7 @@ const VIDEOS: Video[] = [
         speaker: 'Closing remarks · Club Suisse de la Presse, Geneva',
         location: 'Geneva',
         summary:
-          'Closing remarks and debate from the international civil society panel on women’s condition and violence in wartime, with concluding statements by Manel Msalmi, Abderrahim Grein, Dr Mohamed Ali, Andy Vermaut and Elisabeth Saba. The speakers called for immediate international intervention, protection of journalists and civilians, ICC prosecution without immunity, and an urgent ceasefire.',
+          'Closing remarks and debate from the international civil society panel on women’s condition and violence in wartime, with concluding statements by Manel Msalmi, Abdelrahim Grein, Dr Mohamed Ali, Andy Vermaut and Elisabeth Saba. The speakers called for immediate international intervention, protection of journalists and civilians, ICC prosecution without immunity, and an urgent ceasefire.',
       },
       ar: {
         title: 'البيانات الختامية: العدالة وجرائم الحرب والنساء في السودان',
@@ -91,23 +91,23 @@ const VIDEOS: Video[] = [
         speaker: 'Remarques de clôture · Club Suisse de la Presse, Genève',
         location: 'Genève',
         summary:
-          'Remarques de clôture et débat du panel international de la société civile sur la condition des femmes et les violences en temps de guerre, avec les déclarations finales de Manel Msalmi, Abderrahim Grein, du Dr Mohamed Ali, d’Andy Vermaut et d’Elisabeth Saba. Les intervenants ont appelé à une intervention internationale immédiate, à la protection des journalistes et des civils, à des poursuites devant la CPI sans immunité et à un cessez-le-feu urgent.',
+          'Remarques de clôture et débat du panel international de la société civile sur la condition des femmes et les violences en temps de guerre, avec les déclarations finales de Manel Msalmi, Abdelrahim Grein, du Dr Mohamed Ali, d’Andy Vermaut et d’Elisabeth Saba. Les intervenants ont appelé à une intervention internationale immédiate, à la protection des journalistes et des civils, à des poursuites devant la CPI sans immunité et à un cessez-le-feu urgent.',
       },
     },
   },
   {
-    slug: 'abderrahim-grein-icc-accountability-geneva-2026',
+    slug: 'abdelrahim-grein-icc-accountability-geneva-2026',
     youtubeId: 'dPDFlbBOr-I',
     uploadDate: '2026-08-29',
     eventDate: '2026-08-25',
     durationSeconds: 856,
     playlist: 'geneva-panel-2026',
-    poster: '/media/abderrahim-grein-icc-accountability-geneva-2026/poster.jpg',
+    poster: '/media/abdelrahim-grein-icc-accountability-geneva-2026/poster.jpg',
     relatedPostSlug: 'civil-society-panel-women-sudan-geneva-august-2026',
     i18n: {
       en: {
         title: 'Violations Against Women and ICC Accountability in Sudan',
-        speaker: 'Abderrahim Grein · International Coalition for Human Rights',
+        speaker: 'Abdelrahim Grein · International Coalition for Human Rights',
         location: 'Geneva',
         summary:
           'Evidence of systematic human rights abuses in Sudan, with a call for an independent OPCW investigation, an ICC referral without immunity, the protection of civilians, and the direct inclusion of Sudanese women in every peace process.',
@@ -121,7 +121,7 @@ const VIDEOS: Video[] = [
       },
       fr: {
         title: 'Violations contre les femmes et responsabilité devant la CPI au Soudan',
-        speaker: 'Abderrahim Grein · Coalition internationale pour les droits de l’homme',
+        speaker: 'Abdelrahim Grein · Coalition internationale pour les droits de l’homme',
         location: 'Genève',
         summary:
           'Présentation de preuves de violations systématiques des droits humains au Soudan, avec un appel à une enquête indépendante de l’OIAC, à une saisine de la CPI sans immunité, à la protection des civils et à l’inclusion directe des femmes soudanaises dans tous les processus de paix.',
@@ -278,12 +278,12 @@ const VIDEOS: Video[] = [
     i18n: {
       en: {
         title: 'Outside the ICJ: Sudanese Civil Society Demands Justice',
-        speaker: 'Delegation led by Abderrahim Grein · Peace Palace, The Hague',
+        speaker: 'Delegation led by Abdelrahim Grein · Peace Palace, The Hague',
         location: 'The Hague',
         // "The delegation called for" — an attributed demand, not a statement of fact,
         // matching the hedging discipline the press statements already use.
         summary:
-          'A Sudanese civil society delegation, led by Abderrahim Grein Sadam, delivered a statement at the gates of the International Court of Justice on 4 May 2025. The delegation called for the Islamic Movement to be designated a terrorist organisation, for those responsible for atrocities in Sudan to be held accountable, and for concrete humanitarian, legal and diplomatic action to protect civilians.',
+          'A Sudanese civil society delegation, led by Abdelrahim Grein Sadam, delivered a statement at the gates of the International Court of Justice on 4 May 2025. The delegation called for the Islamic Movement to be designated a terrorist organisation, for those responsible for atrocities in Sudan to be held accountable, and for concrete humanitarian, legal and diplomatic action to protect civilians.',
       },
       ar: {
         title: 'أمام محكمة العدل الدولية: المجتمع المدني السوداني يطالب بالعدالة',
@@ -294,28 +294,28 @@ const VIDEOS: Video[] = [
       },
       fr: {
         title: 'Devant la CIJ : la société civile soudanaise réclame justice',
-        speaker: 'Délégation menée par Abderrahim Grein · Palais de la Paix, La Haye',
+        speaker: 'Délégation menée par Abdelrahim Grein · Palais de la Paix, La Haye',
         location: 'La Haye',
         summary:
-          'Une délégation de la société civile soudanaise, menée par Abderrahim Grein Sadam, a lu une déclaration devant les grilles de la Cour internationale de justice le 4 mai 2025. La délégation a demandé que le Mouvement islamique soit désigné organisation terroriste, que les responsables des atrocités au Soudan répondent de leurs actes, et que des mesures humanitaires, juridiques et diplomatiques concrètes protègent les civils.',
+          'Une délégation de la société civile soudanaise, menée par Abdelrahim Grein Sadam, a lu une déclaration devant les grilles de la Cour internationale de justice le 4 mai 2025. La délégation a demandé que le Mouvement islamique soit désigné organisation terroriste, que les responsables des atrocités au Soudan répondent de leurs actes, et que des mesures humanitaires, juridiques et diplomatiques concrètes protègent les civils.',
       },
     },
   },
   {
-    slug: 'abderrahim-grein-human-rights-2025',
+    slug: 'abdelrahim-grein-human-rights-2025',
     youtubeId: '51E407P1cNA',
     uploadDate: '2025-07-19',
     // No filming date is stated anywhere; the upload date is the only fact we have.
     eventDate: '2025-07-19',
     durationSeconds: 100,
     playlist: 'advocacy-2025',
-    poster: '/media/abderrahim-grein-human-rights-2025/poster.jpg',
+    poster: '/media/abdelrahim-grein-human-rights-2025/poster.jpg',
     i18n: {
       en: {
         title: 'The Work of ICHR: Justice, Education and Dignity',
-        speaker: 'Abderrahim Grein Sadam · Founder, International Coalition for Human Rights',
+        speaker: 'Abdelrahim Grein Sadam · Founder, International Coalition for Human Rights',
         summary:
-          'A short profile of the human rights work of Abderrahim Grein Sadam, founder of the International Coalition for Human Rights — from advocacy for justice in Sudan to the defence of vulnerable communities, and a call for peace, education and dignity.',
+          'A short profile of the human rights work of Abdelrahim Grein Sadam, founder of the International Coalition for Human Rights — from advocacy for justice in Sudan to the defence of vulnerable communities, and a call for peace, education and dignity.',
       },
       ar: {
         title: 'عمل التحالف الدولي لحقوق الإنسان: العدالة والتعليم والكرامة',
@@ -325,9 +325,9 @@ const VIDEOS: Video[] = [
       },
       fr: {
         title: 'Le travail de l’ICHR : justice, éducation et dignité',
-        speaker: 'Abderrahim Grein Sadam · fondateur de la Coalition internationale pour les droits de l’homme',
+        speaker: 'Abdelrahim Grein Sadam · fondateur de la Coalition internationale pour les droits de l’homme',
         summary:
-          'Un court portrait du travail d’Abderrahim Grein Sadam, fondateur de la Coalition internationale pour les droits de l’homme — de la défense de la justice au Soudan à la protection des communautés vulnérables, et un appel à la paix, à l’éducation et à la dignité.',
+          'Un court portrait du travail d’Abdelrahim Grein Sadam, fondateur de la Coalition internationale pour les droits de l’homme — de la défense de la justice au Soudan à la protection des communautés vulnérables, et un appel à la paix, à l’éducation et à la dignité.',
       },
     },
   },
