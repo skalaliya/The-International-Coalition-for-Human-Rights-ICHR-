@@ -8,7 +8,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Section from '@/components/Section.astro';
 import VideoCard from '@/components/VideoCard.astro';
-import { getVideos, PLAYLISTS, type PlaylistId } from '@/data/videos';
+import { getVideos, PLAYLISTS, PUBLISHED_VIDEOS, type PlaylistId } from '@/data/videos';
 import { SOCIAL_PROFILES } from '@/lib/site';
 import { useTranslations, localizeHref, type Locale } from '@/i18n';
 
@@ -32,8 +32,11 @@ const filters: (PlaylistId | 'All')[] = ['All', ...PLAYLISTS];
 const filterHref = (p: string) => (p === 'All' ? mediaBase : `${mediaBase}?playlist=${encodeURIComponent(p)}`);
 
 const channel = SOCIAL_PROFILES.find((s) => s.name === 'YouTube')?.href;
-// Only worth a filter row when there is more than one thing to filter by.
-const showFilters = PLAYLISTS.length > 1;
+// Only worth a filter row when there is more than one thing to filter by — and only when
+// there is anything listed at all, or an empty page would show pills above no results.
+// Keyed off the whole listed set, not `videos`: a playlist that happens to be empty must
+// still leave the reader a way back to "All".
+const showFilters = PLAYLISTS.length > 1 && PUBLISHED_VIDEOS.length > 0;
 ---
 
 <BaseLayout title={t.meta.media.title} description={t.meta.media.desc} lang={lang}>

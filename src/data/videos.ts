@@ -53,6 +53,10 @@ export interface Video {
   poster: string;
   /** Slug of the related newsroom article, if any. Shared across locales. */
   relatedPostSlug?: string;
+  /** Omit for a live video. `false` keeps the entry — copy, poster and manifest all stay
+   *  validated by videos.test.ts — but hides it from /media, the homepage and the sitemap,
+   *  and 404s its detail page. Delete the line to re-list it; nothing else is needed. */
+  published?: boolean;
   i18n: Record<Locale, VideoCopy>;
 }
 
@@ -61,6 +65,11 @@ export interface Video {
 // TYFA and Post Versa. Arabic name and venue forms are taken verbatim from the existing
 // Arabic articles (عبد الرحيم قرين, آندي فيرمو, رامون راهانغميتان, النادي السويسري
 // للصحافة) so the site never spells the same person two ways.
+//
+// ALL EIGHT ENTRIES ARE CURRENTLY UNLISTED (`published: false`), at the client's request on
+// 31 August 2026, pending a new batch of videos. Nothing has been deleted: the copy, posters,
+// responsive variants and manifest entries are all still here and still test-validated, so
+// re-listing a video is exactly one deleted line.
 const VIDEOS: Video[] = [
   {
     slug: 'panel-final-statements-geneva-2026',
@@ -71,6 +80,7 @@ const VIDEOS: Video[] = [
     playlist: 'geneva-panel-2026',
     poster: '/media/panel-final-statements-geneva-2026/poster.jpg',
     relatedPostSlug: 'civil-society-panel-women-sudan-geneva-august-2026',
+    published: false,
     i18n: {
       en: {
         title: 'Final Statements: Justice, War Crimes and Women in Sudan',
@@ -104,6 +114,7 @@ const VIDEOS: Video[] = [
     playlist: 'geneva-panel-2026',
     poster: '/media/abdelrahim-grein-icc-accountability-geneva-2026/poster.jpg',
     relatedPostSlug: 'civil-society-panel-women-sudan-geneva-august-2026',
+    published: false,
     i18n: {
       en: {
         title: 'Violations Against Women and ICC Accountability in Sudan',
@@ -137,6 +148,7 @@ const VIDEOS: Video[] = [
     playlist: 'geneva-panel-2026',
     poster: '/media/hiba-elwassilla-women-families-geneva-2026/poster.jpg',
     relatedPostSlug: 'civil-society-panel-women-sudan-geneva-august-2026',
+    published: false,
     i18n: {
       en: {
         title: 'The Impact of the Sudan Conflict on Women and Families',
@@ -170,6 +182,7 @@ const VIDEOS: Video[] = [
     playlist: 'geneva-panel-2026',
     poster: '/media/andy-vermaut-icc-referral-geneva-2026/poster.jpg',
     relatedPostSlug: 'civil-society-panel-women-sudan-geneva-august-2026',
+    published: false,
     i18n: {
       en: {
         title: 'Justice, ICC Referral and the Sudan Conflict',
@@ -203,6 +216,7 @@ const VIDEOS: Video[] = [
     playlist: 'geneva-panel-2026',
     poster: '/media/ramon-rahangmetan-gender-based-violence-geneva-2026/poster.jpg',
     relatedPostSlug: 'civil-society-panel-women-sudan-geneva-august-2026',
+    published: false,
     i18n: {
       en: {
         title: 'Gender-Based Violence and Justice in Sudan',
@@ -236,6 +250,7 @@ const VIDEOS: Video[] = [
     playlist: 'geneva-panel-2026',
     poster: '/media/mohamed-ali-violations-civilian-protection-geneva-2026/poster.jpg',
     relatedPostSlug: 'civil-society-panel-women-sudan-geneva-august-2026',
+    published: false,
     i18n: {
       en: {
         title: 'Human Rights Violations and Civilian Protection in Sudan',
@@ -275,6 +290,7 @@ const VIDEOS: Video[] = [
     durationSeconds: 118,
     playlist: 'advocacy-2025',
     poster: '/media/icj-stand-sudanese-civil-society-hague-2025/poster.jpg',
+    published: false,
     i18n: {
       en: {
         title: 'Outside the ICJ: Sudanese Civil Society Demands Justice',
@@ -310,6 +326,7 @@ const VIDEOS: Video[] = [
     durationSeconds: 100,
     playlist: 'advocacy-2025',
     poster: '/media/abdelrahim-grein-human-rights-2025/poster.jpg',
+    published: false,
     i18n: {
       en: {
         title: 'The Work of ICHR: Justice, Education and Dignity',
@@ -338,18 +355,19 @@ function byDateDesc(a: Video, b: Video): number {
   return b.eventDate.localeCompare(a.eventDate) || b.uploadDate.localeCompare(a.uploadDate);
 }
 
-/** Every video, newest first, optionally narrowed to one playlist.
+/** Every LISTED video, newest first, optionally narrowed to one playlist.
  *  `lang` is required so no call site can forget which language it is rendering. */
 export function getVideos(lang: Locale, playlist?: PlaylistId | 'All'): Video[] {
   void lang; // copy is selected per-video by the caller; the parameter keeps that explicit
-  const all = [...VIDEOS].sort(byDateDesc);
+  const all = [...PUBLISHED_VIDEOS].sort(byDateDesc);
   return !playlist || playlist === 'All' ? all : all.filter((v) => v.playlist === playlist);
 }
 
-/** One video by its (locale-independent) slug, or undefined. */
+/** One LISTED video by its (locale-independent) slug, or undefined. An unpublished slug
+ *  resolves to undefined, which the /media/[slug] routes turn into a real 404. */
 export function getVideo(slug: string | undefined): Video | undefined {
   if (!slug) return undefined;
-  return VIDEOS.find((v) => v.slug === slug);
+  return PUBLISHED_VIDEOS.find((v) => v.slug === slug);
 }
 
 /** The copy for a locale. Typed as total, so this can never return undefined. */
@@ -357,5 +375,11 @@ export function copyFor(video: Video, lang: Locale): VideoCopy {
   return video.i18n[lang];
 }
 
-/** Raw list, for the tests and the sitemap. */
+/** The WHOLE registry, listed or not. This is what videos.test.ts validates: an unlisted
+ *  video is still checked, so it is still correct on the day it comes back. Nothing
+ *  reader-facing should use this — see PUBLISHED_VIDEOS. */
 export const ALL_VIDEOS: readonly Video[] = VIDEOS;
+
+/** What the site actually shows: the registry minus anything marked `published: false`.
+ *  The listings, the detail routes and the sitemap all go through this. */
+export const PUBLISHED_VIDEOS: readonly Video[] = VIDEOS.filter((v) => v.published !== false);

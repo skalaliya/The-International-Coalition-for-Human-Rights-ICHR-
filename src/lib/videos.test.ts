@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { ALL_VIDEOS, PLAYLISTS, getVideo, getVideos, copyFor } from '../data/videos.ts';
+import { ALL_VIDEOS, PUBLISHED_VIDEOS, PLAYLISTS, getVideo, getVideos, copyFor } from '../data/videos.ts';
 import { toIso8601 } from './duration.ts';
 import { en } from '../i18n/strings/en.ts';
 import { ar } from '../i18n/strings/ar.ts';
@@ -157,8 +157,9 @@ test('a relatedPostSlug, when set, looks like a real article slug', () => {
 });
 
 test('getVideo finds by slug and refuses everything else', () => {
-  const first = ALL_VIDEOS[0]!;
-  assert.equal(getVideo(first.slug)?.slug, first.slug);
+  // Guarded, not assumed: the whole registry may legitimately be unlisted (it is today).
+  const first = PUBLISHED_VIDEOS[0];
+  if (first) assert.equal(getVideo(first.slug)?.slug, first.slug);
   assert.equal(getVideo('does-not-exist'), undefined);
   assert.equal(getVideo(''), undefined);
   assert.equal(getVideo(undefined), undefined, 'a missing route param must not throw');
@@ -166,7 +167,7 @@ test('getVideo finds by slug and refuses everything else', () => {
 
 test('getVideos sorts newest-first and filters by playlist', () => {
   const all = getVideos('en');
-  assert.equal(all.length, ALL_VIDEOS.length);
+  assert.equal(all.length, PUBLISHED_VIDEOS.length);
   for (let i = 1; i < all.length; i++) {
     assert.ok(all[i - 1]!.eventDate >= all[i]!.eventDate, 'not sorted newest-first');
   }
@@ -177,6 +178,22 @@ test('getVideos sorts newest-first and filters by playlist', () => {
   assert.deepEqual(
     getVideos('en').map((v) => v.slug),
     all.map((v) => v.slug),
+  );
+});
+
+test('an unpublished video is hidden from the listing and from its own detail route', () => {
+  // The flag is the only thing standing between a pulled video and a live page, so it is
+  // checked directly rather than inferred from a count.
+  const listed = getVideos('en');
+  for (const v of ALL_VIDEOS.filter((v) => v.published === false)) {
+    assert.equal(getVideo(v.slug), undefined, `${v.slug} is unlisted but still routable`);
+    assert.ok(!listed.some((x) => x.slug === v.slug), `${v.slug} is unlisted but still listed`);
+    assert.ok(!PUBLISHED_VIDEOS.includes(v), `${v.slug} is unlisted but in PUBLISHED_VIDEOS`);
+  }
+  assert.equal(
+    PUBLISHED_VIDEOS.length,
+    ALL_VIDEOS.filter((v) => v.published !== false).length,
+    'PUBLISHED_VIDEOS disagrees with the flags',
   );
 });
 

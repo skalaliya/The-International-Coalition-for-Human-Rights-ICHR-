@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { prisma } from '@/server/db';
 import { LOCALES, localizedPath, type Locale } from '@/i18n';
-import { ALL_VIDEOS } from '@/data/videos';
+import { PUBLISHED_VIDEOS } from '@/data/videos';
 
 // SSR sitemap: covers the prerendered marketing pages (×3 locales) AND the
 // SSR-only published news articles (which @astrojs/sitemap can't enumerate),
@@ -40,7 +40,7 @@ export const GET: APIRoute = async ({ site, url }) => {
 
   // Videos — one slug serves all three locales (src/data/videos.ts), so unlike articles
   // these need no grouping: every video exists in every language by construction.
-  for (const video of ALL_VIDEOS) {
+  for (const video of PUBLISHED_VIDEOS) {
     for (const lang of LOCALES) {
       entries.push({
         path: localizedPath(`/media/${video.slug}`, lang),
